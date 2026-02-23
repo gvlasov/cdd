@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Install CDD support for Fish shell for current user
+cd "$(git rev-parse --show-toplevel)"
+test -d ~/.config/fish/conf.d && cp -r ./platform/fish/cdd.fish ~/.config/fish/conf.d/cdd.fish
+cp -r ./processes/discovery/cdd-help ~/.local/bin

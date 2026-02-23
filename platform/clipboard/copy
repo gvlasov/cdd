@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Copies arbitrary text to X clipboard
+output=$(cat)
+line_count=$(echo "$output" | wc -l)
+echo "$output" | xclip -i -selection clipboard
+echo "Copied $line_count lines to clipboard"

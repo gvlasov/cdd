@@ -1,1 +1,0 @@
-A state of affairs in [[Reality]]

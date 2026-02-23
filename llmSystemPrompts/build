@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-find . \
-  -type f \
-  -name "*.md" \
-  -exec sh -c 'name=$(basename "$1"); echo "# ${name%.*}"; cat "$1"; echo; echo ' _ {} \;

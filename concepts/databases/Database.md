@@ -1,0 +1,1 @@
+Database - an interface to store and query state

@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Print commands and their descriptions from ./platform/cli
+
+dir="./platform/cli"
+grey='\033[90m'
+reset='\033[0m'
+
+for filepath in "$dir"/*; do
+    [ -f "$filepath" ] || continue
+    name=$(basename "$filepath")
+
+    desc=$(tail -n +2 "$filepath" | awk 'NF && /^#/ { print; exit }' | sed 's/^#[[:space:]]*//')
+
+    if [ -n "$desc" ]; then
+        desc="$(echo "$desc" | sed 's/./\L&/')"
+        echo -e "$name ${grey}-${reset} $desc"
+    else
+        echo "$name"
+    fi
+done

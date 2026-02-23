@@ -6,3 +6,9 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+.gitignore
+/*
+!/vcs.xml
+!/conceptualization.iml
+!/modules.xml
+

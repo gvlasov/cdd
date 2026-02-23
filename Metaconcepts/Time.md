@@ -1,1 +1,0 @@
-Any spatial dimension where you can only move forward

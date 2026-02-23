@@ -1,0 +1,3 @@
+Repository - an object that provides access to mutable state of a concept. Allows writing and reading state. For CQRS purposes, may be split into read repository and write repository.
+
+Essentially the same as DDD repository. An interface with a database that allows to express CRUD operations with domain language. Transaction boundaries may or may not be within repository methods. **TODO: This is concerning, as it makes repositories somewhat unpredictable. Maybe aggregates are a better place to ensure transaction boundaries?**

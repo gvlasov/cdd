@@ -1,1 +1,0 @@
-An ordered change in [[state]] that propagates forward in [[time]] until its termination

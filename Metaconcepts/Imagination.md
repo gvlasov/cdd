@@ -1,1 +1,0 @@
-An inner [[Virtual reality]]of a [[subject]]

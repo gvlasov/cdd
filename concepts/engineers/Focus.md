@@ -1,0 +1,1 @@
+The resource of a person's psyche that is spent on keeping things in person's attention.

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Copy whole methodology text to clipboard for refinement with an LLM
+set -e
+cd "$(git rev-parse --show-toplevel)"
+
+./processes/refinement/prompt-for-refinement | ./platform/clipboard/copy
+echo "Prompt for refinement alongside the whole methodology text is copied to clipboard"

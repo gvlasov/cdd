@@ -1,1 +1,12 @@
-{}
+{
+  "showRibbon": true,
+  "theme": "obsidian",
+  "accentColor": "#ff98a3",
+  "nativeMenus": false,
+  "cssTheme": "Minimal",
+  "baseFontSize": 17,
+  "showViewHeader": false,
+  "enabledCssSnippets": [
+    "zoom"
+  ]
+}

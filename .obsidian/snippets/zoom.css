@@ -1,0 +1,5 @@
+:root { --custom_zoom: 150%;}
+div.prompt { zoom: var(--custom_zoom); }
+div.menu-scroll { zoom: var(--custom_zoom); }
+div.modal { zoom: var(--custom_zoom); }
+div.horizontal-main-container { zoom: var(--custom_zoom); }
