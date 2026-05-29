@@ -6,8 +6,8 @@ description: Apply concept-driven design methodology when generating or organizi
 ---
 "
 
-./whole-text
-echo "# concepts/agent-skills/Skill.prompt.md"
-cat concepts/agent-skills/Skill.prompt.md
+./concepts/system-prompts/whole-text
+echo "# concepts/agent-skills/AgentSkill.prompt.md"
+cat concepts/agent-skills/AgentSkill.prompt.md
 echo
 echo
