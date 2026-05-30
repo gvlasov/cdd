@@ -40,7 +40,7 @@ Platform-level cohesion units:
 - A [[Tool|tool]] is a cohesion unit for its configuration, wrappers, support files, and sometimes its generated outputs.
 - Composer can have its configuration and `vendor` output grouped as a Composer/tool concern.
 - NPM can have its configuration and `node_modules` output grouped as an NPM/tool concern.
-- A lifecycle concern is also a platform-level cohesion unit: testing, linting, CLI, compilation, deployment, and similar concerns group the tool setup needed to run the project.
+- A [[Lifecycle phase|lifecycle phase]] is also a platform-level cohesion unit: testing, linting, CLI, compilation, deployment, and similar concerns group the tool setup needed to run the project.
 
 Project-level cohesion unit:
 
