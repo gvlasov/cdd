@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Run Concept-Driven Design project commands
+set -euo pipefail
+
+source_path="${BASH_SOURCE[0]}"
+while [ -L "$source_path" ]; do
+  source_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
+  source_path="$(readlink "$source_path")"
+  case "$source_path" in
+    /*) ;;
+    *) source_path="$source_dir/$source_path" ;;
+  esac
+done
+
+source_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
+cdd_home="$(cd "$source_dir/../.." >/dev/null 2>&1 && pwd)"
+
+command="${1:-help}"
+case "$command" in
+  help|--help|-h)
+    exec "$cdd_home/processes/discovery/cdd-help"
+    ;;
+  init)
+    shift
+    exec "$cdd_home/concepts/directory-structures/init" "$@"
+    ;;
+  *)
+    shift
+    if [ -x "./platform/cli/$command" ] && [ "$command" != "cdd" ]; then
+      exec "./platform/cli/$command" "$@"
+    fi
+    if [ -x "$cdd_home/platform/cli/$command" ] && [ "$command" != "cdd" ]; then
+      exec "$cdd_home/platform/cli/$command" "$@"
+    fi
+    printf 'cdd: unknown command: %s\n' "$command" >&2
+    printf 'Run `cdd help` to see available commands.\n' >&2
+    exit 1
+    ;;
+esac

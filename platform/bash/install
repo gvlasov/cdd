@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Install CDD support for Fish shell for current user
+# Install CDD support for Bash for current user
 set -euo pipefail
 
 source_path="${BASH_SOURCE[0]}"
@@ -15,14 +15,11 @@ done
 source_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
 cdd_home="$(cd "$source_dir/../.." >/dev/null 2>&1 && pwd)"
 bin_dir="$HOME/.local/bin"
-conf_dir="$HOME/.config/fish/conf.d"
-completion_dir="$HOME/.config/fish/completions"
+completion_dir="$HOME/.local/share/bash-completion/completions"
 
-mkdir -p "$bin_dir" "$conf_dir" "$completion_dir"
+mkdir -p "$bin_dir" "$completion_dir"
 ln -sfn "$cdd_home/platform/cdd/cdd" "$bin_dir/cdd"
-install -m 0644 "$cdd_home/platform/fish/cdd.fish" "$conf_dir/cdd.fish"
-install -m 0644 "$cdd_home/platform/fish/completions/cdd.fish" "$completion_dir/cdd.fish"
+install -m 0644 "$cdd_home/platform/bash/completions/cdd" "$completion_dir/cdd"
 
 printf 'Installed cdd to %s/cdd\n' "$bin_dir"
-printf 'Installed Fish config to %s/cdd.fish\n' "$conf_dir"
-printf 'Installed Fish completion to %s/cdd.fish\n' "$completion_dir"
+printf 'Installed Bash completion to %s/cdd\n' "$completion_dir"

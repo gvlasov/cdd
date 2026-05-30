@@ -1,0 +1,30 @@
+_cdd()
+{
+  local current previous commands cli_command
+
+  COMPREPLY=()
+  current="${COMP_WORDS[COMP_CWORD]}"
+  previous="${COMP_WORDS[COMP_CWORD - 1]}"
+  commands="help init"
+
+  if [[ -d ./platform/cli ]]; then
+    for cli_command in ./platform/cli/*; do
+      [[ -f "$cli_command" ]] || continue
+      commands="$commands ${cli_command##*/}"
+    done
+  fi
+
+  if [[ "$COMP_CWORD" -eq 1 ]]; then
+    COMPREPLY=( $(compgen -W "$commands" -- "$current") )
+    return 0
+  fi
+
+  case "$previous" in
+    init)
+      COMPREPLY=( $(compgen -d -- "$current") )
+      return 0
+      ;;
+  esac
+}
+
+complete -F _cdd cdd
