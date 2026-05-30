@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+# Opens Codex for this CDD project in an xterm-backed tmuxinator session
+set -euo pipefail
+
+find_project_root() {
+  local dir
+  dir="$(pwd)"
+
+  while [ "$dir" != "/" ]; do
+    if [ -d "$dir/platform/cli" ]; then
+      printf '%s\n' "$dir"
+      return 0
+    fi
+    dir="$(dirname "$dir")"
+  done
+
+  return 1
+}
+
+require_command() {
+  local command_name="$1"
+
+  if ! command -v "$command_name" >/dev/null 2>&1; then
+    printf 'terminal-tmuxinator-codex: required command not found: %s\n' "$command_name" >&2
+    exit 1
+  fi
+}
+
+focus_existing_i3_window() {
+  local window_class="$1"
+  local tree
+
+  command -v i3-msg >/dev/null 2>&1 || return 1
+  tree="$(i3-msg -t get_tree 2>/dev/null)" || return 1
+
+  if ! printf '%s' "$tree" | grep -Eq "\"class\"[[:space:]]*:[[:space:]]*\"$window_class\""; then
+    return 1
+  fi
+
+  i3-msg "[class=\"$window_class\"] focus" >/dev/null 2>&1
+}
+
+yaml_single_quote() {
+  sed "s/'/''/g; s/^/'/; s/$/'/"
+}
+
+project_root="$(find_project_root || true)"
+if [ -z "$project_root" ]; then
+  printf 'terminal-tmuxinator-codex: run this from inside a CDD project with ./platform/cli\n' >&2
+  exit 1
+fi
+
+window_class="cdd-tmuxinator-codex"
+if focus_existing_i3_window "$window_class"; then
+  exit 0
+fi
+
+require_command xterm
+require_command tmux
+require_command tmuxinator
+require_command codex
+
+state_dir="$project_root/platform/tmuxinator/local"
+mkdir -p "$state_dir"
+
+project_id="$(printf '%s' "$project_root" | sha256sum | awk '{ print substr($1, 1, 12) }')"
+project_name="$(basename "$project_root" | tr -d '\n' | tr -c '[:alnum:]_-' '-')"
+session_name="cdd-codex-${project_name}-${project_id}"
+config_path="$state_dir/terminal-tmuxinator-codex.yml"
+quoted_project_root="$(printf '%s' "$project_root" | yaml_single_quote)"
+
+{
+  printf 'name: %s\n' "$session_name"
+  printf 'root: %s\n' "$quoted_project_root"
+  printf 'windows:\n'
+  printf '  - codex:\n'
+  printf '      panes:\n'
+  printf '        - codex\n'
+} > "$config_path"
+
+exec xterm \
+  -class "$window_class" \
+  -T "Codex - $project_name" \
+  -e bash -lc '
+    tmuxinator start -p "$1"
+    status="$?"
+
+    if [ "$status" -ne 0 ]; then
+      printf "\nterminal-tmuxinator-codex failed with exit code %s.\n" "$status" >&2
+      printf "Press Enter to close this terminal." >&2
+      read -r _
+    fi
+
+    exit "$status"
+  ' terminal-tmuxinator-codex "$config_path"
