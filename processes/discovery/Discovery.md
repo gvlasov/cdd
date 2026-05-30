@@ -9,6 +9,7 @@ Discoverability is a property of a good [[Reflection|reflection]].
 
 **Discovery channels:**
 
+- with `help` command in [[Project shell]]
 - By concept. You think what concept the functionality applies to and check its directory.
 - Search by file name. This is very prominent in Jetbrains IDEs or something with. Good reflections must be discoverable by file name. That's why a concept name must be a part of the reflection name.
 - By content. Last resort.
