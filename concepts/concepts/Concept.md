@@ -10,6 +10,8 @@ Examples:
   Order.php           # order entity representation
   OrderView.vue       # order UI representation
   OrderRepository.php # order persistence representation
+  OrderController.php # HTTP representation of order actions
+  CreateOrdersTable.php # database state representation of orders
   ImportOrder.php     # command module for importing orders
   Order.md            # written description of the order concept
   screenshots/        # visual representations of orders in the product
@@ -46,6 +48,16 @@ There is no canonical reflection of a concept apart from its name. Every reflect
 A concept directory exists to keep the concept's reflections together.
 
 Representations inside one concept directory are highly cohesive because they are about the same part of reality. This makes the concept easier for humans to navigate and easier for an LLM to understand: the whole directory can be passed as context, and the LLM can see the concept in its entirety instead of reconstructing it from scattered technical-role directories.
+
+### Runtime mechanisms
+
+A reflection belongs to the concept whose meaning it expresses, not to the runtime mechanism that executes it.
+
+A controller for a concept is a concept reflection. An `OrderController` belongs to the order concept because it exposes order actions to users through HTTP. The HTTP server, routing engine, middleware pipeline, and framework bootstrapping belong to platform.
+
+A migration for a concept is also a concept reflection. A migration that creates or changes an orders table belongs to the order concept because it describes how orders exist in database state. The migration runner, database connection setup, and migration discovery mechanism belong to platform.
+
+If a file seems to belong to both a concept and a runtime mechanism, split the concept-specific reflection from the mechanism-specific adapter. The concept-specific part stays with the concept; the generic mechanism stays in platform.
 
 ## Concept and class
 

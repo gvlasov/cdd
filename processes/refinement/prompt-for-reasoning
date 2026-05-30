@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Outputs the prompt used to reason about the methodology with an LLM
+set -e
+cd "$(git rev-parse --show-toplevel)"
+
+./concepts/system-prompts/whole-text
+cat <<'EOF'
+
+--------------
+The following text is not a part of the original system design document. It is instructions for the AI conversation.
+
+I want to discuss this methodology with you and refine it interactively.
+
+For your first response, do not analyze the methodology, list observations, suggest improvements, rewrite files, or start a review. Only say that you have loaded the methodology and are ready to listen.
+
+After I bring up a topic, help me reason about definitions, contradictions, examples, naming, structure, and consequences. When I propose an idea, analyze it critically and connect it to the methodology above.
+EOF
