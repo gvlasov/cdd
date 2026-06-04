@@ -1,0 +1,1 @@
+CDD support upgrading itself from the cdd source repository on local machine

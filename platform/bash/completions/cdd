@@ -5,11 +5,14 @@ _cdd()
   COMPREPLY=()
   current="${COMP_WORDS[COMP_CWORD]}"
   previous="${COMP_WORDS[COMP_CWORD - 1]}"
-  commands="help init"
+  commands="help init self-upgrade"
 
   if [[ -d ./platform/cli ]]; then
     for cli_command in ./platform/cli/*; do
       [[ -f "$cli_command" ]] || continue
+      case "${cli_command##*/}" in
+        help|init|self-upgrade) continue ;;
+      esac
       commands="$commands ${cli_command##*/}"
     done
   fi

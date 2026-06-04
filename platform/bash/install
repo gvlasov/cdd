@@ -19,7 +19,7 @@ completion_dir="$HOME/.local/share/bash-completion/completions"
 
 mkdir -p "$bin_dir" "$completion_dir"
 ln -sfn "$cdd_home/platform/cdd/cdd" "$bin_dir/cdd"
-install -m 0644 "$cdd_home/platform/bash/completions/cdd" "$completion_dir/cdd"
+command -p install -m 0644 "$cdd_home/platform/bash/completions/cdd" "$completion_dir/cdd"
 
 printf 'Installed cdd to %s/cdd\n' "$bin_dir"
 printf 'Installed Bash completion to %s/cdd\n' "$completion_dir"

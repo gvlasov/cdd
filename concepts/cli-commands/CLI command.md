@@ -20,7 +20,7 @@ CDD also implements some reusable shell support:
 
 - `platform/fish/cdd.fish` provides `help` through `cdd-help`
 - `platform/fish/cdd.fish` provides `cdd-cd` to jump to the project root
-- `platform/fish/cdd.fish` adds `platform/cli` and `commands/dev` to the shell path when they exist
+- `platform/fish/cdd.fish` prepends `platform/cli` and `commands/dev` to the shell path when they exist, so project commands take precedence over commands from the default path
 
 ## Project shell
 

@@ -24,6 +24,10 @@ case "$command" in
     shift
     exec "$cdd_home/concepts/directory-structures/init" "$@"
     ;;
+  self-upgrade)
+    shift
+    exec "$cdd_home/processes/self-upgrade/self-upgrade" "$@"
+    ;;
   *)
     shift
     if [ -x "./platform/cli/$command" ] && [ "$command" != "cdd" ]; then
