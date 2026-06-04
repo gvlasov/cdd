@@ -14,9 +14,10 @@ done
 cd "$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
 
 # Create skills directory if it doesn't exist
-mkdir -p ~/.claude/skills/concept_driven_design
+mkdir -p ~/.claude/skills/concept_driven_design/references
 
 # Generate and install the skill
 ./build > ~/.claude/skills/concept_driven_design/SKILL.md
+./build-concepts-reference > ~/.claude/skills/concept_driven_design/references/concepts.md
 
 echo "Installed concept-driven-design skill to ~/.claude/skills/concept_driven_design/SKILL.md"
