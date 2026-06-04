@@ -30,6 +30,9 @@ case "$command" in
     ;;
   *)
     shift
+    if [ -x "./commands/dev/$command" ] && [ "$command" != "cdd" ]; then
+      exec "./commands/dev/$command" "$@"
+    fi
     if [ -x "./platform/cli/$command" ] && [ "$command" != "cdd" ]; then
       exec "./platform/cli/$command" "$@"
     fi

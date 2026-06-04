@@ -6,13 +6,18 @@ function cdd-help
     cdd-help-command "cdd help" "Show available CDD commands"
     cdd-help-command "cdd init [directory]" "Initialize a CDD project directory"
     cdd-help-command "cdd self-upgrade" "Self-upgrade CDD support from CDD_SOURCE_PATH"
-    for filepath in ./platform/cli/*
-        test -f $filepath || continue
-        set name (basename $filepath)
-        contains -- $name help init self-upgrade
-        and continue
-        set desc (tail -n +2 $filepath | awk 'NF && /^#/ { print; exit }' | sed 's/^#[[:space:]]*//' | sed 's/./\L&/')
-        cdd-help-command "$name" "$desc"
+    set seen help init self-upgrade
+    for dir in ./commands/dev ./platform/cli
+        test -d $dir || continue
+        for filepath in $dir/*
+            test -f $filepath || continue
+            set name (basename $filepath)
+            contains -- $name $seen
+            and continue
+            set --append seen $name
+            set desc (tail -n +2 $filepath | awk 'NF && /^#/ { print; exit }' | sed 's/^#[[:space:]]*//' | sed 's/./\L&/')
+            cdd-help-command "$name" "$desc"
+        end
     end
 end
 
@@ -31,7 +36,7 @@ function cdd-help-command
 end
 
 function help
-    if test -d ./platform/cli
+    if test -d ./commands/dev; or test -d ./platform/cli
         cdd-help
     else
         __original_help $argv
@@ -42,7 +47,7 @@ function cdd-cd
     cd (git rev-parse --show-toplevel)
 end
 
-for dir in ./commands/dev ./platform/cli
+for dir in ./platform/cli ./commands/dev
     if test -d $dir
         set --global --export PATH (realpath $dir) $PATH
     end

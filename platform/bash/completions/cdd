@@ -1,21 +1,23 @@
 _cdd()
 {
-  local current previous commands cli_command
+  local current previous commands command_dir cli_command
 
   COMPREPLY=()
   current="${COMP_WORDS[COMP_CWORD]}"
   previous="${COMP_WORDS[COMP_CWORD - 1]}"
   commands="help init self-upgrade"
 
-  if [[ -d ./platform/cli ]]; then
-    for cli_command in ./platform/cli/*; do
-      [[ -f "$cli_command" ]] || continue
-      case "${cli_command##*/}" in
-        help|init|self-upgrade) continue ;;
-      esac
-      commands="$commands ${cli_command##*/}"
-    done
-  fi
+  for command_dir in ./commands/dev ./platform/cli; do
+    if [[ -d "$command_dir" ]]; then
+      for cli_command in "$command_dir"/*; do
+        [[ -f "$cli_command" ]] || continue
+        case " $commands " in
+          *" ${cli_command##*/} "*) continue ;;
+        esac
+        commands="$commands ${cli_command##*/}"
+      done
+    fi
+  done
 
   if [[ "$COMP_CWORD" -eq 1 ]]; then
     COMPREPLY=( $(compgen -W "$commands" -- "$current") )
