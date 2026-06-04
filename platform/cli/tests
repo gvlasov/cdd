@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Run project tests in Docker
+set -euo pipefail
+
+source_path="${BASH_SOURCE[0]}"
+while [ -L "$source_path" ]; do
+  source_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
+  source_path="$(readlink "$source_path")"
+  case "$source_path" in
+    /*) ;;
+    *) source_path="$source_dir/$source_path" ;;
+  esac
+done
+
+source_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
+cdd_home="$(cd "$source_dir/../.." >/dev/null 2>&1 && pwd)"
+compose_file="$cdd_home/platform/tests/compose.yaml"
+test_path_provided=0
+
+for arg in "$@"; do
+  case "$arg" in
+    -*) ;;
+    *.bats) test_path_provided=1 ;;
+    *)
+      if [ -e "$arg" ]; then
+        test_path_provided=1
+      fi
+      ;;
+  esac
+done
+
+args=(--print-output-on-failure "$@")
+if [ "$test_path_provided" -eq 0 ]; then
+  args+=(platform/tests/bats)
+fi
+
+exec docker compose -f "$compose_file" run --rm tests "${args[@]}"

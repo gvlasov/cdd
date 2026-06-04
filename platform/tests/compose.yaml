@@ -1,0 +1,11 @@
+services:
+  tests:
+    build:
+      context: ../..
+      dockerfile: platform/tests/Dockerfile
+    working_dir: /workspace
+    volumes:
+      - ../..:/workspace
+    command:
+      - --print-output-on-failure
+      - platform/tests/bats
