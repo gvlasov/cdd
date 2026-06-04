@@ -19,7 +19,7 @@ assert_installed_support() {
 @test "cdd self-upgrade uses CDD_SOURCE_PATH and runs real installers in isolated HOME" {
   setup_test_home
 
-  run env CDD_SOURCE_PATH="$PROJECT_ROOT" "$CDD" self-upgrade
+  run env CDD_SELF_UPGRADE_SKIP_TESTS=1 CDD_SOURCE_PATH="$PROJECT_ROOT" "$CDD" self-upgrade
 
   assert_success
   assert_output_contains "Installing Bash support..."
@@ -36,10 +36,54 @@ assert_installed_support() {
   mkdir -p "$HOME/Projects/personal"
   ln -s "$PROJECT_ROOT" "$HOME/Projects/personal/cdd"
 
-  run "$CDD" self-upgrade
+  run env CDD_SELF_UPGRADE_SKIP_TESTS=1 "$CDD" self-upgrade
 
   assert_success
   assert_installed_support
+}
+
+@test "cdd self-upgrade runs tests before installing" {
+  setup_test_home
+  fake_bin="$BATS_TEST_TMPDIR/bin"
+  docker_log="$BATS_TEST_TMPDIR/docker.log"
+  mkdir -p "$fake_bin"
+  cat > "$fake_bin/docker" <<EOF
+#!/usr/bin/env bash
+printf '%s\n' "\$*" >> "$docker_log"
+exit 0
+EOF
+  chmod +x "$fake_bin/docker"
+
+  run env PATH="$fake_bin:$PATH" CDD_SOURCE_PATH="$PROJECT_ROOT" "$CDD" self-upgrade
+
+  assert_success
+  assert_output_contains "Running CDD tests..."
+  assert_output_contains $'\033[32m✓\033[0m All tests pass fine'
+  assert_output_contains "Installing Bash support..."
+  assert_output_contains "Upgraded CDD support from $PROJECT_ROOT"
+  grep -q "compose -f $PROJECT_ROOT/platform/tests/compose.yaml run --build --rm tests" "$docker_log"
+  assert_installed_support
+}
+
+@test "cdd self-upgrade does not install when tests fail" {
+  setup_test_home
+  fake_bin="$BATS_TEST_TMPDIR/bin"
+  docker_log="$BATS_TEST_TMPDIR/docker.log"
+  mkdir -p "$fake_bin"
+  cat > "$fake_bin/docker" <<EOF
+#!/usr/bin/env bash
+printf '%s\n' "\$*" >> "$docker_log"
+exit 42
+EOF
+  chmod +x "$fake_bin/docker"
+
+  run env PATH="$fake_bin:$PATH" CDD_SOURCE_PATH="$PROJECT_ROOT" "$CDD" self-upgrade
+
+  assert_failure
+  assert_output_contains "Running CDD tests..."
+  ! printf '%s\n' "$output" | grep -q "Installing Bash support..."
+  [ ! -e "$HOME/.local/bin/cdd" ]
+  grep -q "compose -f $PROJECT_ROOT/platform/tests/compose.yaml run --build --rm tests" "$docker_log"
 }
 
 @test "cdd self-upgrade fails clearly when source path is missing" {

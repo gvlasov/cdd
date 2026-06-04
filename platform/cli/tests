@@ -16,22 +16,50 @@ source_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
 cdd_home="$(cd "$source_dir/../.." >/dev/null 2>&1 && pwd)"
 compose_file="$cdd_home/platform/tests/compose.yaml"
 test_path_provided=0
+formatter_provided=0
 
+previous=""
 for arg in "$@"; do
+  case "$previous" in
+    -F|--formatter)
+      formatter_provided=1
+      previous=""
+      continue
+      ;;
+  esac
+
   case "$arg" in
-    -*) ;;
-    *.bats) test_path_provided=1 ;;
+    -F|--formatter)
+      formatter_provided=1
+      previous="$arg"
+      ;;
+    -t|--tap|-p|--pretty|--formatter=*)
+      formatter_provided=1
+      previous=""
+      ;;
+    *.bats)
+      test_path_provided=1
+      previous=""
+      ;;
+    -*)
+      previous="$arg"
+      ;;
     *)
       if [ -e "$arg" ]; then
         test_path_provided=1
       fi
+      previous=""
       ;;
   esac
 done
 
-args=(--print-output-on-failure "$@")
+args=(--print-output-on-failure)
+if [ "$formatter_provided" -eq 0 ]; then
+  args+=(--formatter pretty)
+fi
+args+=("$@")
 if [ "$test_path_provided" -eq 0 ]; then
   args+=(platform/tests/bats)
 fi
 
-exec docker compose -f "$compose_file" run --rm tests "${args[@]}"
+exec docker compose -f "$compose_file" run --build --rm tests "${args[@]}"

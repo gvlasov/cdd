@@ -7,10 +7,13 @@ RUN apk add --no-cache \
   diffutils \
   findutils \
   fish \
+  ncurses \
   gawk \
   git \
   grep \
   sed
+
+ENV TERM=xterm
 
 WORKDIR /workspace
 
