@@ -111,11 +111,18 @@ is_ignored_extension() {
 git_root="$(git rev-parse --show-toplevel)"
 cd "$git_root"
 
-while IFS= read -r -d '' path; do
+while IFS= read -r -d '' index_entry; do
+  mode="${index_entry%% *}"
+  path="${index_entry#*$'\t'}"
+
+  if [ "$mode" = "120000" ]; then
+    continue
+  fi
+
   if is_ignored_extension "$path"; then
     continue
   fi
 
   printf '%s:\n' "$path"
   git show ":$path"
-done < <(git ls-files --cached -z)
+done < <(git ls-files --cached --stage -z)

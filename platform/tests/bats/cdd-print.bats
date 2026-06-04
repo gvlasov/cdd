@@ -10,6 +10,8 @@ load test_helper
 
   printf 'indexed text\n' > app.txt
   printf '<svg>indexed svg</svg>\n' > vector.svg
+  printf 'linked text\n' > linked.txt
+  ln -s linked.txt link-to-text
 
   mapfile -t ignored_extensions < <(
     awk '
@@ -32,6 +34,6 @@ load test_helper
 
   assert_success
 
-  expected=$'app.txt:\nindexed text\nvector.svg:\n<svg>indexed svg</svg>'
+  expected=$'app.txt:\nindexed text\nlinked.txt:\nlinked text\nvector.svg:\n<svg>indexed svg</svg>'
   [ "$output" = "$expected" ]
 }
