@@ -5,7 +5,7 @@ _cdd()
   COMPREPLY=()
   current="${COMP_WORDS[COMP_CWORD]}"
   previous="${COMP_WORDS[COMP_CWORD - 1]}"
-  commands="help init self-upgrade"
+  commands="help init print self-upgrade"
 
   for command_dir in ./commands/dev ./platform/cli; do
     if [[ -d "$command_dir" ]]; then

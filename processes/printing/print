@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+# Print indexed project code to stdout.
+set -euo pipefail
+
+ignored_extensions=(
+  3fr
+  3g2
+  3gp
+  3gpp
+  ai
+  apng
+  arw
+  asf
+  avi
+  avif
+  bmp
+  braw
+  cr2
+  cr3
+  crm
+  crw
+  dcr
+  dng
+  drf
+  dv
+  erf
+  exr
+  f4v
+  flv
+  gif
+  gpr
+  heic
+  heif
+  ico
+  j2c
+  j2k
+  jfif
+  jif
+  jp2
+  jpe
+  jpeg
+  jpg
+  jpx
+  k25
+  kdc
+  m2ts
+  m2v
+  m4v
+  mef
+  mj2
+  mjpeg
+  mkv
+  mng
+  mos
+  mov
+  mp4
+  mpe
+  mpeg
+  mpg
+  mpo
+  mrw
+  mts
+  nef
+  nrw
+  ogm
+  ogv
+  orf
+  pef
+  png
+  psd
+  raf
+  raw
+  rm
+  rmvb
+  rw2
+  rwl
+  sr2
+  srf
+  srw
+  tif
+  tiff
+  ts
+  vob
+  webm
+  webp
+  wmv
+  x3f
+)
+
+is_ignored_extension() {
+  local path="$1"
+  local basename extension ignored_extension
+
+  basename="${path##*/}"
+  if [ "$basename" = "${basename%.*}" ]; then
+    return 1
+  fi
+
+  extension="${basename##*.}"
+  extension="${extension,,}"
+
+  for ignored_extension in "${ignored_extensions[@]}"; do
+    if [ "$extension" = "$ignored_extension" ]; then
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+git_root="$(git rev-parse --show-toplevel)"
+cd "$git_root"
+
+while IFS= read -r -d '' path; do
+  if is_ignored_extension "$path"; then
+    continue
+  fi
+
+  printf '%s:\n' "$path"
+  git show ":$path"
+done < <(git ls-files --cached -z)

@@ -28,6 +28,10 @@ case "$command" in
     shift
     exec "$cdd_home/processes/self-upgrade/self-upgrade" "$@"
     ;;
+  print)
+    shift
+    exec "$cdd_home/processes/printing/print" "$@"
+    ;;
   *)
     shift
     if [ -x "./commands/dev/$command" ] && [ "$command" != "cdd" ]; then

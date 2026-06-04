@@ -5,8 +5,9 @@ end
 function cdd-help
     cdd-help-command "cdd help" "Show available CDD commands"
     cdd-help-command "cdd init [directory]" "Initialize a CDD project directory"
+    cdd-help-command "cdd print" "Print indexed project code"
     cdd-help-command "cdd self-upgrade" "Self-upgrade CDD support from CDD_SOURCE_PATH"
-    set seen help init self-upgrade
+    set seen help init print self-upgrade
     for dir in ./commands/dev ./platform/cli
         test -d $dir || continue
         for filepath in $dir/*

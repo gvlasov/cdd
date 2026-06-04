@@ -10,6 +10,7 @@ load test_helper
   esc=$'\033'
   assert_output_contains "cdd help ${esc}[37m- show available CDD commands${esc}[0m"
   assert_output_contains "cdd init [directory] ${esc}[37m- initialize a CDD project directory${esc}[0m"
+  assert_output_contains "cdd print ${esc}[37m- print indexed project code${esc}[0m"
   assert_output_contains "cdd self-upgrade ${esc}[37m- self-upgrade CDD support from CDD_SOURCE_PATH${esc}[0m"
   assert_output_contains "tests ${esc}[37m- run project tests in Docker${esc}[0m"
 }
