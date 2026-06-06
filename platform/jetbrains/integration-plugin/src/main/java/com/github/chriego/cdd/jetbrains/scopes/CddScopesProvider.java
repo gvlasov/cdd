@@ -28,7 +28,8 @@ public final class CddScopesProvider implements CustomScopesProvider {
                 "concepts",
                 "stakeholders",
                 "processes",
-                "platform"
+                "platform",
+                "commands"
         );
 
         private CddPackageSet() {

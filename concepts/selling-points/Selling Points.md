@@ -4,7 +4,7 @@ Here is a list of very practical reasons to adopt CDD:
 
 CDD promotes well-structured project-specific commands that work directly in the project shell.
 
-Instead of asking a developer to remember long setup instructions or search through documentation, a CDD project can expose clear namespaced commands from `platform/cli`:
+Instead of asking a developer to remember long setup instructions or search through documentation, a CDD project can expose clear namespaced commands from `/commands`:
 
 - `help` lists available project commands
 - `up` starts the local environment

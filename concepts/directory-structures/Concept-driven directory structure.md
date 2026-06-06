@@ -6,7 +6,7 @@ All project code is separated into:
 - `/stakeholders` - all [[stakeholders|Stakeholder]] of the project, grouped in directories by a specific stakeholder
 - `/processes` - all [[processes|Process]]
 - `/platform` - code that sets up [[tools|Tool]] and [[runtime environment|Runtime environment]] - any means that run our application to reflect the problem being solved with it onto the hardware
-- `/platform/cli` - commands for the project developer to operate the project in building, immediately available in the [[Project shell]]
+- `/commands` - commands for the project developer to operate the project, immediately available in the [[Project shell]]
     - Setting up the project: `up`
     - Release lifecycle: `deploy`, `release`, `build`, `lint`
     - Bringing it up for manual testing
@@ -38,8 +38,8 @@ See [[Diagram.url]]
 /stakeholders/
 /processes/
 /platform/
-/platform/cli/
-/platform/cli/up
+/commands/
+/commands/up
 /concepts/apples/
 /concepts/apples/Apple.php
 /concepts/apples/Apple.vue
@@ -72,9 +72,9 @@ See [[Diagram.url]]
 	- linters, 
 	- test runners
 	- entry points for various runtime environments (e.g., artisan.php as CLI entry point and index.php as web entry point for Laravel)
-- Commands are scripts used by the administrator of the production or dev environment to run the application.
-	- Use /commands/$ENVIRONMENT_NAME directories, e.g. /commands/dev, /commands/prod
-	- Use symlink at /commands/local to point to the current environment, set it up at deployment time (when a developer sets up the project, or when the administrator deploys the project in production)
+- Commands are scripts used by developers to operate the project.
+	- Use `/commands` as the single command entrypoint directory.
+	- Prefer symlinks from `/commands` to implementations placed with the concept, stakeholder, process, or platform concern they belong to.
 
 
 Anything that is still in /platform but relates to a specific concept, stakeholder, or process must be extracted from the platform to that directory.

@@ -7,7 +7,7 @@ find_project_root() {
   dir="$(pwd)"
 
   while [ "$dir" != "/" ]; do
-    if [ -d "$dir/platform/cli" ]; then
+    if [ -d "$dir/commands" ]; then
       printf '%s\n' "$dir"
       return 0
     fi
@@ -46,7 +46,7 @@ yaml_single_quote() {
 
 project_root="$(find_project_root || true)"
 if [ -z "$project_root" ]; then
-  printf 'terminal-tmuxinator-codex: run this from inside a CDD project with ./platform/cli\n' >&2
+  printf 'terminal-tmuxinator-codex: run this from inside a CDD project with ./commands\n' >&2
   exit 1
 fi
 

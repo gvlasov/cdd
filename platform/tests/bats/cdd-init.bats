@@ -13,7 +13,8 @@ load test_helper
   [ -d "$target/concepts" ]
   [ -d "$target/stakeholders" ]
   [ -d "$target/processes" ]
-  [ -d "$target/platform/cli" ]
+  [ -d "$target/platform" ]
+  [ -d "$target/commands" ]
   [ -d "$target/sandbox" ]
 }
 
@@ -30,6 +31,7 @@ load test_helper
   [ -d concepts ]
   [ -d stakeholders ]
   [ -d processes ]
-  [ -d platform/cli ]
+  [ -d platform ]
+  [ -d commands ]
   [ -d sandbox ]
 }

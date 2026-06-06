@@ -7,7 +7,7 @@ _cdd()
   previous="${COMP_WORDS[COMP_CWORD - 1]}"
   commands="help init print self-upgrade"
 
-  for command_dir in ./commands/dev ./platform/cli; do
+  for command_dir in ./commands; do
     if [[ -d "$command_dir" ]]; then
       for cli_command in "$command_dir"/*; do
         [[ -f "$cli_command" ]] || continue

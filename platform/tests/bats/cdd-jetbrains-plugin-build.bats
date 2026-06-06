@@ -20,7 +20,7 @@ printf 'plugin zip\n' > build/distributions/cdd-jetbrains-integration-test.zip
 SCRIPT
   chmod +x "$fake_bin/gradle"
 
-  run env PATH="$fake_bin:$PATH" GRADLE_LOG="$gradle_log" "$PROJECT_ROOT/platform/cli/jetbrains:plugin:build" "$output_dir"
+  run env PATH="$fake_bin:$PATH" GRADLE_LOG="$gradle_log" "$PROJECT_ROOT/commands/jetbrains:plugin:build" "$output_dir"
 
   assert_success
   [ -f "$output_dir/cdd-jetbrains-integration-test.zip" ]
@@ -30,7 +30,7 @@ SCRIPT
 }
 
 @test "jetbrains:plugin:build requires output directory argument" {
-  run "$PROJECT_ROOT/platform/cli/jetbrains:plugin:build"
+  run "$PROJECT_ROOT/commands/jetbrains:plugin:build"
 
   assert_failure
   assert_output_contains "usage: jetbrains:plugin:build <output-directory>"

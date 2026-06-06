@@ -20,7 +20,7 @@ CDD also implements some reusable shell support:
 
 - `platform/fish/cdd.fish` provides `help` through `cdd-help`
 - `platform/fish/cdd.fish` provides `cdd-cd` to jump to the project root
-- `platform/fish/cdd.fish` prepends `platform/cli` and `commands/dev` to the shell path when they exist, with `commands/dev` taking precedence over `platform/cli`, so project commands take precedence over commands from the default path
+- `platform/fish/cdd.fish` prepends `commands` to the shell path when it exists, so project commands take precedence over commands from the default path
 
 ## Project shell
 
@@ -51,15 +51,15 @@ If a CLI command is related to a tool, framework, project lifecycle, or runtime 
 - A framework wrapper belongs near that framework's platform integration.
 - A project lifecycle command such as `build`, `lint`, or `test` may belong near the tool that implements it.
 
-`/platform/cli` is the command entrypoint directory. It should usually contain symlinks to command files, not the command implementations themselves. This keeps commands immediately available in the shell while preserving CDD's core rule: group files by concept or by tool, not by technical role.
+`/commands` is the command entrypoint directory. It should usually contain symlinks to command files, not the command implementations themselves. This keeps commands immediately available in the shell while preserving CDD's core rule: group files by concept or by tool, not by technical role.
 
 Examples:
 
-- `/platform/cli/install-to-codex` can be a symlink to `/concepts/agent-skills/install-to-codex`.
-- `/platform/cli/refine` can be a symlink to `/processes/refinement/refine`.
-- `/platform/cli/npm` can be a symlink to `/platform/npm/npm`.
+- `/commands/install-to-codex` can be a symlink to `/concepts/agent-skills/install-to-codex`.
+- `/commands/refine` can be a symlink to `/processes/refinement/refine`.
+- `/commands/npm` can be a symlink to `/platform/npm/npm`.
 
-In this project, `platform/cli/refine` is an example of a CLI command entrypoint. It links to `processes/refinement/refine`, because the command belongs to the refinement process rather than to the CLI platform itself.
+In this project, `commands/refine` is an example of a CLI command entrypoint. It links to `processes/refinement/refine`, because the command belongs to the refinement process rather than to the command entrypoint directory itself.
 
 ## Kinds
 

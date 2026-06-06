@@ -21,7 +21,7 @@ CDD organises source code around the **concepts of your problem domain**, not ar
 /platform/                 ← framework wiring, docker, build tools
 /stakeholders/             ← people and groups concerned with the project
 /processes/                ← ordered changes and workflows over time
-/commands/                 ← scripts for dev, CI/CD, production
+/commands/                 ← project commands for developers
 ```
 
 Three axioms underpin this:

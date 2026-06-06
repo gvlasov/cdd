@@ -8,7 +8,7 @@ function cdd-help
     cdd-help-command "cdd print" "Print indexed project code"
     cdd-help-command "cdd self-upgrade" "Self-upgrade CDD support from CDD_SOURCE_PATH"
     set seen help init print self-upgrade
-    for dir in ./commands/dev ./platform/cli
+    for dir in ./commands
         test -d $dir || continue
         for filepath in $dir/*
             test -f $filepath || continue
@@ -37,7 +37,7 @@ function cdd-help-command
 end
 
 function help
-    if test -d ./commands/dev; or test -d ./platform/cli
+    if test -d ./commands
         cdd-help
     else
         __original_help $argv
@@ -48,7 +48,7 @@ function cdd-cd
     cd (git rev-parse --show-toplevel)
 end
 
-for dir in ./platform/cli ./commands/dev
+for dir in ./commands
     if test -d $dir
         set --global --export PATH (realpath $dir) $PATH
     end

@@ -34,14 +34,11 @@ case "$command" in
     ;;
   *)
     shift
-    if [ -x "./commands/dev/$command" ] && [ "$command" != "cdd" ]; then
-      exec "./commands/dev/$command" "$@"
+    if [ -x "./commands/$command" ] && [ "$command" != "cdd" ]; then
+      exec "./commands/$command" "$@"
     fi
-    if [ -x "./platform/cli/$command" ] && [ "$command" != "cdd" ]; then
-      exec "./platform/cli/$command" "$@"
-    fi
-    if [ -x "$cdd_home/platform/cli/$command" ] && [ "$command" != "cdd" ]; then
-      exec "$cdd_home/platform/cli/$command" "$@"
+    if [ -x "$cdd_home/commands/$command" ] && [ "$command" != "cdd" ]; then
+      exec "$cdd_home/commands/$command" "$@"
     fi
     printf 'cdd: unknown command: %s\n' "$command" >&2
     printf 'Run `cdd help` to see available commands.\n' >&2

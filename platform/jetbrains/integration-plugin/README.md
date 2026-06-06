@@ -10,6 +10,7 @@ JetBrains IDE plugin for Concept-Driven Design projects.
   - `stakeholders`
   - `processes`
   - `platform`
+  - `commands`
 - The scope also contains the project-root `README.md` file.
 
 ## Development
