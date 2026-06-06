@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Build the JetBrains CDD integration plugin and copy the artifact to an output directory.
+set -euo pipefail
+
+if [ "$#" -ne 1 ]; then
+  printf 'usage: jetbrains:plugin:build <output-directory>\n' >&2
+  exit 2
+fi
+
+output_dir="$1"
+mkdir -p "$output_dir"
+output_dir="$(cd "$output_dir" >/dev/null 2>&1 && pwd)"
+
+source_path="${BASH_SOURCE[0]}"
+while [ -L "$source_path" ]; do
+  source_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
+  source_path="$(readlink "$source_path")"
+  case "$source_path" in
+    /*) ;;
+    *) source_path="$source_dir/$source_path" ;;
+  esac
+done
+
+plugin_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
+cd "$plugin_dir"
+
+gradle clean buildPlugin --no-daemon
+
+shopt -s nullglob
+artifacts=(build/distributions/*.zip)
+shopt -u nullglob
+
+if [ "${#artifacts[@]}" -eq 0 ]; then
+  printf 'jetbrains:plugin:build: no plugin artifact found in %s/build/distributions\n' "$plugin_dir" >&2
+  exit 1
+fi
+
+for artifact in "${artifacts[@]}"; do
+  cp "$artifact" "$output_dir/"
+  printf '%s\n' "$output_dir/$(basename "$artifact")"
+done

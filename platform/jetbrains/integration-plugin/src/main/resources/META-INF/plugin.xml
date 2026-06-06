@@ -1,0 +1,11 @@
+<idea-plugin>
+    <id>com.github.chriego.cdd.jetbrains.integration</id>
+    <name>CDD Integration</name>
+    <vendor>CDD</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <customScopesProvider implementation="com.github.chriego.cdd.jetbrains.scopes.CddScopesProvider"/>
+    </extensions>
+</idea-plugin>
