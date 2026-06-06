@@ -15,9 +15,12 @@ done
 source_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
 cdd_home="$(cd "$source_dir/../.." >/dev/null 2>&1 && pwd)"
 
-command="${1:-help}"
+command="${1:-self-help}"
 case "$command" in
-  help|--help|-h)
+  self-help|--help|-h)
+    exec "$cdd_home/processes/discovery/cdd-self-help"
+    ;;
+  help)
     exec "$cdd_home/processes/discovery/cdd-help"
     ;;
   init)

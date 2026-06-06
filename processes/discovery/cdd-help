@@ -7,7 +7,7 @@ if [ "${#dirs[@]}" -eq 0 ]; then
 fi
 grey='\033[37m'
 reset='\033[0m'
-seen=' help init print self-upgrade '
+seen=' cdd '
 
 print_command() {
     local name="$1"
@@ -20,11 +20,6 @@ print_command() {
         echo "$name"
     fi
 }
-
-print_command "cdd help" "Show available CDD commands"
-print_command "cdd init [directory]" "Initialize a CDD project directory"
-print_command "cdd print" "Print indexed project code"
-print_command "cdd self-upgrade" "Self-upgrade CDD support from CDD_SOURCE_PATH"
 
 for dir in "${dirs[@]}"; do
     [ -d "$dir" ] || continue

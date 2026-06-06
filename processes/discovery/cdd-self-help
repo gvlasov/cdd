@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Print cdd command subcommands.
+set -euo pipefail
+
+grey='\033[37m'
+reset='\033[0m'
+
+print_command() {
+    local name="$1"
+    local desc="${2:-}"
+
+    if [ -n "$desc" ]; then
+        desc="$(echo "$desc" | sed 's/./\L&/')"
+        echo -e "$name ${grey}- $desc${reset}"
+    else
+        echo "$name"
+    fi
+}
+
+print_command "cdd self-help" "Show cdd subcommands"
+print_command "cdd help" "Show available project commands"
+print_command "cdd init [directory]" "Initialize a CDD project directory"
+print_command "cdd print" "Print indexed project code"
+print_command "cdd self-upgrade" "Self-upgrade CDD support from CDD_SOURCE_PATH"
