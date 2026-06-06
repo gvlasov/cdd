@@ -6,6 +6,7 @@ target="${1:-.}"
 
 mkdir -p \
   "$target/concepts" \
+  "$target/stakeholders" \
   "$target/processes" \
   "$target/platform/cli" \
   "$target/sandbox"

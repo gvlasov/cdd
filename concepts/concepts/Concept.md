@@ -85,7 +85,7 @@ A concept is different from an object-oriented class because a class is one poss
 
 ## Project hierarchy
 
-A [[Project|project]] is a cohesion unit composed of concepts, processes, and platform.
+A [[Project|project]] is a cohesion unit composed of concepts, stakeholders, processes, and platform.
 
 A concept sits below the project in the hierarchy of cohesion: a project contains concepts, and a concept contains reflections.
 

@@ -1,0 +1,1 @@
+Developer is a person who applies their mental and physical energy to build a project

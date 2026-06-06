@@ -6,7 +6,7 @@ Before writing any expression — a class, method, property, function, constant,
 
 ## File placement follows from concept membership
 
-Once you know what concept an expression belongs to, its file lives in `/concepts/{concept-name}/`. If it reflects no domain concept and instead configures a framework, runtime, or tool, it lives in `/platform/`. If it is a developer or operator script, it lives in `/commands/`.
+Once you know what concept an expression belongs to, its file lives in `/concepts/{concept-name}/`. If it reflects a specific stakeholder, it lives in `/stakeholders/{stakeholder-name}/`. If it describes how multiple concept instances evolve together in time, it lives in `/processes/{process-name}/`. If it reflects no domain concept and instead configures a framework, runtime, or tool, it lives in `/platform/`. If it is a developer or operator script, it lives in `/commands/`.
 
 Don't organize files by technical role in `/concepts/`. There is no `/concepts/models/`, `/concepts/jobs/`, `/concepts/views/`, `/concepts/tests/`, `/concepts/services/`, `/concepts/helpers/`, `/concepts/utils/`, unless we're building a tool that works with these things. A test for `Order` lives in `/concepts/orders/`. A queue job that processes orders lives in `/concepts/orders/`. A search indexer for orders lives in `/concepts/orders/`.
 

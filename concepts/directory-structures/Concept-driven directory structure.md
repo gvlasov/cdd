@@ -3,6 +3,7 @@ A hierarchical directory structure of a [[Project]] suggested by the ontological
 **Structure:**
 All project code is separated into:
 - `/concepts` - all [[reflections|Reflection]] of the concepts, grouped in directories by a specific concept
+- `/stakeholders` - all [[stakeholders|Stakeholder]] of the project, grouped in directories by a specific stakeholder
 - `/processes` - all [[processes|Process]]
 - `/platform` - code that sets up [[tools|Tool]] and [[runtime environment|Runtime environment]] - any means that run our application to reflect the problem being solved with it onto the hardware
 - `/platform/cli` - commands for the project developer to operate the project in building, immediately available in the [[Project shell]]
@@ -13,7 +14,7 @@ All project code is separated into:
     - CLI commands (`artisan`)
     - GUI commands (like some launcher)
   The idea is being able to introduce a command here easily whenever you need one, and having the common commands named after the literal actions they perform, like `build`
-- `/sandbox` - anything we have to actively work on but have yet to decide how to properly decompose it into concepts/platform. Staging area for ongoing experiments. Anything that goes here has to eventually either move to `/concepts` or `/platform`.
+- `/sandbox` - anything we have to actively work on but have yet to decide how to properly decompose it into concepts, stakeholders, processes, or platform. Staging area for ongoing experiments. Anything that goes here has to eventually move to `/concepts`, `/stakeholders`, `/processes`, or `/platform`.
 
 **The problem it solves:**
 For the entire software development history, project directory structures were created [[Tool-driven directory structure|for tools to ingest]], not for developers to understand the project. This manifests as:
@@ -34,6 +35,8 @@ See [[Diagram.url]]
 
 ```
 /concepts/
+/stakeholders/
+/processes/
 /platform/
 /platform/cli/
 /platform/cli/up
@@ -56,7 +59,7 @@ See [[Diagram.url]]
 ```
 
 **Rules:**
-- Concepts code and platform code are the main separation. It is deemed the most useful distinction for the project code, because most of the time you can definitely say if some expression reflects a concept code or is platform code. 
+- Concepts, stakeholders, processes, and platform are the main separation. It is deemed the most useful distinction for the project code, because most of the time you can definitely say if some expression reflects a concept, a stakeholder, a process, or platform code.
 	- UI views, 
 	- database models, 
 	- controllers, 
@@ -74,4 +77,4 @@ See [[Diagram.url]]
 	- Use symlink at /commands/local to point to the current environment, set it up at deployment time (when a developer sets up the project, or when the administrator deploys the project in production)
 
 
-Anything that is still in /platform but relates to a specific concept must be extracted from the platform to that concept directory.
+Anything that is still in /platform but relates to a specific concept, stakeholder, or process must be extracted from the platform to that directory.

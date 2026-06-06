@@ -10,7 +10,7 @@ Cohesion applies at every level of code organization:
 - Statements should form one meaningful step.
 - Functions should do one coherent action or calculation.
 - Files, classes, and modules should reflect one concept or one tightly bound representation of a concept.
-- Directories should group files by concept, process, tool, or platform concern.
+- Directories should group files by concept, stakeholder, process, tool, or platform concern.
 - A project should contain a coherent conceptual system.
 
 The same rule repeats at every scale: related by meaning means kept together; unrelated by meaning means split apart.
@@ -35,6 +35,11 @@ Process-level cohesion units:
 - An individual [[Process|process]] is a cohesion unit of representations that describe or implement that process.
 - Process documentation, process commands, process diagrams, and process scripts belong together when they are about the same process.
 
+Stakeholder-level cohesion units:
+
+- A [[Stakeholder|stakeholder]] is a cohesion unit for representations of a person or group concerned with the project.
+- Stakeholder documentation, goals, constraints, expectations, and research belong together when they are about the same stakeholder.
+
 Platform-level cohesion units:
 
 - A [[Tool|tool]] is a cohesion unit for its configuration, wrappers, support files, and sometimes its generated outputs.
@@ -44,7 +49,7 @@ Platform-level cohesion units:
 
 Project-level cohesion unit:
 
-- A [[Project|project]] is a cohesion unit composed of concepts, processes, and platform.
+- A [[Project|project]] is a cohesion unit composed of concepts, stakeholders, processes, and platform.
 
 The hierarchy is not only about nesting files. It is about preserving meaning at every scale, from an expression inside a statement to the structure of the whole project.
 

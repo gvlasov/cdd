@@ -1,6 +1,6 @@
 # Concept-Driven Design
 
-**A code organisation methodology that puts developer experience at the heart of any software project.**
+**A code organization methodology that puts developer experience at the heart of any software project.**
 
 ---
 
@@ -19,6 +19,8 @@ CDD organises source code around the **concepts of your problem domain**, not ar
   README.md
 
 /platform/                 ← framework wiring, docker, build tools
+/stakeholders/             ← people and groups concerned with the project
+/processes/                ← ordered changes and workflows over time
 /commands/                 ← scripts for dev, CI/CD, production
 ```
 
@@ -26,7 +28,7 @@ Three axioms underpin this:
 
 1. Software exists to reflect some reality to a user.
 2. Any reality consists of **concepts**.
-3. Every software system consists of concept **reflections**, a software **platform**, and a command **shell**.
+3. Every software system consists of concept **reflections**, **stakeholders**, **processes**, a software **platform**, and a command **shell**.
 
 ## What you get
 

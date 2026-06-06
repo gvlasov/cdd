@@ -1,1 +1,1 @@
-Building a concept driven project is the same as building an ontology of the project (concepts + processes) and a platform for that ontology to execute
+Building a concept driven project is the same as building an ontology of the project (concepts + stakeholders + processes) and a platform for that ontology to execute
