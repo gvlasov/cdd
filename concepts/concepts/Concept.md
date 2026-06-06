@@ -43,7 +43,25 @@ A concept consists only of its representations. Its name is one of those represe
 
 There is no canonical reflection of a concept apart from its name. Every reflection is a facet of the whole concept.
 
+## Plural and singleton concepts
+
+Concepts tend to exist as a set, is its name is plural most of the time. But some concepts reflect a set of 1 instance, they are called singletons as in OOP:
+
+Most practical concepts are plural, but it is fine to have singleton concepts
+
+The name of a plural concept must be in plural, e.g. `bills`, `products`, `apples`
+
+The name of a singleton concept must be in singular, e.g. `jimmy-the-client`
+
+### Examples of singleton concepts
+
+- project author for the solo-founder project
+- country in an application that only works in one country and should not know about any other countries
+- customer in a project where the client is a single guy that hired a team of developers to build him a project
+
 ## Concept directory
+
+Example: `/concept/users` - the concept of users
 
 A concept directory exists to keep the concept's reflections together.
 
@@ -94,3 +112,8 @@ The reflections can also be grouped by kind to strengthen cohesion:
 - `/concepts/countries/kinds/usa/flag.png`
 - `/concepts/countries/kinds/china/China.php`
 - `/concepts/countries/kinds/china/flag.png`
+
+
+### Examples
+
+If a concept is complex and needs representation by complex examples, it makes sense to create an `$concept/examples` directory

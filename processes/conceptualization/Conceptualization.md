@@ -7,9 +7,6 @@ The process consists of:
 
 Thus, conceptualization is the function from observation to building reflections.
 
-**Axiom:**
-Every concept exists in plural
-
 **Examples:**
 Observing how a cook uses kitchen tools, we may arrive at the concepts of knives, pans, saucers.
 Reflecting on past successful experience (observation) can help identify facts and contradictions to build more robust systems.
