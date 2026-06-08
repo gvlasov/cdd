@@ -12,6 +12,7 @@ JetBrains IDE plugin for Concept-Driven Design projects.
   - `platform`
   - `commands`
 - The scope also contains the project-root `README.md` file.
+- Adds `Paste as Symlink` for copied files. When a destination directory is selected in Project View, the action creates links there immediately. When invoked from Search Everywhere without a selected destination directory, it asks for the destination directory.
 
 ## Development
 

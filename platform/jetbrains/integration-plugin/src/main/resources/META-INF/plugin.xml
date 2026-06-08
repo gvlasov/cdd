@@ -7,5 +7,16 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <customScopesProvider implementation="com.github.chriego.cdd.jetbrains.scopes.CddScopesProvider"/>
+        <notificationGroup id="CDD Integration" displayType="BALLOON"/>
     </extensions>
+
+    <actions>
+        <action
+                id="com.github.chriego.cdd.jetbrains.symlinks.PasteAsSymlink"
+                class="com.github.chriego.cdd.jetbrains.symlinks.PasteAsSymlinkAction"
+                text="Paste as Symlink"
+                description="Create symbolic links in the selected directory from copied files">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="Paste"/>
+        </action>
+    </actions>
 </idea-plugin>
