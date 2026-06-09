@@ -2,6 +2,8 @@
 
 **A code organization methodology that puts developer experience at the heart of any software project.**
 
+[Read the developer's introduction to CDD.](https://gvlasov.github.io/concept-driven-design/)
+
 ---
 
 Most codebases are arcane spellbooks — files scattered by the tools that consume them, not by the ideas they express. CDD turns a project into an **ordered encyclopedia**: every file has a principled place, every concept has a home.
