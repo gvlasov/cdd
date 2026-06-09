@@ -34,6 +34,6 @@ load test_helper
 
   assert_success
 
-  expected=$'app.txt:\nindexed text\nlinked.txt:\nlinked text\nvector.svg:\n<svg>indexed svg</svg>'
+  expected=$'\napp.txt:\nindexed text\n\nlinked.txt:\nlinked text\n\nvector.svg:\n<svg>indexed svg</svg>'
   [ "$output" = "$expected" ]
 }

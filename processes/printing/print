@@ -132,6 +132,6 @@ while IFS= read -r -d '' index_entry; do
     continue
   fi
 
-  printf '%s:\n' "$path"
+  printf '\n%s:\n' "$path"
   git --no-pager show ":$path"
 done < <(git ls-files --cached --stage -z)
