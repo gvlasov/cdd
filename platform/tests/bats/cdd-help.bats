@@ -8,7 +8,12 @@ load test_helper
   assert_success
 
   esc=$'\033'
+  assert_output_contains "ide ${esc}[37m- open a file in the user's editor.${esc}[0m"
   assert_output_contains "github:open ${esc}[37m- open this project's GitHub repository in browser.${esc}[0m"
+  assert_output_contains "plans ${esc}[37m- list stored plans in the repository.${esc}[0m"
+  assert_output_contains "plans:create:feature ${esc}[37m- create a feature plan and open it in the editor.${esc}[0m"
+  assert_output_contains "plans:create:problem ${esc}[37m- create a problem plan and open it in the editor.${esc}[0m"
+  assert_output_contains "plans:finish ${esc}[37m- finish a plan from the active plans directory.${esc}[0m"
   assert_output_contains "tests ${esc}[37m- run project tests in Docker${esc}[0m"
   ! printf '%s\n' "$output" | grep -q '^cdd help\b'
   ! printf '%s\n' "$output" | grep -q '^cdd init\b'

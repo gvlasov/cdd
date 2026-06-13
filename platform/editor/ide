@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Open a file in the user's editor.
+set -euo pipefail
+
+if [ "$#" -ne 1 ]; then
+  printf 'usage: cdd ide <file>\n' >&2
+  exit 2
+fi
+
+file="$1"
+if command -v realpath >/dev/null 2>&1; then
+  file="$(realpath "$file")"
+elif command -v readlink >/dev/null 2>&1; then
+  file="$(readlink -f "$file")"
+fi
+
+if [ -n "${EDITOR:-}" ]; then
+  exec "$EDITOR" "$file"
+fi
+
+if command -v vim >/dev/null 2>&1; then
+  exec vim "$file"
+fi
+
+if command -v vi >/dev/null 2>&1; then
+  exec vi "$file"
+fi
+
+printf 'cdd ide: editor is not set up.\n' >&2
+printf 'Set EDITOR or install vim/vi, then run: %s %s\n' "${EDITOR:-\$EDITOR}" "$file" >&2
+exit 1

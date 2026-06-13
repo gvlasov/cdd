@@ -30,7 +30,36 @@ _cdd()
       COMPREPLY=( $(compgen -d -- "$current") )
       return 0
       ;;
+    plans:finish)
+      _cdd_complete_plans_finish "$current"
+      return 0
+      ;;
   esac
+}
+
+_cdd_complete_plans_finish()
+{
+  local current="$1"
+  local plan_root="plans"
+  local completions=()
+  local entry
+
+  if [[ "$current" == *"/"* ]]; then
+    while IFS= read -r entry; do
+      entry="${entry#${plan_root}/}"
+      completions+=("$entry")
+    done < <(compgen -f -d -- "$plan_root/$current")
+  else
+    for entry in problems features; do
+      if [[ -d "$plan_root/$entry" ]]; then
+        completions+=("$entry/")
+      fi
+    done
+
+    compopt -o nospace 2>/dev/null || true
+  fi
+
+  COMPREPLY=("${completions[@]}")
 }
 
 complete -F _cdd cdd

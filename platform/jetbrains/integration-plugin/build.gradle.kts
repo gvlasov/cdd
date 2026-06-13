@@ -41,4 +41,10 @@ tasks {
         sourceCompatibility = "21"
         targetCompatibility = "21"
     }
+
+    processResources {
+        from(file("../../../concepts/project-directories/directories-list.json")) {
+            into("concepts/project-directories")
+        }
+    }
 }

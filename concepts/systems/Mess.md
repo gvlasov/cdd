@@ -4,11 +4,10 @@ The opposite of mess can be called order or place.
 
 Mess is not chaos. Chaos is change. Mess is things out of their place. Chaos can create mess, or chaos can be contained to produce little mess within a mess container.
 
-Putting a thing in its place eliminates mess introduced by that thing. It may also indirectly create more total mess by driving things connected to that thing out of their place.
+Putting a thing in its place removes mess introduced by that thing. It can also indirectly create more total mess by driving things connected to that thing out of their place.
 
 Having mess is sometimes cheaper than creating a proper order not only in the moment, but overall. So mess can be tolerated, but must be constrained and contained:
 
-- Nothing should depend on the internals of a mess
 
 ### Examples of tolerable mess
 
@@ -17,5 +16,6 @@ Having mess is sometimes cheaper than creating a proper order not only in the mo
 
 ### Criteria for mess tolerance
 - Mess must not spread
+- Nothing should depend on the internals of a mess
 - Mess must have a clear boundary with well-defined inputs and outputs
 - Mess must be contained within a single file/directory, thus different parts of the same mess must not exist across filesystem

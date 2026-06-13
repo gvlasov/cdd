@@ -15,6 +15,10 @@ load test_helper
   [ -d "$target/processes" ]
   [ -d "$target/platform" ]
   [ -d "$target/commands" ]
+  [ -d "$target/plans" ]
+  [ -d "$target/plans/problems" ]
+  [ -d "$target/plans/features" ]
+  [ -d "$target/plans/finished" ]
   [ -d "$target/sandbox" ]
 }
 
@@ -33,5 +37,9 @@ load test_helper
   [ -d processes ]
   [ -d platform ]
   [ -d commands ]
+  [ -d plans ]
+  [ -d plans/problems ]
+  [ -d plans/features ]
+  [ -d plans/finished ]
   [ -d sandbox ]
 }

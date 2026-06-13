@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Finish an active plan by moving it to the finished plans directory.
+set -euo pipefail
+
+if [ "$#" -ne 1 ]; then
+  printf 'usage: cdd plans:finish <plan>\n' >&2
+  exit 2
+fi
+
+source_path="${BASH_SOURCE[0]}"
+while [ -L "$source_path" ]; do
+  source_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
+  source_path="$(readlink "$source_path")"
+  case "$source_path" in
+    /*) ;;
+    *) source_path="$source_dir/$source_path" ;;
+  esac
+done
+
+cdd_home="$(cd -P "$(dirname "$source_path")/../.." >/dev/null 2>&1 && pwd)"
+project_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+plan_root="$project_root/plans"
+plan_ref="$1"
+
+case "$plan_ref" in
+  plans/*)
+    source_plan="$project_root/$plan_ref"
+    relative_plan="${plan_ref#plans/}"
+    ;;
+  *)
+    source_plan="$plan_root/$plan_ref"
+    relative_plan="$plan_ref"
+    ;;
+esac
+
+if [ ! -f "$source_plan" ]; then
+  printf 'cdd plans:finish: plan not found: %s\n' "$plan_ref" >&2
+  exit 1
+fi
+
+destination_plan="$plan_root/finished/$relative_plan"
+mkdir -p "$(dirname "$destination_plan")"
+if [ -e "$destination_plan" ]; then
+  printf 'cdd plans:finish: destination already exists: %s\n' "$destination_plan" >&2
+  exit 1
+fi
+
+mv "$source_plan" "$destination_plan"
+exec "$cdd_home/commands/ide" "$destination_plan"

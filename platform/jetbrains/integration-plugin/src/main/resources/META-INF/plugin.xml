@@ -17,6 +17,20 @@
 
     <actions>
         <action
+                id="com.github.chriego.cdd.jetbrains.plans.CreateProblemPlanAction"
+                class="com.github.chriego.cdd.jetbrains.plans.CreateProblemPlanAction"
+                text="Problem Plan"
+                description="Create a problem plan under plans/problems">
+            <add-to-group group-id="NewGroup" anchor="last"/>
+        </action>
+        <action
+                id="com.github.chriego.cdd.jetbrains.plans.CreateFeaturePlanAction"
+                class="com.github.chriego.cdd.jetbrains.plans.CreateFeaturePlanAction"
+                text="Feature Plan"
+                description="Create a feature plan under plans/features">
+            <add-to-group group-id="NewGroup" anchor="last"/>
+        </action>
+        <action
                 id="com.github.chriego.cdd.jetbrains.symlinks.PasteAsSymlink"
                 class="com.github.chriego.cdd.jetbrains.symlinks.PasteAsSymlinkAction"
                 text="Paste as Symlink"

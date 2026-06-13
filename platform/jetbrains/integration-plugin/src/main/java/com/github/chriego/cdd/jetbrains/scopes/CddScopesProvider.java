@@ -9,11 +9,11 @@ import com.intellij.psi.search.scope.packageSet.AbstractPackageSet;
 import com.intellij.psi.search.scope.packageSet.CustomScopesProvider;
 import com.intellij.psi.search.scope.packageSet.NamedScope;
 import com.intellij.psi.search.scope.packageSet.NamedScopesHolder;
+import com.github.chriego.cdd.jetbrains.directories.CddProjectDirectories;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Set;
 
 public final class CddScopesProvider implements CustomScopesProvider {
     private static final NamedScope CDD_SCOPE = new NamedScope("CDD", new CddPackageSet());
@@ -24,32 +24,25 @@ public final class CddScopesProvider implements CustomScopesProvider {
     }
 
     private static final class CddPackageSet extends AbstractPackageSet {
-        private static final Set<String> CDD_ROOTS = Set.of(
-                "concepts",
-                "stakeholders",
-                "processes",
-                "platform",
-                "commands"
-        );
-
         private CddPackageSet() {
             super("CDD");
         }
 
         @Override
         public boolean contains(@NotNull VirtualFile file, @NotNull Project project, @Nullable NamedScopesHolder holder) {
+            List<String> cddRoots = List.copyOf(CddProjectDirectories.loadTopLevelRoots());
             for (VirtualFile contentRoot : ProjectRootManager.getInstance(project).getContentRoots()) {
-                if (isCddFile(file, contentRoot)) {
+                if (isCddFile(file, contentRoot, cddRoots)) {
                     return true;
                 }
             }
 
             VirtualFile baseDir = ProjectUtil.guessProjectDir(project);
-            return baseDir != null && isCddFile(file, baseDir);
+            return baseDir != null && isCddFile(file, baseDir, cddRoots);
         }
 
-        private static boolean isCddFile(@NotNull VirtualFile file, @NotNull VirtualFile projectRoot) {
-            return isRootReadme(file, projectRoot) || isInsideCddRoot(file, projectRoot);
+        private static boolean isCddFile(@NotNull VirtualFile file, @NotNull VirtualFile projectRoot, @NotNull List<String> cddRoots) {
+            return isRootReadme(file, projectRoot) || isInsideCddRoot(file, projectRoot, cddRoots);
         }
 
         private static boolean isRootReadme(@NotNull VirtualFile file, @NotNull VirtualFile projectRoot) {
@@ -57,8 +50,8 @@ public final class CddScopesProvider implements CustomScopesProvider {
             return readme != null && readme.equals(file);
         }
 
-        private static boolean isInsideCddRoot(@NotNull VirtualFile file, @NotNull VirtualFile projectRoot) {
-            for (String rootName : CDD_ROOTS) {
+        private static boolean isInsideCddRoot(@NotNull VirtualFile file, @NotNull VirtualFile projectRoot, @NotNull List<String> cddRoots) {
+            for (String rootName : cddRoots) {
                 VirtualFile cddRoot = projectRoot.findChild(rootName);
                 if (cddRoot != null && VfsUtilCore.isAncestor(cddRoot, file, false)) {
                     return true;

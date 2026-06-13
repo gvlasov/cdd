@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# Create a plan file and open it in the editor.
+set -euo pipefail
+
+if [ "$#" -lt 2 ]; then
+  printf 'usage: plans:create:<kind> <description>\n' >&2
+  exit 2
+fi
+
+kind="$1"
+shift
+title="$*"
+
+source_path="${BASH_SOURCE[0]}"
+while [ -L "$source_path" ]; do
+  source_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
+  source_path="$(readlink "$source_path")"
+  case "$source_path" in
+    /*) ;;
+    *) source_path="$source_dir/$source_path" ;;
+  esac
+done
+
+cdd_home="$(cd -P "$(dirname "$source_path")/../.." >/dev/null 2>&1 && pwd)"
+project_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+plan_dir="$project_root/plans/${kind}s"
+mkdir -p "$plan_dir"
+
+slug="$(printf '%s' "$title" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]\+/-/g; s/^-//; s/-$//')"
+if [ -z "$slug" ]; then
+  printf 'plans:create:%s: invalid description: %s\n' "$kind" "$title" >&2
+  exit 1
+fi
+
+plan_file="$plan_dir/$slug.md"
+if [ ! -f "$plan_file" ]; then
+  case "$kind" in
+    problem)
+      cat > "$plan_file" <<EOF
+# $title
+
+## Problem
+
+Describe the problem you are trying to solve.
+
+## Impact
+
+Describe who is affected and how.
+
+## Desired outcome
+
+EOF
+      ;;
+    feature)
+      cat > "$plan_file" <<EOF
+# $title
+
+## Feature
+
+Describe the feature you want to build.
+
+## Value
+
+Describe why the feature matters.
+
+## Notes
+
+EOF
+      ;;
+    *)
+      printf 'plans:create:%s: unsupported kind\n' "$kind" >&2
+      exit 1
+      ;;
+  esac
+fi
+
+exec "$cdd_home/commands/ide" "$plan_file"

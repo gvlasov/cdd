@@ -42,6 +42,23 @@ assert_installed_support() {
   assert_installed_support
 }
 
+@test "cdd self-upgrade skips tests with --skip-tests and -S" {
+  setup_test_home
+
+  for flag in --skip-tests -S; do
+    run env CDD_SOURCE_PATH="$PROJECT_ROOT" "$CDD" self-upgrade "$flag"
+
+    assert_success
+    ! printf '%s\n' "$output" | grep -q '^Running CDD tests...$'
+    assert_output_contains "Installing Bash support..."
+    assert_output_contains "Upgraded CDD support from $PROJECT_ROOT"
+    assert_installed_support
+
+    rm -rf "$HOME/.local" "$HOME/.config" "$HOME/.codex" "$HOME/.claude"
+    mkdir -p "$HOME"
+  done
+}
+
 @test "cdd self-upgrade defaults to HOME Projects personal cdd source path" {
   setup_test_home
   mkdir -p "$HOME/Projects/personal"
