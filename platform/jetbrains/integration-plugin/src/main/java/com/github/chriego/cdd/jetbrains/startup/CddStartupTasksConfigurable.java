@@ -1,9 +1,10 @@
 package com.github.chriego.cdd.jetbrains.startup;
 
-import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.execution.impl.RunManagerImpl;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
@@ -26,6 +27,7 @@ import java.awt.GridLayout;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -205,6 +207,7 @@ public final class CddStartupTasksConfigurable implements SearchableConfigurable
         private @NotNull RunnerAndConfigurationSettings ensureStartupTaskConfiguration(@NotNull StartupTaskSpec task) throws ReflectiveOperationException {
             RunnerAndConfigurationSettings existing = findExistingTaskConfiguration(task);
             if (existing != null) {
+                configureShellScript(existing.getConfiguration(), task);
                 return existing;
             }
 
@@ -213,11 +216,13 @@ public final class CddStartupTasksConfigurable implements SearchableConfigurable
                 throw new IllegalStateException("Shell Script configuration type is unavailable");
             }
 
-            RunManager runManager = RunManager.getInstance(project);
+            RunManagerImpl runManager = RunManagerImpl.getInstanceImpl(project);
             RunnerAndConfigurationSettings settings = runManager.createConfiguration(task.name, factory);
             configureShellScript(settings.getConfiguration(), task);
             runManager.addConfiguration(settings);
-            return settings;
+
+            RunnerAndConfigurationSettings persisted = runManager.getConfigurationById(settings.getUniqueID());
+            return persisted != null ? persisted : settings;
         }
 
         private void addStartupTask(@NotNull RunnerAndConfigurationSettings settings) throws ReflectiveOperationException {
@@ -232,7 +237,7 @@ public final class CddStartupTasksConfigurable implements SearchableConfigurable
         }
 
         private @Nullable RunnerAndConfigurationSettings findExistingTaskConfiguration(@NotNull StartupTaskSpec task) throws ReflectiveOperationException {
-            RunManager runManager = RunManager.getInstance(project);
+            RunManagerImpl runManager = RunManagerImpl.getInstanceImpl(project);
             for (RunnerAndConfigurationSettings settings : runManager.getAllSettings()) {
                 if (matchesTask(settings, task)) {
                     return settings;
@@ -306,12 +311,26 @@ public final class CddStartupTasksConfigurable implements SearchableConfigurable
         }
 
         private void configureShellScript(@NotNull Object configuration, @NotNull StartupTaskSpec task) throws ReflectiveOperationException {
+            if (!invokeSetter(configuration, bashExecutable(), "setShellPath", "setInterpreterPath", "setShellPathText")) {
+                throw new IllegalStateException("Shell Script configuration does not expose a shell path setter");
+            }
+
             String commandPath = taskPath(task).toString();
             if (!invokeSetter(configuration, commandPath, "setScriptPath", "setPath", "setScript", "setCommandLine", "setCommand", "setScriptText")) {
                 throw new IllegalStateException("Shell Script configuration does not expose a script path setter");
             }
 
             invokeSetter(configuration, projectRoot.toString(), "setWorkingDirectory", "setWorkDirectory", "setWorkDir", "setWorkingDir");
+        }
+
+        private @NotNull String bashExecutable() {
+            for (String candidate : List.of("/bin/bash", "/usr/bin/bash", "bash")) {
+                if ("bash".equals(candidate) || Files.isExecutable(Path.of(candidate))) {
+                    return candidate;
+                }
+            }
+
+            return "bash";
         }
 
         private @Nullable ConfigurationFactory findShellScriptFactory() {
