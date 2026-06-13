@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Open the given URL in the default browser.
+set -euo pipefail
+
+url="${1:-}"
+if [ -z "$url" ]; then
+  printf 'open-in-browser: missing URL\n' >&2
+  exit 1
+fi
+
+if command -v xdg-open >/dev/null 2>&1; then
+  exec xdg-open "$url"
+fi
+
+if command -v open >/dev/null 2>&1; then
+  exec open "$url"
+fi
+
+if command -v cmd.exe >/dev/null 2>&1; then
+  exec cmd.exe /c start "" "$url"
+fi
+
+printf 'open-in-browser: no browser opener found for %s\n' "$url" >&2
+exit 1
