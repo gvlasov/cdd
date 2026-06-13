@@ -13,6 +13,7 @@ Having mess is sometimes cheaper than creating a proper order not only in the mo
 
 - Non-trivial bash scripts can be hard to read and especially modify manually, so they are intrinsically messy. It is ok to have a messy bash script as long as its inputs and outputs are well documented and the script itself is properly placed.
 - `/sandbox` is the place to experiment, its contents are expected to be messy
+- A frontend component with a lot of complex interactions within it may become messy, but is ok as long as the mess is cohesive, the interface is clear, the internals don't leak out, and no other components would make sense to be cleanly extracted out of it.
 
 ### Criteria for mess tolerance
 - Mess must not spread
