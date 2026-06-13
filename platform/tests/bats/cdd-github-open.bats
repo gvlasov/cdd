@@ -9,7 +9,7 @@ load test_helper
 
   cat > "$fake_bin/xdg-open" <<EOF
 #!/usr/bin/env bash
-printf '%s\n' "$1" > "$opened_url"
+printf '%s\n' "\$1" > "$opened_url"
 EOF
   chmod +x "$fake_bin/xdg-open"
 

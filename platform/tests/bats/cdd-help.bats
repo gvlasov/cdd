@@ -8,7 +8,7 @@ load test_helper
   assert_success
 
   esc=$'\033'
-  assert_output_contains "github:open ${esc}[37m- open this project's github repository in browser${esc}[0m"
+  assert_output_contains "github:open ${esc}[37m- open this project's GitHub repository in browser.${esc}[0m"
   assert_output_contains "tests ${esc}[37m- run project tests in Docker${esc}[0m"
   ! printf '%s\n' "$output" | grep -q '^cdd help\b'
   ! printf '%s\n' "$output" | grep -q '^cdd init\b'
