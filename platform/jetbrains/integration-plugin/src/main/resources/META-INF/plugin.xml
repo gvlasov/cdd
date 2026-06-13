@@ -8,6 +8,11 @@
     <extensions defaultExtensionNs="com.intellij">
         <customScopesProvider implementation="com.github.chriego.cdd.jetbrains.scopes.CddScopesProvider"/>
         <notificationGroup id="CDD Integration" displayType="BALLOON"/>
+        <projectConfigurable
+                parentId="preferences.startup.tasks"
+                id="cdd.startup.tasks"
+                provider="com.github.chriego.cdd.jetbrains.startup.CddStartupTasksConfigurableProvider"
+                nonDefaultProject="true"/>
     </extensions>
 
     <actions>

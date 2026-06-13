@@ -2,14 +2,10 @@
 # Build the JetBrains CDD integration plugin and copy the artifact to an output directory.
 set -euo pipefail
 
-if [ "$#" -ne 1 ]; then
-  printf 'usage: jetbrains:plugin:build <output-directory>\n' >&2
+if [ "$#" -gt 1 ]; then
+  printf 'usage: jetbrains:plugin:build [output-directory]\n' >&2
   exit 2
 fi
-
-output_dir="$1"
-mkdir -p "$output_dir"
-output_dir="$(cd "$output_dir" >/dev/null 2>&1 && pwd)"
 
 source_path="${BASH_SOURCE[0]}"
 while [ -L "$source_path" ]; do
@@ -22,6 +18,11 @@ while [ -L "$source_path" ]; do
 done
 
 plugin_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
+default_output_dir="$plugin_dir/../build"
+output_dir="${1:-$default_output_dir}"
+mkdir -p "$output_dir"
+output_dir="$(cd "$output_dir" >/dev/null 2>&1 && pwd)"
+
 cd "$plugin_dir"
 
 gradle clean buildPlugin --no-daemon

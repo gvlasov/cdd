@@ -31,7 +31,7 @@ intellijPlatform {
         """.trimIndent()
 
         changeNotes = """
-            Initial version: adds a CDD scope to the Project tool window.
+            Adds a CDD subpane under Startup Tasks for common project shell tasks.
         """.trimIndent()
     }
 }

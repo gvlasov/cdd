@@ -5,6 +5,7 @@ JetBrains IDE plugin for Concept-Driven Design projects.
 ## Current functionality
 
 - Adds a `CDD` scope to the Project tool window.
+- Adds a `CDD` subpane under `Settings | Tools | Startup Tasks` with buttons for common CDD startup shell tasks.
 - The scope contains files under these project-root directories:
   - `concepts`
   - `stakeholders`
