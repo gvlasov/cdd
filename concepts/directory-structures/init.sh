@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Finish a plan from the active plans directory.
+# Compatibility wrapper for cdd init.
 set -euo pipefail
 
 source_path="${BASH_SOURCE[0]}"
@@ -12,5 +12,5 @@ while [ -L "$source_path" ]; do
   esac
 done
 
-command_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
-exec "$command_dir/../processes/planning/finish-plan" "$@"
+concept_dir="$(cd -P "$(dirname "$source_path")/../cdd-cli-commands" >/dev/null 2>&1 && pwd)"
+exec "$concept_dir/init" "$@"

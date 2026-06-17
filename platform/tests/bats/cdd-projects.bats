@@ -12,6 +12,16 @@ load test_helper
   [ "$output" = $'features\nproblems' ]
 }
 
+@test "cdd projects defaults to ls when no argument is provided" {
+  projects_root="$BATS_TEST_TMPDIR/projects"
+  mkdir -p "$projects_root/problems" "$projects_root/features"
+
+  run env CDD_PROJECTS_DIRECTORY="$projects_root" "$CDD" projects
+
+  assert_success
+  [ "$output" = $'features\nproblems' ]
+}
+
 @test "cdd projects pwd prints the absolute path of a project directory" {
   projects_root="$BATS_TEST_TMPDIR/projects"
   mkdir -p "$projects_root/problems"
@@ -66,4 +76,75 @@ load test_helper
 
   assert_success
   [ "$output" = "problems" ]
+}
+
+@test "cdd ide bash completion offers files from current and relative directories" {
+  project="$BATS_TEST_TMPDIR/project"
+  mkdir -p "$project/sub"
+  touch "$project/local-file.txt" "$project/sub/nested-file.txt"
+
+  cd "$project"
+  source "$PROJECT_ROOT/platform/bash/completions/cdd"
+
+  COMP_WORDS=(cdd ide "")
+  COMP_CWORD=2
+  COMPREPLY=()
+  _cdd
+  [ "$(printf '%s\n' "${COMPREPLY[@]}" | sort)" = $'local-file.txt\nsub' ]
+
+  COMP_WORDS=(cdd ide sub/)
+  COMP_CWORD=2
+  COMPREPLY=()
+  _cdd
+  [ "$(printf '%s\n' "${COMPREPLY[@]}" | sort)" = "sub/nested-file.txt" ]
+
+  COMP_WORDS=(cdd ide ../p)
+  COMP_CWORD=2
+  COMPREPLY=()
+  _cdd
+  [ "$(printf '%s\n' "${COMPREPLY[@]}" | sort)" = "../project" ]
+}
+
+@test "cdd ide uses CDD_IDE_CMD before editor discovery" {
+  project="$BATS_TEST_TMPDIR/project"
+  mkdir -p "$project"
+  touch "$project/file.txt"
+
+  fake_bin="$BATS_TEST_TMPDIR/bin"
+  mkdir -p "$fake_bin"
+  cat > "$fake_bin/ide-cmd" <<'EOF'
+#!/usr/bin/env bash
+printf '%s\n' "$@" > "$BATS_TEST_TMPDIR/ide-args.txt"
+EOF
+  chmod +x "$fake_bin/ide-cmd"
+
+  run env BATS_TEST_TMPDIR="$BATS_TEST_TMPDIR" PATH="$fake_bin:$PATH" CDD_IDE_CMD="$fake_bin/ide-cmd" "$CDD" ide "$project/file.txt"
+
+  assert_success
+  [ "$(<"$BATS_TEST_TMPDIR/ide-args.txt")" = "$(realpath "$project/file.txt")" ]
+}
+
+@test "cdd ide fish completion offers files from current and relative directories" {
+  root="$BATS_TEST_TMPDIR/root"
+  project="$root/project"
+  mkdir -p "$project/sub"
+  touch "$project/local-file.txt" "$project/sub/nested-file.txt"
+
+  cd "$project"
+
+  run env PROJECT_ROOT="$PROJECT_ROOT" fish --no-config -c 'source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd ide "'
+
+  assert_success
+  assert_output_contains "local-file.txt"
+  assert_output_contains "sub"
+
+  run env PROJECT_ROOT="$PROJECT_ROOT" fish --no-config -c 'source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd ide sub/n"'
+
+  assert_success
+  assert_output_contains "sub/nested-file.txt"
+
+  run env PROJECT_ROOT="$PROJECT_ROOT" BATS_TEST_TMPDIR="$BATS_TEST_TMPDIR" fish --no-config -c 'cd "$BATS_TEST_TMPDIR/root/project"; source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd ide ../p"'
+
+  assert_success
+  [ "$output" = "../project" ]
 }

@@ -14,6 +14,10 @@ elif command -v readlink >/dev/null 2>&1; then
   file="$(readlink -f "$file")"
 fi
 
+if [ -n "${CDD_IDE_CMD:-}" ]; then
+  exec "$CDD_IDE_CMD" "$file"
+fi
+
 if [ -n "${EDITOR:-}" ]; then
   exec "$EDITOR" "$file"
 fi

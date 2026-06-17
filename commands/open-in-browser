@@ -8,7 +8,7 @@ if [ -z "$url" ]; then
   exit 1
 fi
 
-if command -v xdg-open >/dev/null 2>&1; then
+if command -v xdg-open >cdd /dev/null 2>&1; then
   exec xdg-open "$url"
 fi
 

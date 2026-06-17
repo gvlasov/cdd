@@ -26,6 +26,11 @@ _cdd()
   fi
 
   case "$previous" in
+    ide)
+      COMPREPLY=( $(compgen -f -- "$current") )
+      compopt -o filenames 2>/dev/null || true
+      return 0
+      ;;
     init)
       COMPREPLY=( $(compgen -d -- "$current") )
       return 0

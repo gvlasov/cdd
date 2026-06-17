@@ -1,24 +1,16 @@
 #!/usr/bin/env bash
-# Print cdd command subcommands.
+# Compatibility wrapper for cdd self-help.
 set -euo pipefail
 
-grey='\033[37m'
-reset='\033[0m'
+source_path="${BASH_SOURCE[0]}"
+while [ -L "$source_path" ]; do
+  source_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
+  source_path="$(readlink "$source_path")"
+  case "$source_path" in
+    /*) ;;
+    *) source_path="$source_dir/$source_path" ;;
+  esac
+done
 
-print_command() {
-    local name="$1"
-    local desc="${2:-}"
-
-    if [ -n "$desc" ]; then
-        desc="$(echo "$desc" | sed 's/./\L&/')"
-        echo -e "$name ${grey}- $desc${reset}"
-    else
-        echo "$name"
-    fi
-}
-
-print_command "cdd self-help" "Show cdd subcommands"
-print_command "cdd help" "Show available project commands"
-print_command "cdd init [directory]" "Initialize a CDD project directory"
-print_command "cdd print" "Print indexed project code"
-print_command "cdd self-upgrade" "Self-upgrade CDD support from CDD_SOURCE_PATH"
+concept_dir="$(cd -P "$(dirname "$source_path")/../../concepts/cdd-cli-commands" >/dev/null 2>&1 && pwd)"
+exec "$concept_dir/self-help" "$@"

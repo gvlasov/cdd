@@ -12,5 +12,5 @@ while [ -L "$source_path" ]; do
   esac
 done
 
-command_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
-exec "$command_dir/../processes/planning/create-plan" problem "$@"
+concept_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
+exec "$concept_dir/../../processes/planning/create-plan" problem "$@"

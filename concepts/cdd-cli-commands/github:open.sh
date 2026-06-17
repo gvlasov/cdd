@@ -2,7 +2,7 @@
 # Open this project's GitHub repository in browser.
 set -euo pipefail
 
-project_root="$(cd "$(dirname "$0")/.." && pwd)"
+project_root="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$project_root"
 
 if [ -n "${GITHUB_URL:-}" ]; then

@@ -6,7 +6,7 @@ The project should feel like it comes with its own command language.
 
 ## Standard commands
 
-CDD suggests a small standard vocabulary for common project operations:
+CDD projects have dedicated directory to store project-specific CLI commands: `/commands`.
 
 - `help` lists available project commands
 - `up` starts the local project environment
@@ -16,11 +16,16 @@ CDD suggests a small standard vocabulary for common project operations:
 
 The exact implementation depends on the project, but the names should remain boring and predictable. A developer should be able to open a shell in the IDE and try `help`, `up`, `build`, `lint`, or `test` without first studying the repository.
 
+
 CDD also implements some reusable shell support:
 
 - `platform/fish/cdd.fish` provides `help` through `cdd-help`
 - `platform/fish/cdd.fish` provides `cdd-cd` to jump to the project root
 - `platform/fish/cdd.fish` prepends `commands` to the shell path when it exists, so project commands take precedence over commands from the default path
+
+## `cdd` utility
+
+CDD provides a system-wide utility `cdd` that suggests [CDD CLI commands](/home/chriego/Projects/personal/cdd/concepts/cdd-cli-commands/README.md) for common project operations.
 
 ## Project shell
 

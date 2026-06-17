@@ -16,27 +16,35 @@ source_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
 cdd_home="$(cd "$source_dir/../.." >/dev/null 2>&1 && pwd)"
 
 command="${1:-self-help}"
+command_dir="$cdd_home/concepts/cdd-cli-commands"
 case "$command" in
   self-help|--help|-h)
-    exec "$cdd_home/processes/discovery/cdd-self-help"
+    exec "$command_dir/self-help"
     ;;
   help)
-    exec "$cdd_home/processes/discovery/cdd-help"
+    exec "$command_dir/help"
     ;;
   init)
     shift
-    exec "$cdd_home/concepts/directory-structures/init" "$@"
+    exec "$command_dir/init" "$@"
     ;;
   self-upgrade)
     shift
-    exec "$cdd_home/processes/self-upgrade/self-upgrade" "$@"
+    exec "$command_dir/self-upgrade" "$@"
     ;;
   print)
     shift
-    exec "$cdd_home/processes/printing/print" "$@"
+    exec "$command_dir/print" "$@"
+    ;;
+  projects)
+    shift
+    exec "$command_dir/projects" "$@"
     ;;
   *)
     shift
+    if [ -x "$command_dir/$command" ] && [ "$command" != "cdd" ]; then
+      exec "$command_dir/$command" "$@"
+    fi
     if [ -x "./commands/$command" ] && [ "$command" != "cdd" ]; then
       exec "./commands/$command" "$@"
     fi
