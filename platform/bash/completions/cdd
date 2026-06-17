@@ -5,7 +5,7 @@ _cdd()
   COMPREPLY=()
   current="${COMP_WORDS[COMP_CWORD]}"
   previous="${COMP_WORDS[COMP_CWORD - 1]}"
-  commands="self-help help init print self-upgrade"
+  commands="self-help help init print self-upgrade projects"
 
   for command_dir in ./commands; do
     if [[ -d "$command_dir" ]]; then
@@ -34,6 +34,17 @@ _cdd()
       _cdd_complete_plans_finish "$current"
       return 0
       ;;
+    projects)
+      _cdd_complete_projects "$current"
+      return 0
+      ;;
+  esac
+
+  case "${COMP_WORDS[1]:-}" in
+    projects)
+      _cdd_complete_projects "$current"
+      return 0
+      ;;
   esac
 }
 
@@ -58,6 +69,34 @@ _cdd_complete_plans_finish()
 
     compopt -o nospace 2>/dev/null || true
   fi
+
+  COMPREPLY=("${completions[@]}")
+}
+
+_cdd_complete_projects()
+{
+  local current="$1"
+  local projects_root="${CDD_PROJECTS_DIRECTORY:-$HOME/Projects}"
+  local completions=()
+  local entry
+
+  case "${COMP_WORDS[2]:-}" in
+    cd|pwd)
+      if [[ -d "$projects_root" ]]; then
+        while IFS= read -r entry; do
+          entry="${entry#${projects_root}/}"
+          completions+=("$entry")
+        done < <(compgen -d -- "$projects_root/$current")
+      fi
+      ;;
+    ls)
+      return 0
+      ;;
+    *)
+      completions+=(ls cd pwd)
+      compopt -o nospace 2>/dev/null || true
+      ;;
+  esac
 
   COMPREPLY=("${completions[@]}")
 }

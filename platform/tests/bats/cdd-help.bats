@@ -14,6 +14,7 @@ load test_helper
   assert_output_contains "plans:create:feature ${esc}[37m- create a feature plan and open it in the editor.${esc}[0m"
   assert_output_contains "plans:create:problem ${esc}[37m- create a problem plan and open it in the editor.${esc}[0m"
   assert_output_contains "plans:finish ${esc}[37m- finish a plan from the active plans directory.${esc}[0m"
+  assert_output_contains "projects ${esc}[37m- list, resolve, or print projects from the projects directory.${esc}[0m"
   assert_output_contains "tests ${esc}[37m- run project tests in Docker${esc}[0m"
   ! printf '%s\n' "$output" | grep -q '^cdd help\b'
   ! printf '%s\n' "$output" | grep -q '^cdd init\b'

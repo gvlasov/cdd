@@ -4,9 +4,12 @@ complete -c cdd -n '__fish_use_subcommand' -a help -d 'Show available project co
 complete -c cdd -n '__fish_use_subcommand' -a init -d 'Initialize a CDD directory structure'
 complete -c cdd -n '__fish_use_subcommand' -a print -d 'Print indexed project code'
 complete -c cdd -n '__fish_use_subcommand' -a self-upgrade -d 'Self-upgrade CDD support from CDD_SOURCE_PATH'
+complete -c cdd -n '__fish_use_subcommand' -a projects -d 'List, resolve, or print projects'
 complete -c cdd -n '__fish_use_subcommand; and test -d ./commands' -a '(set seen cdd self-help help init print self-upgrade; for filepath in ./commands/*; test -f $filepath; or continue; set name (basename $filepath); contains -- $name $seen; and continue; set --append seen $name; echo $name; end)' -d 'Run project command'
 complete -c cdd -n '__fish_seen_subcommand_from init' -a '(__fish_complete_directories)'
 complete -c cdd -n '__fish_seen_subcommand_from plans:finish' -a '(__cdd_plans_finish_complete (commandline -ct))'
+complete -c cdd -n '__fish_seen_subcommand_from projects; and not __fish_seen_subcommand_from ls cd pwd' -a '(__cdd_projects_subcommands)'
+complete -c cdd -n '__fish_seen_subcommand_from projects; and __fish_seen_subcommand_from cd pwd' -a '(__cdd_projects_names)'
 
 function __cdd_plans_finish_complete
     set -l current $argv[1]
@@ -35,5 +38,19 @@ function __cdd_plans_finish_complete
             test -d "$plan_root/$category"; or continue
             echo "$category/"
         end
+    end
+end
+
+function __cdd_projects_subcommands
+    printf '%s\n' ls cd pwd
+end
+
+function __cdd_projects_names
+    set -l projects_root
+    set projects_root (set -q CDD_PROJECTS_DIRECTORY; and echo $CDD_PROJECTS_DIRECTORY; or echo "$HOME/Projects")
+
+    for path in $projects_root/*
+        test -d "$path"; or continue
+        basename "$path"
     end
 end
