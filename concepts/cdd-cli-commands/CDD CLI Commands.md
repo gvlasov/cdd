@@ -7,6 +7,7 @@ CDD keeps these commands together so the entrypoint can discover, print, and dis
 - `help` lists available project commands
 - `github:open` opens the current repository in GitHub
 - `ide` opens a file in the user's editor
+- `ide:which` prints the IDE command CDD will use
 - `init` initializes a CDD project directory
 - `print` prints indexed project code
 - `plans` lists stored plans in the repository

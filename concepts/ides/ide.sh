@@ -14,22 +14,6 @@ elif command -v readlink >/dev/null 2>&1; then
   file="$(readlink -f "$file")"
 fi
 
-if [ -n "${CDD_IDE_CMD:-}" ]; then
-  exec "$CDD_IDE_CMD" "$file"
-fi
-
-if [ -n "${EDITOR:-}" ]; then
-  exec "$EDITOR" "$file"
-fi
-
-if command -v vim >/dev/null 2>&1; then
-  exec vim "$file"
-fi
-
-if command -v vi >/dev/null 2>&1; then
-  exec vi "$file"
-fi
-
-printf 'cdd ide: editor is not set up.\n' >&2
-printf 'Set EDITOR or install vim/vi, then run: %s %s\n' "${EDITOR:-\$EDITOR}" "$file" >&2
-exit 1
+concept_dir="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+editor_command="$("$concept_dir/../cdd-cli-commands/ide:which")"
+exec "$editor_command" "$file"

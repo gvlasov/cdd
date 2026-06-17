@@ -21,7 +21,7 @@ print_command() {
     local desc="${2:-}"
 
     if [ -n "$desc" ]; then
-        desc="$(echo "$desc" | sed 's/./\L&/')"
+        desc="${desc,,}"
         echo -e "$name ${grey}- $desc${reset}"
     else
         echo "$name"

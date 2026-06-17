@@ -81,7 +81,7 @@ load test_helper
 @test "cdd ide bash completion offers files from current and relative directories" {
   project="$BATS_TEST_TMPDIR/project"
   mkdir -p "$project/sub"
-  touch "$project/local-file.txt" "$project/sub/nested-file.txt"
+  touch "$project/file.md" "$project/local-file.txt" "$project/sub/nested-file.txt"
 
   cd "$project"
   source "$PROJECT_ROOT/platform/bash/completions/cdd"
@@ -90,7 +90,13 @@ load test_helper
   COMP_CWORD=2
   COMPREPLY=()
   _cdd
-  [ "$(printf '%s\n' "${COMPREPLY[@]}" | sort)" = $'local-file.txt\nsub' ]
+  [ "$(printf '%s\n' "${COMPREPLY[@]}" | sort)" = $'file.md\nlocal-file.txt\nsub' ]
+
+  COMP_WORDS=(cdd ide fi)
+  COMP_CWORD=2
+  COMPREPLY=()
+  _cdd
+  [ "$(printf '%s\n' "${COMPREPLY[@]}" | sort)" = "file.md" ]
 
   COMP_WORDS=(cdd ide sub/)
   COMP_CWORD=2
@@ -124,11 +130,26 @@ EOF
   [ "$(<"$BATS_TEST_TMPDIR/ide-args.txt")" = "$(realpath "$project/file.txt")" ]
 }
 
+@test "cdd ide:which prints the configured IDE command" {
+  fake_bin="$BATS_TEST_TMPDIR/bin"
+  mkdir -p "$fake_bin"
+  cat > "$fake_bin/ide-cmd" <<'EOF'
+#!/usr/bin/env bash
+printf '%s\n' "$0"
+EOF
+  chmod +x "$fake_bin/ide-cmd"
+
+  run env PATH="$fake_bin:$PATH" CDD_IDE_CMD="$fake_bin/ide-cmd" "$CDD" ide:which
+
+  assert_success
+  [ "$output" = "$fake_bin/ide-cmd" ]
+}
+
 @test "cdd ide fish completion offers files from current and relative directories" {
   root="$BATS_TEST_TMPDIR/root"
   project="$root/project"
   mkdir -p "$project/sub"
-  touch "$project/local-file.txt" "$project/sub/nested-file.txt"
+  touch "$project/file.md" "$project/local-file.txt" "$project/sub/nested-file.txt"
 
   cd "$project"
 
@@ -137,6 +158,11 @@ EOF
   assert_success
   assert_output_contains "local-file.txt"
   assert_output_contains "sub"
+
+  run env PROJECT_ROOT="$PROJECT_ROOT" fish --no-config -c 'source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd ide fi"'
+
+  assert_success
+  [ "$output" = "file.md" ]
 
   run env PROJECT_ROOT="$PROJECT_ROOT" fish --no-config -c 'source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd ide sub/n"'
 

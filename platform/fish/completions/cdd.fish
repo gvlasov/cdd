@@ -2,11 +2,12 @@ complete -c cdd -f
 complete -c cdd -n '__fish_use_subcommand' -a self-help -d 'Show cdd subcommands'
 complete -c cdd -n '__fish_use_subcommand' -a help -d 'Show available project commands'
 complete -c cdd -n '__fish_use_subcommand' -a ide -d "Open a file in the user's editor"
+complete -c cdd -n '__fish_use_subcommand' -a 'ide:which' -d 'Print the IDE command CDD will use'
 complete -c cdd -n '__fish_use_subcommand' -a init -d 'Initialize a CDD directory structure'
 complete -c cdd -n '__fish_use_subcommand' -a print -d 'Print indexed project code'
 complete -c cdd -n '__fish_use_subcommand' -a self-upgrade -d 'Self-upgrade CDD support from CDD_SOURCE_PATH'
 complete -c cdd -n '__fish_use_subcommand' -a projects -d 'List, resolve, or print projects'
-complete -c cdd -n '__fish_use_subcommand; and test -d ./commands' -a '(set seen cdd self-help help init print self-upgrade; for filepath in ./commands/*; test -f $filepath; or continue; set name (basename $filepath); contains -- $name $seen; and continue; set --append seen $name; echo $name; end)' -d 'Run project command'
+complete -c cdd -n '__fish_use_subcommand' -a '(__cdd_top_level_commands)' -d 'Run project command'
 complete -c cdd -n '__fish_seen_subcommand_from init' -a '(__fish_complete_directories)'
 complete -c cdd -f -n '__cdd_ide_should_complete_paths' -a '(__cdd_ide_paths (commandline -ct))'
 complete -c cdd -n '__fish_seen_subcommand_from plans:finish' -a '(__cdd_plans_finish_complete (commandline -ct))'
@@ -43,6 +44,21 @@ function __cdd_plans_finish_complete
     end
 end
 
+function __cdd_top_level_commands
+    set -l seen cdd self-help help init print self-upgrade projects
+    for dir in ./commands ./concepts/cdd-cli-commands
+        test -d "$dir"; or continue
+        for filepath in $dir/*
+            test -f "$filepath"; or continue
+            string match -q -- '*.sh' (basename "$filepath"); and continue
+            set -l name (basename "$filepath")
+            contains -- $name $seen; and continue
+            set --append seen $name
+            echo $name
+        end
+    end
+end
+
 function __cdd_projects_subcommands
     printf "%s\n" ls cd pwd
 end
@@ -64,7 +80,7 @@ function __cdd_ide_should_complete_paths
     end
 
     switch $tokens[2]
-        case ide
+        case ide ide:which
             return 0
     end
 
