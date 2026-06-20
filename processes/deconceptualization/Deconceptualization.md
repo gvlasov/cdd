@@ -3,5 +3,6 @@ Unlabelling the content of a reflection out of its concept, experiencing raw mat
 **Examples:**
 - Serialization is a particular case of deconceptualization
 - A tool is deconceptualized when someone plays with it instead of using it for its intended purpose
- - Using something in an unintended way
+- Using something in an unintended way
+
 Some meditation techniques include deconceptualization
