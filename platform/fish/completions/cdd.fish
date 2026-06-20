@@ -6,6 +6,7 @@ complete -c cdd -n '__fish_use_subcommand' -a 'ide:which' -d 'Print the IDE comm
 complete -c cdd -n '__fish_use_subcommand' -a init -d 'Initialize a CDD directory structure'
 complete -c cdd -n '__fish_use_subcommand' -a print -d 'Print indexed project code'
 complete -c cdd -n '__fish_use_subcommand' -a 'source-code:print' -d 'Print indexed project code'
+complete -c cdd -n '__fish_use_subcommand' -a 'source-code:volume' -d 'Print the indexed source-code volume in bytes'
 complete -c cdd -n '__fish_use_subcommand' -a 'source-code:volume:analyze' -d 'Print source files ordered by indexed byte size'
 complete -c cdd -n '__fish_use_subcommand' -a self-upgrade -d 'Self-upgrade CDD support from CDD_SOURCE_PATH'
 complete -c cdd -n '__fish_use_subcommand' -a projects -d 'List, resolve, or print projects'
@@ -47,7 +48,7 @@ function __cdd_plans_finish_complete
 end
 
 function __cdd_top_level_commands
-    set -l seen cdd self-help help init print source-code:print source-code:volume:analyze self-upgrade projects
+    set -l seen cdd self-help help init print source-code:print source-code:volume source-code:volume:analyze self-upgrade projects
     for dir in ./commands ./concepts/cdd-cli-commands
         test -d "$dir"; or continue
         for filepath in $dir/*

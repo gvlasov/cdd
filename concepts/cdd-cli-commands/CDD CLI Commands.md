@@ -11,6 +11,7 @@ CDD keeps these commands together so the entrypoint can discover, print, and dis
 - `init` initializes a CDD project directory
 - `print` prints indexed project code
 - `source-code:print` prints indexed project code
+- `source-code:volume` prints the indexed source-code volume in bytes
 - `source-code:volume:analyze` prints source files ordered by indexed byte size
 - `plans` lists stored plans in the repository
 - `plans:create:feature` creates a feature plan
