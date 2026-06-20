@@ -23,3 +23,4 @@ Not only executable pieces qualify as source code. For example, documentation fo
 - `cdd source-code:print` prints the indexed source tree, optionally restricted to paths
 - `cdd source-code:volume` prints the volume of the source tree in bytes
 - `cdd source-code:volume:analyze` ranks indexed source files by byte size, optionally restricted to paths
+- `cdd source-code:volume:assess` opens a terminal browser that ranks source-code items by aggregate volume

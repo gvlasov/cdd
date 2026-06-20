@@ -1,3 +1,5 @@
+Help is whatever information the project can provide on its commands
+
 It is very important to have a single point of action to figure out how to do stuff
 
 For CDD shell integration, there is `cdd help` command that lists commands in the project and explains what they do. 

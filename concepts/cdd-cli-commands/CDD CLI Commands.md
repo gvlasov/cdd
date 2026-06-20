@@ -13,6 +13,7 @@ CDD keeps these commands together so the entrypoint can discover, print, and dis
 - `source-code:print` prints indexed project code and can be restricted to given paths
 - `source-code:volume` prints the indexed source-code volume in bytes
 - `source-code:volume:analyze` prints source files ordered by indexed byte size and can be restricted to given paths
+- `source-code:volume:assess` opens a terminal browser that ranks source-code items by aggregate volume
 - `plans` lists stored plans in the repository
 - `plans:create:feature` creates a feature plan
 - `plans:create:problem` creates a problem plan
