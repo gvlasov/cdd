@@ -8,7 +8,7 @@ CDD keeps these commands together so the entrypoint can discover, print, and dis
 - `github:open` opens the current repository in GitHub
 - `ide` opens a file in the user's editor
 - `ide:which` prints the IDE command CDD will use
-- `init` initializes a CDD project directory
+- `init` initializes a CDD project directory and Git repository
 - `print` prints indexed project code
 - `source-code:print` prints indexed project code and can be restricted to given paths
 - `source-code:volume` prints the indexed source-code volume in bytes

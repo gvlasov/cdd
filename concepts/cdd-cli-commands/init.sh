@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Initialize a CDD directory structure
+# Initialize a CDD directory structure and Git repository
 set -euo pipefail
 
 target="${1:-.}"
@@ -15,5 +15,7 @@ while IFS= read -r directory; do
   [ -n "$directory" ] || continue
   mkdir -p "$target/$directory"
 done < <(sed -n 's/^[[:space:]]*"\([^"]\+\)".*$/\1/p' "$directories_file")
+
+git -C "$target" init >/dev/null 2>&1
 
 printf 'Initialized CDD directory structure in %s\n' "$target"

@@ -10,6 +10,9 @@ load test_helper
   assert_success
   assert_output_contains "Initialized CDD directory structure in $target"
 
+  [ -d "$target/.git" ]
+  git -C "$target" rev-parse --is-inside-work-tree >/dev/null
+
   [ -d "$target/concepts" ]
   [ -d "$target/project" ]
   [ -d "$target/stakeholders" ]
@@ -32,6 +35,9 @@ load test_helper
 
   assert_success
   assert_output_contains "Initialized CDD directory structure in ."
+
+  [ -d .git ]
+  git rev-parse --is-inside-work-tree >/dev/null
 
   [ -d concepts ]
   [ -d project ]
