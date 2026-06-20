@@ -53,6 +53,8 @@ The name of a plural concept must be in plural, e.g. `bills`, `products`, `apple
 
 The name of a singleton concept must be in singular, e.g. `jimmy-the-client`
 
+Also [[substances|Substance]] are called in singular.
+
 ### Examples of singleton concepts
 
 - project author for the solo-founder project

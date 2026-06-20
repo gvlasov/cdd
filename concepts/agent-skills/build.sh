@@ -25,3 +25,7 @@ Use this skill when a task benefits from organizing code by concepts rather than
 
 For the full CDD glossary and examples, read `references/concepts.md` only when needed for concept vocabulary or placement decisions.
 EOF
+
+echo
+echo
+./concepts/agent-skills/build-concepts-reference

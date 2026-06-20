@@ -3,7 +3,8 @@
 load test_helper
 
 strip_ansi() {
-  perl -pe 's/\e\[[0-9;]*[A-Za-z]//g'
+  local esc=$'\033'
+  sed "s#${esc}\\[[0-9;]*[A-Za-z]##g"
 }
 
 @test "cdd source-code:volume:assess dump shows root items sorted by volume" {

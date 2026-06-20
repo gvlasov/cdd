@@ -310,6 +310,9 @@ render() {
   mapfile -t items < <(sorted_children "$current")
   current_children=("${items[@]}")
   child_count="${#current_children[@]}"
+  if [ "$dump_mode" -eq 1 ]; then
+    viewport_height="$child_count"
+  fi
 
   printf '\033[2J\033[H'
   printf 'Source-code browser\n'

@@ -38,7 +38,7 @@ load test_helper
   COMPREPLY=()
   _cdd
 
-  [ "$(printf '%s\n' "${COMPREPLY[@]}" | sort)" = $'source-code:print\nsource-code:volume\nsource-code:volume:analyze' ]
+  [ "$(printf '%s\n' "${COMPREPLY[@]}" | sort)" = $'source-code:print\nsource-code:volume\nsource-code:volume:analyze\nsource-code:volume:assess' ]
 }
 
 @test "cdd source-code completions include source-code commands in fish" {

@@ -46,6 +46,7 @@ load test_helper
   assert_output_contains "cdd source-code:print ${esc}[37m- print indexed project code to stdout${esc}[0m"
   assert_output_contains "cdd source-code:volume:analyze ${esc}[37m- print source files ordered by indexed byte size${esc}[0m"
   assert_output_contains "cdd self-help ${esc}[37m- print cdd command subcommands${esc}[0m"
+  assert_output_contains "cdd skill:print ${esc}[37m- print the freshest installed CDD skill${esc}[0m"
   assert_output_contains "cdd help ${esc}[37m- print commands and their descriptions from project command directories${esc}[0m"
   assert_output_contains "cdd init ${esc}[37m- initialize a CDD directory structure${esc}[0m"
   assert_output_contains "cdd print ${esc}[37m- print indexed project code to stdout${esc}[0m"
