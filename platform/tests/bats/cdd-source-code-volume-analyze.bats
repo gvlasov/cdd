@@ -20,7 +20,7 @@ load test_helper
 
   assert_success
 
-  expected=$'large.txt 11\nmedium.txt 5\nsmall.txt 2'
+  expected=$'small.txt 2\nmedium.txt 5\nlarge.txt 11'
   [ "$output" = "$expected" ]
 }
 

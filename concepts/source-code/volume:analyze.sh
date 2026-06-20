@@ -142,4 +142,4 @@ while IFS= read -r -d '' index_entry; do
   printf '%s\t%s\n' "$path" "$size" >>"$tmpfile"
 done < <(git ls-files --cached --stage -z)
 
-LC_ALL=C sort -t "$(printf '\t')" -k2,2nr -k1,1 "$tmpfile" | awk -F '\t' '{ print $1, $2 }'
+LC_ALL=C sort -t "$(printf '\t')" -k2,2n -k1,1 "$tmpfile" | awk -F '\t' '{ print $1, $2 }'
