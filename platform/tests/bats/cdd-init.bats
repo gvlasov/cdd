@@ -11,6 +11,7 @@ load test_helper
   assert_output_contains "Initialized CDD directory structure in $target"
 
   [ -d "$target/concepts" ]
+  [ -d "$target/project" ]
   [ -d "$target/stakeholders" ]
   [ -d "$target/processes" ]
   [ -d "$target/platform" ]
@@ -33,6 +34,7 @@ load test_helper
   assert_output_contains "Initialized CDD directory structure in ."
 
   [ -d concepts ]
+  [ -d project ]
   [ -d stakeholders ]
   [ -d processes ]
   [ -d platform ]

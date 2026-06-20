@@ -3,6 +3,7 @@ A hierarchical directory structure of a [[Project]] suggested by the ontological
 **Structure:**
 All project code is separated into:
 - `/concepts` - all [[reflections|Reflection]] of the concepts, grouped in directories by a specific concept
+- `/project` - project-only materials such as the project description, icon, and other project identity assets
 - `/stakeholders` - all [[stakeholders|Stakeholder]] of the project, grouped in directories by a specific stakeholder
 - `/processes` - all [[processes|Process]]
 - `/platform` - code that sets up [[tools|Tool]] and [[runtime environment|Runtime environment]] - any means that run our application to reflect the problem being solved with it onto the hardware
@@ -42,6 +43,7 @@ See [[Diagram.url]]
 
 ```
 /concepts/
+/project/
 /stakeholders/
 /processes/
 /platform/

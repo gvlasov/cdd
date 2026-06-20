@@ -16,6 +16,7 @@ public final class CddProjectDirectories {
     private static final String DIRECTORIES_FILE = "concepts/project-directories/directories-list.json";
     private static final List<String> FALLBACK_DIRECTORIES = List.of(
             "concepts",
+            "project",
             "stakeholders",
             "processes",
             "platform",

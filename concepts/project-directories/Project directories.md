@@ -7,6 +7,7 @@ The source of truth is [`directories-list.json`](directories-list.json).
 | Path | Purpose |
 | --- | --- |
 | `concepts` | Concept reflections and related materials |
+| `project` | Project-specific description, icon, and other project-only materials |
 | `stakeholders` | Stakeholder reflections |
 | `processes` | Process reflections |
 | `platform` | Platform code and tooling support |
