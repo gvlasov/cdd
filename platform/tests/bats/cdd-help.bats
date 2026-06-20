@@ -43,6 +43,7 @@ load test_helper
   assert_output_contains "cdd plans:create:feature ${esc}[37m- create a feature plan and open it in the editor.${esc}[0m"
   assert_output_contains "cdd plans:create:problem ${esc}[37m- create a problem plan and open it in the editor.${esc}[0m"
   assert_output_contains "cdd plans:finish ${esc}[37m- finish an active plan by moving it to the finished plans directory.${esc}[0m"
+  assert_output_contains "cdd source-code:print ${esc}[37m- print indexed project code to stdout.${esc}[0m"
   assert_output_contains "cdd self-help ${esc}[37m- print cdd command subcommands.${esc}[0m"
   assert_output_contains "cdd help ${esc}[37m- print commands and their descriptions from project command directories.${esc}[0m"
   assert_output_contains "cdd init ${esc}[37m- initialize a cdd directory structure${esc}[0m"

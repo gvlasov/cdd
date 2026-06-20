@@ -18,4 +18,5 @@ EOF
   assert_success
   expected="https://github.com/gvlasov/concept-driven-organization/tree/master"
   [ "$(cat "$opened_url")" = "$expected" ]
+  [ ! -e "$PROJECT_ROOT/cdd" ]
 }

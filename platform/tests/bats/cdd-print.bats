@@ -36,4 +36,9 @@ load test_helper
 
   expected=$'\napp.txt:\nindexed text\n\nlinked.txt:\nlinked text\n\nvector.svg:\n<svg>indexed svg</svg>'
   [ "$output" = "$expected" ]
+
+  run "$CDD" source-code:print
+
+  assert_success
+  [ "$output" = "$expected" ]
 }

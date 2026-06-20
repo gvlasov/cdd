@@ -10,6 +10,7 @@ CDD keeps these commands together so the entrypoint can discover, print, and dis
 - `ide:which` prints the IDE command CDD will use
 - `init` initializes a CDD project directory
 - `print` prints indexed project code
+- `source-code:print` prints indexed project code
 - `plans` lists stored plans in the repository
 - `plans:create:feature` creates a feature plan
 - `plans:create:problem` creates a problem plan

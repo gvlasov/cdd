@@ -34,7 +34,7 @@ case "$command" in
     ;;
   print)
     shift
-    exec "$command_dir/print" "$@"
+    exec "$command_dir/source-code:print" "$@"
     ;;
   projects)
     shift
