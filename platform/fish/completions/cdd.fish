@@ -13,6 +13,7 @@ complete -c cdd -n '__fish_use_subcommand' -a projects -d 'List, resolve, or pri
 complete -c cdd -n '__fish_use_subcommand' -a '(__cdd_top_level_commands)' -d 'Run project command'
 complete -c cdd -n '__fish_seen_subcommand_from init' -a '(__fish_complete_directories)'
 complete -c cdd -f -n '__cdd_ide_should_complete_paths' -a '(__cdd_ide_paths (commandline -ct))'
+complete -c cdd -f -n '__cdd_source_code_should_complete_paths' -a '(__cdd_source_code_paths)'
 complete -c cdd -n '__fish_seen_subcommand_from plans:finish' -a '(__cdd_plans_finish_complete (commandline -ct))'
 complete -c cdd -f -n '__cdd_projects_should_complete_subcommands' -a '(__cdd_projects_subcommands)'
 complete -c cdd -f -n '__cdd_projects_should_complete_paths' -a '(__cdd_projects_paths)'
@@ -88,6 +89,29 @@ function __cdd_ide_should_complete_paths
     end
 
     return 1
+end
+
+function __cdd_source_code_should_complete_paths
+    set -l tokens (commandline -opc)
+    if test (count $tokens) -lt 2
+        return 1
+    end
+
+    switch $tokens[2]
+        case source-code:print source-code:volume source-code:volume:analyze
+            return 0
+    end
+
+    return 1
+end
+
+function __cdd_source_code_paths
+    set -l current (commandline -ct)
+    for path in $current*
+        if test -e "$path"
+            echo "$path"
+        end
+    end
 end
 
 function __cdd_projects_should_complete_subcommands

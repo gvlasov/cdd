@@ -19,4 +19,9 @@ load test_helper
 
   assert_success
   [ "$output" = "$expected" ]
+
+  run "$CDD" source-code:volume alpha.txt
+
+  assert_success
+  [ "$output" = "18" ]
 }

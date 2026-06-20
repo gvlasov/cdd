@@ -120,6 +120,11 @@ is_ignored_extension() {
 git_root="$(git rev-parse --show-toplevel)"
 cd "$git_root"
 
+ls_files_args=(--cached --stage -z)
+if [ "$#" -gt 0 ]; then
+  ls_files_args+=(-- "$@")
+fi
+
 while IFS= read -r -d '' index_entry; do
   mode="${index_entry%% *}"
   path="${index_entry#*$'\t'}"
@@ -134,4 +139,4 @@ while IFS= read -r -d '' index_entry; do
 
   printf '\n%s:\n' "$path"
   git --no-pager show ":$path"
-done < <(git ls-files --cached --stage -z)
+done < <(git ls-files "${ls_files_args[@]}")

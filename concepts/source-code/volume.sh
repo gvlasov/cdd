@@ -13,4 +13,4 @@ while [ -L "$source_path" ]; do
 done
 
 cdd_home="$(cd -P "$(dirname "$source_path")/../.." >/dev/null 2>&1 && pwd)"
-"$cdd_home/platform/cdd/cdd" source-code:print | wc -c
+"$cdd_home/platform/cdd/cdd" source-code:print "$@" | wc -c

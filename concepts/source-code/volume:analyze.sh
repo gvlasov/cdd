@@ -123,6 +123,11 @@ cd "$git_root"
 tmpfile="$(mktemp)"
 trap 'rm -f "$tmpfile"' EXIT
 
+ls_files_args=(--cached --stage -z)
+if [ "$#" -gt 0 ]; then
+  ls_files_args+=(-- "$@")
+fi
+
 while IFS= read -r -d '' index_entry; do
   mode="${index_entry%% *}"
   meta="${index_entry%%$'\t'*}"
@@ -140,6 +145,6 @@ while IFS= read -r -d '' index_entry; do
 
   size="$(git cat-file -s "$blob")"
   printf '%s\t%s\n' "$path" "$size" >>"$tmpfile"
-done < <(git ls-files --cached --stage -z)
+done < <(git ls-files "${ls_files_args[@]}")
 
 LC_ALL=C sort -t "$(printf '\t')" -k2,2n -k1,1 "$tmpfile" | awk -F '\t' '{ print $1, $2 }'

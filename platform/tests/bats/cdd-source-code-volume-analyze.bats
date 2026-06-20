@@ -22,6 +22,11 @@ load test_helper
 
   expected=$'small.txt 2\nmedium.txt 5\nlarge.txt 11'
   [ "$output" = "$expected" ]
+
+  run "$CDD" source-code:volume:analyze medium.txt large.txt
+
+  assert_success
+  [ "$output" = $'medium.txt 5\nlarge.txt 11' ]
 }
 
 @test "cdd source-code completions include source-code commands in bash" {
@@ -43,4 +48,20 @@ load test_helper
   assert_output_contains "source-code:print"
   assert_output_contains "source-code:volume"
   assert_output_contains "source-code:volume:analyze"
+}
+
+@test "cdd source-code fish completion offers paths for source-code commands" {
+  project="$BATS_TEST_TMPDIR/project"
+  mkdir -p "$project/sub"
+  touch "$project/file.txt" "$project/sub/nested.txt"
+
+  run env PROJECT_ROOT="$PROJECT_ROOT" fish --no-config -c 'cd "$argv[1]"; source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd source-code:print f"' "$project"
+
+  assert_success
+  assert_output_contains "file.txt"
+
+  run env PROJECT_ROOT="$PROJECT_ROOT" fish --no-config -c 'cd "$argv[1]"; source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd source-code:print sub/"' "$project"
+
+  assert_success
+  assert_output_contains "sub/nested.txt"
 }
