@@ -18,7 +18,7 @@ load test_helper
       /^ignored_extensions=\(/ { inside = 1; next }
       inside && /^\)/ { exit }
       inside && NF { print $1 }
-    ' "$PROJECT_ROOT/processes/printing/print"
+    ' "$PROJECT_ROOT/concepts/source-code/print.sh"
   )
 
   for extension in "${ignored_extensions[@]}"; do
