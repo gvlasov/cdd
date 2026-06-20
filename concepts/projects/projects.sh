@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# List, resolve, or print projects from CDD_PROJECTS_DIRECTORY.
+# List, resolve, or print projects from CDD_PROJECTS_DIRECTORY
 set -euo pipefail
 
 usage() {

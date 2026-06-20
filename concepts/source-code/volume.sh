@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Print the indexed source-code volume in bytes.
+# Print the indexed source-code volume in bytes
 set -euo pipefail
 
 source_path="${BASH_SOURCE[0]}"

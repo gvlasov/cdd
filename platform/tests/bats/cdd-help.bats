@@ -53,6 +53,14 @@ load test_helper
   assert_output_contains "cdd self-upgrade ${esc}[37m- self-upgrade cdd support from the configured cdd source repository${esc}[0m"
 }
 
+@test "cdd --help is a synonym for cdd self-help" {
+  run "$CDD" --help
+
+  assert_success
+
+  [ "$output" = "$("$CDD" self-help)" ]
+}
+
 @test "cdd without arguments lists cdd subcommands" {
   run "$CDD"
 

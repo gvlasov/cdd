@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# List stored plans in the repository.
+# List stored plans in the repository
 set -euo pipefail
 
 source_path="${BASH_SOURCE[0]}"

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Open this project's GitHub repository in browser.
+# Open this project's GitHub repository in browser
 set -euo pipefail
 
 project_root="$(cd "$(dirname "$0")/../.." && pwd)"

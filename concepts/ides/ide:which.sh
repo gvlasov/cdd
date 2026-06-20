@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Print the IDE command CDD will use.
+# Print the IDE command CDD will use
 set -euo pipefail
 
 if [ "$#" -ne 0 ]; then

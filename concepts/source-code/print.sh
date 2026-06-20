@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Print indexed project code to stdout.
+# Print indexed project code to stdout
 set -euo pipefail
 
 ignored_extensions=(

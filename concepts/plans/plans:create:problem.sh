@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Create a problem plan and open it in the editor.
+# Create a problem plan and open it in the editor
 set -euo pipefail
 
 source_path="${BASH_SOURCE[0]}"

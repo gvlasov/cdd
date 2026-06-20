@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Finish an active plan by moving it to the finished plans directory.
+# Finish an active plan by moving it to the finished plans directory
 set -euo pipefail
 
 source_path="${BASH_SOURCE[0]}"

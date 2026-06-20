@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Print commands and their descriptions from project command directories.
+# Print commands and their descriptions from project command directories
 
 dirs=("$@")
 if [ "${#dirs[@]}" -eq 0 ]; then

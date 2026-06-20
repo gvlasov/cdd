@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Print cdd command subcommands.
+# Print cdd command subcommands
 set -euo pipefail
 
 source_path="${BASH_SOURCE[0]}"

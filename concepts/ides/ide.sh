@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Open a file in the user's editor.
+# Open a file in the user's editor
 set -euo pipefail
 
 if [ "$#" -ne 1 ]; then

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Print source files ordered by indexed byte size.
+# Print source files ordered by indexed byte size
 set -euo pipefail
 
 ignored_extensions=(
