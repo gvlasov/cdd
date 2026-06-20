@@ -1,1 +1,2 @@
-../processes/self-upgrade/self-upgrade
+#!/usr/bin/env bash
+cdd self-upgrade "$@"
