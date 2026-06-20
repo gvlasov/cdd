@@ -5,7 +5,7 @@ _cdd()
   COMPREPLY=()
   current="${COMP_WORDS[COMP_CWORD]}"
   previous="${COMP_WORDS[COMP_CWORD - 1]}"
-  commands="self-help help init print self-upgrade projects"
+  commands="self-help help init print self-upgrade projects source-code:print source-code:volume:analyze"
 
   for command_dir in ./commands ./concepts/cdd-cli-commands; do
     if [[ -d "$command_dir" ]]; then

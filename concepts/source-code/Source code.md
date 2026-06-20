@@ -16,3 +16,9 @@ Not only executable pieces qualify as source code. For example, documentation fo
 - Generated code
 - Binary artifacts
 - Source code of the dependency libraries
+- Whatever is .gitignore'd is not considered source code, e.g. dependencies and .env files
+
+## Source-code commands
+
+- `cdd source-code:print` prints the full indexed source tree
+- `cdd source-code:volume:analyze` ranks indexed source files by byte size

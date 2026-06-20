@@ -8,6 +8,7 @@ Directly relates to CDD:
 - "Attention span" is a substance, quantified in seconds or a number of simultaneously held attention targets
 - Time is a substance, quantified in seconds
 - Reality is a substance, quantified in the number of concepts and their reflections that take part in the reality, or in time spent running that reality
+- "Help" as a noun, quantified in characters or items or the amount of functionality covered
 
 General examples from life:
 
