@@ -24,6 +24,13 @@ For the entire software development history, project directory structures were c
 	- documentation changes in yet another directory.
 - Every tool is a CLI instrument that you would want to run as simply as possible, so their configuration files would naturally be placed at the root of a repository, dedicating the / level as something for tools, e.g. /package.json for `npm`. This is fine while your configs are simple, but when they start requiring additional files, you will want to group them together so they are not scattered all over the codebase. And also it would result in transient directories like `node_modules` to appear at the root of the project.
 
+Grouping files like that is great, because when a person or an LLM browses the codebase, the quesitons that arise are:
+- How does this thing work? (browse `/concepts/$thing`)
+- How do we use this tool? (browse `/platform/$tool`)
+- Who are the stakeholders and what are their expectations? (browse `/stakeholders/$group`)
+- What are we going to do next? (browse `/plans/{features,problems}`)
+- What do I as a developer can and need to do within this project (browse `/commands`)
+
 Inspiration is drawn from:
 - Feature-sliced directory structure
 - Wikipedia – organizing everything about a concept in one place, with links between concepts and no single definitional hierarchy of the concepts, there is no "root" concept on Wikipedia – only reflections of the real world.

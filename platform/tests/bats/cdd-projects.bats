@@ -92,7 +92,7 @@ load test_helper
   _cdd
   [ "$(printf '%s\n' "${COMPREPLY[@]}" | sort)" = $'file.md\nlocal-file.txt\nsub' ]
 
-  COMP_WORDS=(cdd ide fi)
+  COMP_WORDS=(cdd ide file)
   COMP_CWORD=2
   COMPREPLY=()
   _cdd
@@ -159,7 +159,7 @@ EOF
   assert_output_contains "local-file.txt"
   assert_output_contains "sub"
 
-  run env PROJECT_ROOT="$PROJECT_ROOT" fish --no-config -c 'source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd ide fi"'
+  run env PROJECT_ROOT="$PROJECT_ROOT" fish --no-config -c 'source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd ide file"'
 
   assert_success
   [ "$output" = "file.md" ]
