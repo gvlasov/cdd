@@ -16,10 +16,26 @@ source_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
 cdd_home="$(cd "$source_dir/../.." >/dev/null 2>&1 && pwd)"
 bin_dir="$HOME/.local/bin"
 completion_dir="$HOME/.local/share/bash-completion/completions"
+bashrc_dir="$HOME/.bashrc.d"
+bashrc_file="$HOME/.bashrc"
 
-mkdir -p "$bin_dir" "$completion_dir"
+mkdir -p "$bin_dir" "$completion_dir" "$bashrc_dir"
 ln -sfn "$cdd_home/platform/cdd/cdd" "$bin_dir/cdd"
 command -p install -m 0644 "$cdd_home/platform/bash/completions/cdd" "$completion_dir/cdd"
+command -p install -m 0644 "$cdd_home/platform/bash/cdd.bash" "$bashrc_dir/cdd.bash"
+
+mkdir -p "$(dirname "$bashrc_file")"
+touch "$bashrc_file"
+if ! grep -Fq '# CDD bash support' "$bashrc_file"; then
+  {
+    printf '\n# CDD bash support\n'
+    printf 'if [ -f "$HOME/.bashrc.d/cdd.bash" ]; then\n'
+    printf '  source "$HOME/.bashrc.d/cdd.bash"\n'
+    printf 'fi\n'
+    printf '# End CDD bash support\n'
+  } >> "$bashrc_file"
+fi
 
 printf 'Installed cdd to %s/cdd\n' "$bin_dir"
 printf 'Installed Bash completion to %s/cdd\n' "$completion_dir"
+printf 'Installed Bash shell support to %s/cdd.bash and %s\n' "$bashrc_dir" "$bashrc_file"

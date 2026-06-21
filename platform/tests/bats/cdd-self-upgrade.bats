@@ -6,6 +6,10 @@ assert_installed_support() {
   [ -L "$HOME/.local/bin/cdd" ]
   [ "$(readlink "$HOME/.local/bin/cdd")" = "$PROJECT_ROOT/platform/cdd/cdd" ]
   [ -f "$HOME/.local/share/bash-completion/completions/cdd" ]
+  [ -f "$HOME/.bashrc.d/cdd.bash" ]
+  [ -f "$HOME/.bashrc" ]
+  grep -q '# CDD bash support' "$HOME/.bashrc"
+  grep -q 'source "\$HOME/.bashrc.d/cdd.bash"' "$HOME/.bashrc"
   [ -f "$HOME/.config/fish/conf.d/cdd.fish" ]
   [ -f "$HOME/.config/fish/completions/cdd.fish" ]
   [ -f "$HOME/.codex/skills/concept_driven_design/SKILL.md" ]

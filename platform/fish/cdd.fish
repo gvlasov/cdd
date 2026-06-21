@@ -40,6 +40,18 @@ function help
     end
 end
 
+# Fish wrapper so `cdd projects cd <project>` can change the current shell directory.
+function cdd
+    if test (count $argv) -eq 3; and test "$argv[1]" = projects; and test "$argv[2]" = cd
+        set -l project_path (command cdd projects pwd "$argv[3]")
+        or return $status
+        cd "$project_path"
+        return $status
+    end
+
+    command cdd $argv
+end
+
 function cdd-cd
     cd (git rev-parse --show-toplevel)
 end

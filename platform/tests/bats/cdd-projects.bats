@@ -42,6 +42,34 @@ load test_helper
   [ "$output" = "$(realpath "$projects_root/problems")" ]
 }
 
+@test "bash cdd projects cd changes into the project directory" {
+  projects_root="$BATS_TEST_TMPDIR/projects"
+  mkdir -p "$projects_root/problems"
+
+  run env CDD_PROJECTS_DIRECTORY="$projects_root" PROJECT_ROOT="$PROJECT_ROOT" PATH="$PROJECT_ROOT/platform/cdd:$PATH" bash -c '
+    source "$PROJECT_ROOT/platform/bash/cdd.bash"
+    cdd projects cd problems
+    pwd -P
+  '
+
+  assert_success
+  [ "$output" = "$(realpath "$projects_root/problems")" ]
+}
+
+@test "fish cdd projects cd changes into the project directory" {
+  projects_root="$BATS_TEST_TMPDIR/projects"
+  mkdir -p "$projects_root/problems"
+
+  run env CDD_PROJECTS_DIRECTORY="$projects_root" PROJECT_ROOT="$PROJECT_ROOT" fish --no-config -c '
+    source "$PROJECT_ROOT/platform/fish/cdd.fish"
+    cdd projects cd problems
+    pwd -P
+  '
+
+  assert_success
+  [ "$output" = "$(realpath "$projects_root/problems")" ]
+}
+
 @test "cdd projects bash completion offers subcommands then project names" {
   projects_root="$BATS_TEST_TMPDIR/projects"
   mkdir -p "$projects_root/problems" "$projects_root/features"
