@@ -14,7 +14,28 @@ cdd print
 `./install` installs CDD support for the tools available on this machine.
 
 `cdd help` shows the project command language.
-`cdd print` prints the indexed source tree so you can read the whole project as context.
+`cdd print` prints the indexed source tree so LLM can read the whole project as context.
+
+## Inspiration
+
+CDD is a complete implementation of the idea of a [screaming architecture](https://blog.cleancoder.com/uncle-bob/2011/09/30/Screaming-Architecture.html) by Bob Martin.
+
+CDD also borrows from
+
+- [Ontology](https://en.wikipedia.org/wiki/Ontology) as a philosophical study of being
+- Wikipedia-style article organization - everything about a single concept lives in a single place
+- Feature-sliced architecture (pushing it to its logical end)
+
+## The Terms You Need
+
+CDD is built around a few words that explain where things belong:
+
+- `concept`: the thing you are building about, like orders, users, or invoices.
+- `reflection`: any file that expresses a concept, such as code, docs, tests, UI, or jobs.
+- `stakeholder`: a person or group who cares about the project, such as users, owners, developers, operators etc.
+- `process`: a state change over time that represents interoperation of multiple concepts, an example of such change would be refinement, settlement, import, export.
+- `platform`: tool and runtime support, such as bash, fish, Docker, or an IDE plugin.
+- `command`: an action developers run from localhost, such as `help`, `install`, `tests`, `ssh:prod`, `build`, `lint` or `deploy`.
 
 ## Why it exists
 
@@ -29,7 +50,6 @@ Most codebases scatter one feature across technical directories:
 That makes ordinary work expensive:
 
 - one change turns into directory hopping
-- onboarding requires learning framework storage rules
 - it is hard to answer "where does this file go?"
 - LLMs have to reconstruct context from fragments
 
@@ -61,13 +81,17 @@ This makes a project easier to:
 - hand to another developer
 - feed to an LLM as context
 
-## The basic model
+## The directory tree
 
-- `concepts` holds the problem-domain concepts and their reflections.
-- `stakeholders` holds people and groups who care about the project.
-- `processes` holds workflows and ordered changes over time.
-- `platform` holds tools, runtime support, and integration code.
-- `commands` holds project actions developers are meant to run.
+CDD dictates a specific directory tree:
+
+- `/concepts` holds the problem-domain concepts and their reflections.
+- `/platform` holds tools, runtime support, and integration code.
+- `/processes` holds workflows and ordered changes over time.
+- `/commands` holds project actions developers are meant to run.
+- `/stakeholders` holds people and groups who care about the project.
+- `/plans` holds problems to solve and features to add
+- `/project` holds things that relate to the project as a whole, such as project description and logo
 
 The filesystem stops being a tool dump and starts reading like an ontology of the project.
 
@@ -90,6 +114,3 @@ CDD is useful when you want:
 
 The repository is its own vocabulary. Browse `/concepts` to see the method explained through its own terms.
 
-## Inspiration
-
-CDD borrows from Wikipedia-style cross-linking, screaming architecture, and feature-sliced thinking, but pushes the boundary further toward meaning-first file placement.
