@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
+# Shorthand for cdd self-upgrade
 cdd self-upgrade "$@"
