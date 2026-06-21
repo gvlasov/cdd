@@ -8,14 +8,19 @@ The project should feel like it comes with its own command language.
 
 CDD projects have dedicated directory to store project-specific CLI commands: `/commands`.
 
+Command names and semantics that are universal for any project:
+
 - `help` lists available project commands
 - `up` starts the local project environment
 - `build` builds the project artifact
 - `lint` checks code style and static correctness
-- `test` runs tests
+- `tests` runs tests
+- `ssh:prod` runs ssh to production
+- `run` runs a command in a one-sho CLI container (`compose exec --rm`)
+- `prod:deploy` deploys to production
+- `prod:deploy:dirty` deploys current local git worktree to production (without unstaged and gitignored files )
 
-The exact implementation depends on the project, but the names should remain boring and predictable. A developer should be able to open a shell in the IDE and try `help`, `up`, `build`, `lint`, or `test` without first studying the repository.
-
+The exact implementation depends on the project, but the names should remain boring and predictable. A developer should be able to open a shell in the IDE and try `help`, `up`, `build`, `lint`, `tests` without first studying the repository.
 
 CDD also implements some reusable shell support:
 
@@ -25,19 +30,24 @@ CDD also implements some reusable shell support:
 
 ## `cdd` utility
 
-CDD provides a system-wide utility `cdd` that suggests [CDD CLI commands](/home/chriego/Projects/personal/cdd/concepts/cdd-cli-commands/README.md) for common project operations.
+CDD provides a system-wide utility `cdd` that suggests [commands for common project operations](/home/chriego/Projects/personal/cdd/concepts/cdd-cli-commands/README.md):
+
+- `cdd init` initializes a project
+- `cdd github:open` opens the project on github
+- `cdd projects` lists projects in the projects directory
+- `cdd projects cd spotify` cds to the directory of project named `spotify`
+
+etc.
 
 ## Project shell
 
-A project should expose its own command vocabulary through its [[Project shell|project shell]].
-
-CLI commands are extremely important for project usability. When a shell opens in an IDE or terminal inside a project, the project-specific commands should already be available. A developer should not have to remember long tool invocations, change directories, or know where platform configuration lives before they can work on the project.
+CLI commands are extremely important for project usability. When a shell opens in an IDE or terminal inside a project, the project-specific commands should already be available on a host where `cdd` is installed. A developer should not have to remember long tool invocations, change directories, or know where platform configuration lives before they can work on the project.
 
 Command names should describe the developer's goal, not the underlying tool. The point is not to hide tools, but to make the project operable through stable, memorable commands. Tools can change underneath while the project command vocabulary remains stable.
 
 ## Placement
 
-Commands must still be grouped by what they belong to.
+Command scripts, when stored in the project directory tree, must be grouped by what they belong to.
 
 If a CLI command is related to a domain concept, it makes sense to store the command code in that concept's directory.
 
@@ -51,10 +61,12 @@ If a CLI command is related to a tool, framework, project lifecycle, or runtime 
 
 ### Examples:
 
-- A Docker command belongs near Docker platform configuration.
-- An NPM command belongs near NPM platform configuration.
-- A framework wrapper belongs near that framework's platform integration.
-- A project lifecycle command such as `build`, `lint`, or `test` may belong near the tool that implements it.
+- A `compose.sh` Docker command belongs to `./platform/docker/compose.sh`, exposed as `./commands/compose`
+- An `npm.sh` command belongs to `./platform/npm/npm.sh`, exposed as `./commands/npm`
+- A framework wrapper belongs near that framework's platform integration, e.g. `./platform/laravel/artisan` exposed as  `./commands/artisan`
+- A project lifecycle command such as `build`, `lint`, or `tests` may belong near the tool that implements it, e.g. `./platform/phpunit/phpunit.sh` exposed as `./commands/tests`
+
+## Exposing commands
 
 `/commands` is the command entrypoint directory. It should usually contain symlinks to command files, not the command implementations themselves. This keeps commands immediately available in the shell while preserving CDD's core rule: group files by concept or by tool, not by technical role.
 
@@ -66,14 +78,13 @@ Examples:
 
 In this project, `commands/refine` is an example of a CLI command entrypoint. It links to `processes/refinement/refine`, because the command belongs to the refinement process rather than to the command entrypoint directory itself.
 
-## Exposing commands
-
 The usual pattern is to create the actual command script in a `/concept`/`/platform`/`/stakeholder`/`/process`/`/environment` directory and expose it with a symlink at `/commands`, with a name that does not necessarily mathc the original file. It is fine to give the original file an extension for additional context to indicate the language used in the script, but omit the extension for the exposed command for convenience.
 
 Examples:
 
 - `/environments/production/ssh.sh` -> `/commands/ssh:prod`
 - `/platform/npm/npm.sh` -> `/commands/npm`
+
 ## Kinds
 
 Commands accessible from the project shell include:
