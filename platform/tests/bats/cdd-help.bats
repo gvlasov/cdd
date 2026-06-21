@@ -8,6 +8,7 @@ load test_helper
   assert_success
 
   esc=$'\033'
+  assert_output_contains "install ${esc}[37m- install cdd support for the tools available on this machine${esc}[0m"
   assert_output_contains "ide ${esc}[37m- open a file in the user's editor${esc}[0m"
   assert_output_contains "plans ${esc}[37m- list stored plans in the repository${esc}[0m"
   assert_output_contains "plans:create:feature ${esc}[37m- create a feature plan and open it in the editor${esc}[0m"

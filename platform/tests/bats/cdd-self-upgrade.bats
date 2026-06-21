@@ -31,6 +31,21 @@ assert_installed_support() {
   grep -q '# concepts/agent-skills/AgentSkill.prompt.md' "$HOME/.claude/skills/concept_driven_design/references/concepts.md"
 }
 
+@test "commands/install uses installed tools in isolated HOME" {
+  setup_test_home
+
+  run "$PROJECT_ROOT/commands/install"
+
+  assert_success
+  assert_output_contains "Installing Bash support..."
+  assert_output_contains "Installing Fish support..."
+  assert_output_contains "Installing Codex skill..."
+  assert_output_contains "Installing Claude Code skill..."
+  assert_output_contains "Installing Codex project terminal launcher..."
+  assert_output_contains "Installed CDD support from $PROJECT_ROOT"
+  assert_installed_support
+}
+
 @test "cdd self-upgrade uses CDD_SOURCE_PATH and runs real installers in isolated HOME" {
   setup_test_home
 

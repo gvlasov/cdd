@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Install CDD support for the tools available on this machine.
+set -euo pipefail
+
+source_path="${BASH_SOURCE[0]}"
+while [ -L "$source_path" ]; do
+  source_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
+  source_path="$(readlink "$source_path")"
+  case "$source_path" in
+    /*) ;;
+    *) source_path="$source_dir/$source_path" ;;
+  esac
+done
+
+cdd_home="$(cd -P "$(dirname "$source_path")/.." >/dev/null 2>&1 && pwd)"
+
+run_installer() {
+  local tool_name="$1"
+  local command_name="$2"
+  local installer="$3"
+
+  if command -v "$command_name" >/dev/null 2>&1; then
+    printf 'Installing %s...\n' "$tool_name"
+    "$installer"
+  else
+    printf 'Skipping %s; %s not found.\n' "$tool_name" "$command_name"
+  fi
+}
+
+run_installer "Bash support" bash "$cdd_home/commands/bash:install"
+run_installer "Fish support" fish "$cdd_home/commands/fish:install"
+run_installer "Codex skill" codex "$cdd_home/commands/codex:install"
+run_installer "Claude Code skill" claude "$cdd_home/commands/claude:install"
+run_installer "Codex project terminal launcher" tmuxinator "$cdd_home/commands/codex:project-terminal:install"
+
+printf 'Installed CDD support from %s\n' "$cdd_home"

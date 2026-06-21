@@ -36,24 +36,12 @@ if ! cdd_home="$(cd "$cdd_source_path" >/dev/null 2>&1 && pwd)"; then
   exit 1
 fi
 
-run_installer() {
-  local label="$1"
-  local installer="$2"
-
-  printf 'Installing %s...\n' "$label"
-  "$installer"
-}
-
 if [ "$skip_tests" != "1" ]; then
   printf 'Running CDD tests...\n'
   "$cdd_home/platform/cdd/cdd" tests
   printf '\033[32m✓\033[0m All tests pass fine\n'
 fi
 
-run_installer "Bash support" "$cdd_home/platform/bash/install"
-run_installer "Fish support" "$cdd_home/platform/fish/install"
-run_installer "Codex skill" "$cdd_home/concepts/agent-skills/install-to-codex"
-run_installer "Claude Code skill" "$cdd_home/concepts/agent-skills/install-to-claude"
-run_installer "Codex project terminal launcher" "$cdd_home/platform/terminal/install"
+"$cdd_home/commands/install"
 
 printf 'Upgraded CDD support from %s\n' "$cdd_home"

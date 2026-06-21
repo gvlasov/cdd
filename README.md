@@ -1,61 +1,95 @@
 # Concept-Driven Design
 
-**A code organization methodology that puts developer experience at the heart of any software project.**
+CDD is a way to organize software so developers can find the right code by meaning, not by framework trivia.
 
-[Read the developer's introduction to CDD.](https://gvlasov.github.io/concept-driven-design/)
+```bash
+git clone https://github.com/gvlasov/cdd.git
+cd cdd
+./install
 
----
-
-Most codebases are arcane spellbooks — files scattered by the tools that consume them, not by the ideas they express. CDD turns a project into an **ordered encyclopedia**: every file has a principled place, every concept has a home.
-
-## Core idea
-
-CDD organises source code around the **concepts of your problem domain**, not around frameworks or tools.
-
+cdd help
+cdd print
 ```
-/concepts/orders/          ← everything about orders lives here
+
+`./install` installs CDD support for the tools available on this machine.
+
+`cdd help` shows the project command language.
+`cdd print` prints the indexed source tree so you can read the whole project as context.
+
+## Why it exists
+
+Most codebases scatter one feature across technical directories:
+
+- model in one place
+- tests in another
+- UI in another
+- docs somewhere else
+- runtime wiring split again
+
+That makes ordinary work expensive:
+
+- one change turns into directory hopping
+- onboarding requires learning framework storage rules
+- it is hard to answer "where does this file go?"
+- LLMs have to reconstruct context from fragments
+
+CDD reduces that friction by grouping files by the thing they mean.
+
+## What CDD gives you
+
+Open the concept, stakeholder, or process that matters and the whole picture is nearby:
+
+```text
+/concepts/orders/
   Order.php
   Order.vue
   OrderRepository.php
-  SettleOrders.php          ← even the job that settles them
+  SettleOrders.php
   README.md
 
-/platform/                 ← framework wiring, docker, build tools
-/stakeholders/             ← people and groups concerned with the project
-/processes/                ← ordered changes and workflows over time
-/commands/                 ← project commands for developers
+/stakeholders/
+/processes/
+/platform/
+/commands/
 ```
 
-Three axioms underpin this:
+This makes a project easier to:
 
-1. Software exists to reflect some reality to a user.
-2. Any reality consists of **concepts**.
-3. Every software system consists of concept **reflections**, **stakeholders**, **processes**, a software **platform**, and a command **shell**.
+- navigate
+- explain
+- extend
+- hand to another developer
+- feed to an LLM as context
 
-## What you get
+## The basic model
 
-| Problem | CDD answer |
-|---|---|
-| Shotgun surgery across `/src`, `/tests`, `/resources` | One concept directory — all its reflections together |
-| "Where does this file go?" | If it reflects a concept, it goes in that concept's directory |
-| Onboarding friction | Directory structure reads like a glossary of the domain |
-| LLM-assisted development drift | Specifications and code share the same vocabulary; outputs are more deterministic |
+- `concepts` holds the problem-domain concepts and their reflections.
+- `stakeholders` holds people and groups who care about the project.
+- `processes` holds workflows and ordered changes over time.
+- `platform` holds tools, runtime support, and integration code.
+- `commands` holds project actions developers are meant to run.
 
-## Who it's for
+The filesystem stops being a tool dump and starts reading like an ontology of the project.
 
-- Developers who don't believe pragmatism requires messiness
-- Solo developers or small teams who want a strong, flexible base
-- Anyone with a compulsion to keep things in their place
+## Good fits
+
+CDD is useful when you want:
+
+- a stable place for every feature-related file
+- a command vocabulary that matches what developers actually do
+- better context for LLM-assisted development
+- less cleanup after a feature crosses frontend, backend, docs, and automation
 
 ## Honest trade-offs
 
-- **No turnkey setup.** You'll need to adapt CDD to your stack yourself.
-- **Legacy migration is expensive.** Retrofitting an existing codebase is rarely worth the time.
+- It is not a framework with a turnkey app scaffold.
+- It works best when you are willing to structure the project around meaning.
+- Retrofitting an already messy repository can take real effort.
 
-## Concepts in this repository
+## Browse the concepts
 
-Browse `/concepts` to explore the full vocabulary of the methodology — each concept has its own directory with a definition and examples.
+The repository is its own vocabulary. Browse `/concepts` to see the method explained through its own terms.
 
----
+## Inspiration
 
-*Inspired by Wikipedia's flat cross-linked organisation, Bob Martin's screaming architecture, and feature-sliced design.*
+CDD borrows from Wikipedia-style cross-linking, screaming architecture, and feature-sliced thinking, but pushes the boundary further toward meaning-first file placement.
