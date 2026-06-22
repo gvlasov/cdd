@@ -17,6 +17,7 @@ Not only executable pieces qualify as source code. For example, documentation fo
 - Binary artifacts
 - Source code of the dependency libraries
 - Whatever is .gitignore'd is not considered source code, e.g. dependencies and .env files
+- Lock and manifest files like `package-lock.json` and `composer.json`
 
 ## Source-code commands
 

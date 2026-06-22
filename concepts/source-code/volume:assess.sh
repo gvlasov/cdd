@@ -96,6 +96,25 @@ ignored_extensions=(
   zip
 )
 
+ignored_filenames=(
+  composer.json
+  package-lock.json
+)
+
+is_ignored_filename() {
+  local path="$1"
+  local basename ignored_filename
+
+  basename="${path##*/}"
+  for ignored_filename in "${ignored_filenames[@]}"; do
+    if [ "$basename" = "$ignored_filename" ]; then
+      return 0
+    fi
+  done
+
+  return 1
+}
+
 declare -A dir_bytes=()
 declare -A node_bytes=()
 declare -A node_kind=()
@@ -248,6 +267,10 @@ build_tree() {
     fi
 
     if is_ignored_extension "$path"; then
+      continue
+    fi
+
+    if is_ignored_filename "$path"; then
       continue
     fi
 

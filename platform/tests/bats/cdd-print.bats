@@ -10,6 +10,8 @@ load test_helper
 
   printf 'indexed text\n' > app.txt
   printf '<svg>indexed svg</svg>\n' > vector.svg
+  printf '{"name":"app"}\n' > package-lock.json
+  printf '{"name":"app"}\n' > composer.json
   printf 'linked text\n' > linked.txt
   ln -s linked.txt link-to-text
   printf 'subset text\n' > subset/app.txt
