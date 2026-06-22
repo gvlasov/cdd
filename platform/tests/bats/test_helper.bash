@@ -9,6 +9,12 @@ setup_test_home() {
   git config --global --add safe.directory "$PROJECT_ROOT"
 }
 
+setup_file() {
+  export CDD_SKILL_INSTALL_CACHE_DIR="/tmp/cdd-skill-install-cache-${USER:-$(id -u)}"
+  rm -rf "$CDD_SKILL_INSTALL_CACHE_DIR"
+  mkdir -p "$CDD_SKILL_INSTALL_CACHE_DIR"
+}
+
 setup() {
   export CDD_TEST_STARTED_AT_MS="$(date +%s%3N 2>/dev/null || date +%s)"
 }

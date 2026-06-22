@@ -11,13 +11,11 @@ while [ -L "$source_path" ]; do
     *) source_path="$source_dir/$source_path" ;;
   esac
 done
-cd "$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
+concept_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
 
-# Create skills directory if it doesn't exist
-mkdir -p ~/.claude/skills/concept_driven_design/references
+skill_dir="$HOME/.claude/skills/concept_driven_design"
+reference_dir="$skill_dir/references"
 
-# Generate and install the skill
-./build > ~/.claude/skills/concept_driven_design/SKILL.md
-./build-concepts-reference > ~/.claude/skills/concept_driven_design/references/concepts.md
+"$concept_dir/install-generated.sh" "$skill_dir" "$reference_dir"
 
 echo "Installed concept-driven-design skill to ~/.claude/skills/concept_driven_design/SKILL.md"
