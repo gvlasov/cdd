@@ -95,3 +95,19 @@ Commands accessible from the project shell include:
 - Operating system commands used directly when no project-specific wrapper is needed: `ls`, `cat`, `grep`, `systemctl`
 
 CDD organizes project CLI commands into a single system so a developer can operate the project from one shell.
+
+## Naming commands
+
+There are a few principles for naming new commands
+
+1. Commands are named with the names of concepts, processes, tools, verbs, project lifecycle phases
+2. If it is a very commonly used command, then a single verb or the name of a lifecycle phase is enough
+Examples: `build`, `tests`, `up`, `lint`
+3. Commands use `:` as namespacing separator right in the filenames, e.g. `ssh:prod`
+4. If the command is related to a concept in the problem domain, it should start with that concept's canonical name, e.g. `orders:create`, `users:delete`. Any level of nesting is allowed, e.g. `orders:create:from-template`.
+5. If the command is related to a tool, it should start with that tool name
+Examples:
+    - `compose` as a shorthand for `docker compose -f $service1 -f $service2 -f $service3`
+    - `phpunit` as a shorthand for `docker compose exec app vendor/bin/phpunit "$@"`
+6. If a command runs something in another environment while being called in developer's local development envionrment, it can and must start with the target environment name.  Example: `prod:compose`  for production `docker compose` proxy, `ci-cd:run` to connect to CI/CD  server and run the pipeline.
+7. `cdd` subcommands use the same naming principles
