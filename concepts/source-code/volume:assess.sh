@@ -464,6 +464,32 @@ read_key() {
   printf '%s' "$key"
 }
 
+handle_key() {
+  local key="$1"
+
+  case "$key" in
+    q|$'\003')
+      return 1
+      ;;
+    j|$'\016')
+      move_down
+      ;;
+    k|$'\020')
+      move_up
+      ;;
+    l|$'\n'|$'\r')
+      open_selected
+      ;;
+    h|$'\033')
+      if [ "${#history[@]}" -gt 0 ]; then
+        go_back
+      fi
+      ;;
+  esac
+
+  return 0
+}
+
 cleanup_done=
 
 cleanup() {
@@ -477,67 +503,57 @@ cleanup() {
   printf '\033[0m'
 }
 
-if [ "$dump_mode" -eq 0 ] && { [ ! -t 0 ] || [ ! -t 1 ]; }; then
-  printf 'cdd: source-code:volume:assess requires a terminal\n' >&2
-  exit 1
-fi
-
-if [ "$dump_mode" -eq 0 ]; then
-  printf 'Assessing...\n'
-fi
-
-git_root="$(git rev-parse --show-toplevel)"
-cd "$git_root"
-
-build_tree "${build_tree_args[@]}"
-
-current=""
-history=()
-selection_history=()
-scroll_history=()
-selected=0
-
-if [ "$dump_mode" -eq 1 ]; then
-  current="$dump_path"
-  render
-  exit 0
-fi
-
-old_stty_state="$(stty -g)"
-viewport_height="$(tput lines 2>/dev/null || printf 24)"
-viewport_height=$((viewport_height - 3))
-if [ "$viewport_height" -lt 1 ]; then
-  viewport_height=1
-fi
-trap cleanup EXIT
-trap 'cleanup; exit 130' INT
-trap 'cleanup; exit 143' TERM
-stty -echo -icanon min 1 time 0
-printf '\033[?25l'
-
-while true; do
-  render
-  if ! key="$(read_key)"; then
-    break
+main() {
+  if [ "$dump_mode" -eq 0 ] && { [ ! -t 0 ] || [ ! -t 1 ]; }; then
+    printf 'cdd: source-code:volume:assess requires a terminal\n' >&2
+    exit 1
   fi
 
-  case "$key" in
-    q|$'\003')
+  if [ "$dump_mode" -eq 0 ]; then
+    printf 'Assessing...\n'
+  fi
+
+  git_root="$(git rev-parse --show-toplevel)"
+  cd "$git_root"
+
+  build_tree "${build_tree_args[@]}"
+
+  current=""
+  history=()
+  selection_history=()
+  scroll_history=()
+  selected=0
+
+  if [ "$dump_mode" -eq 1 ]; then
+    current="$dump_path"
+    render
+    return 0
+  fi
+
+  old_stty_state="$(stty -g)"
+  viewport_height="$(tput lines 2>/dev/null || printf 24)"
+  viewport_height=$((viewport_height - 3))
+  if [ "$viewport_height" -lt 1 ]; then
+    viewport_height=1
+  fi
+  trap cleanup EXIT
+  trap 'cleanup; exit 130' INT
+  trap 'cleanup; exit 143' TERM
+  stty -echo -icanon min 1 time 0
+  printf '\033[?25l'
+
+  while true; do
+    render
+    if ! key="$(read_key)"; then
       break
-      ;;
-    j|$'\016')
-      move_down
-      ;;
-    k|$'\020')
-      move_up
-      ;;
-    l|$'\n'|$'\r')
-      open_selected
-      ;;
-    h|$'\033')
-      if ! go_back; then
-        break
-      fi
-      ;;
-  esac
-done
+    fi
+
+    if ! handle_key "$key"; then
+      break
+    fi
+  done
+}
+
+if [ "${BASH_SOURCE[0]}" = "$0" ]; then
+  main "$@"
+fi

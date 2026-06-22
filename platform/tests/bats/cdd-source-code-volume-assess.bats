@@ -76,3 +76,35 @@ strip_ansi() {
   assert_output_contains "Current directory: ./solo"
   assert_output_contains "No source-code items here."
 }
+
+@test "cdd source-code:volume:assess ignores back at the top level" {
+  project="$BATS_TEST_TMPDIR/project"
+  mkdir -p "$project/alpha"
+  cd "$project"
+  git init -q
+
+  printf 'nested text\n' > alpha/nested.txt
+  git add .
+
+  run bash -lc "cd '$project' && source '$PROJECT_ROOT/concepts/source-code/volume:assess.sh'; build_tree; current=''; history=(); selection_history=(); scroll_history=(); selected=0; handle_key h; [ -z \"\$current\" ] && [ \"\${#history[@]}\" -eq 0 ]"
+
+  assert_success
+
+  run bash -lc "cd '$project' && source '$PROJECT_ROOT/concepts/source-code/volume:assess.sh'; build_tree; current=''; history=(); selection_history=(); scroll_history=(); selected=0; handle_key \$'\033'; [ -z \"\$current\" ] && [ \"\${#history[@]}\" -eq 0 ]"
+
+  assert_success
+}
+
+@test "cdd source-code:volume:assess opens a child with enter" {
+  project="$BATS_TEST_TMPDIR/project"
+  mkdir -p "$project/alpha"
+  cd "$project"
+  git init -q
+
+  printf 'nested text\n' > alpha/nested.txt
+  git add .
+
+  run bash -lc "cd '$project' && source '$PROJECT_ROOT/concepts/source-code/volume:assess.sh'; build_tree; current=''; history=(); selection_history=(); scroll_history=(); selected=0; viewport_height=10; render >/dev/null; handle_key \$'\n'; [ \"\$current\" = alpha ]"
+
+  assert_success
+}
