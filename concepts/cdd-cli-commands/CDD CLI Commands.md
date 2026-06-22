@@ -16,8 +16,11 @@ CDD keeps these commands together so the entrypoint can discover, print, and dis
 - `source-code:volume:assess` opens a terminal browser that ranks source-code items by aggregate volume
 - `skill:print` prints the freshest installed CDD skill
 - `plans` lists stored plans in the repository
+- `problem` is shorthand for creating a problem plan
+- `feature` is shorthand for creating a feature plan
 - `plans:create:feature` creates a feature plan
 - `plans:create:problem` creates a problem plan
+- `plans:problems:create` creates a problem plan
 - `plans:finish` finishes an active plan
 - `projects` lists or resolves projects from the projects directory
 - `self-help` lists the `cdd` commands

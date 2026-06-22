@@ -9,6 +9,21 @@ setup_test_home() {
   git config --global --add safe.directory "$PROJECT_ROOT"
 }
 
+setup_fake_optional_tools() {
+  fake_bin="$BATS_TEST_TMPDIR/bin"
+  mkdir -p "$fake_bin"
+
+  for tool in codex claude tmuxinator; do
+    cat > "$fake_bin/$tool" <<EOF
+#!/usr/bin/env bash
+exit 0
+EOF
+    chmod +x "$fake_bin/$tool"
+  done
+
+  export PATH="$fake_bin:$PATH"
+}
+
 assert_success() {
   if [ "$status" -ne 0 ]; then
     printf 'expected success, got status %s\n' "$status" >&2

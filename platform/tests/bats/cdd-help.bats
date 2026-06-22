@@ -8,7 +8,7 @@ load test_helper
   assert_success
 
   esc=$'\033'
-  assert_output_contains "install ${esc}[37m- install cdd support for the tools available on this machine${esc}[0m"
+  assert_output_contains "install ${esc}[37m- install cdd support for the tools available on this machine.${esc}[0m"
   assert_output_contains "ide ${esc}[37m- open a file in the user's editor${esc}[0m"
   assert_output_contains "plans ${esc}[37m- list stored plans in the repository${esc}[0m"
   assert_output_contains "plans:create:feature ${esc}[37m- create a feature plan and open it in the editor${esc}[0m"
@@ -41,8 +41,11 @@ load test_helper
   assert_output_contains "cdd ide ${esc}[37m- open a file in the user's editor${esc}[0m"
   assert_output_contains "cdd ide:which ${esc}[37m- print the IDE command CDD will use${esc}[0m"
   assert_output_contains "cdd plans ${esc}[37m- list stored plans in the repository${esc}[0m"
+  assert_output_contains "cdd problem ${esc}[37m- shorthand for cdd plans:problems:create${esc}[0m"
+  assert_output_contains "cdd feature ${esc}[37m- shorthand for cdd plans:create:feature${esc}[0m"
   assert_output_contains "cdd plans:create:feature ${esc}[37m- create a feature plan and open it in the editor${esc}[0m"
   assert_output_contains "cdd plans:create:problem ${esc}[37m- create a problem plan and open it in the editor${esc}[0m"
+  assert_output_contains "cdd plans:problems:create ${esc}[37m- create a problem plan and open it in the editor${esc}[0m"
   assert_output_contains "cdd plans:finish ${esc}[37m- finish an active plan by moving it to the finished plans directory${esc}[0m"
   assert_output_contains "cdd source-code:print ${esc}[37m- print indexed project code to stdout${esc}[0m"
   assert_output_contains "cdd source-code:volume:analyze ${esc}[37m- print source files ordered by indexed byte size${esc}[0m"

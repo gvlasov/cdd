@@ -33,6 +33,7 @@ assert_installed_support() {
 
 @test "commands/install uses installed tools in isolated HOME" {
   setup_test_home
+  setup_fake_optional_tools
 
   run "$PROJECT_ROOT/commands/install"
 
@@ -48,6 +49,7 @@ assert_installed_support() {
 
 @test "cdd self-upgrade uses CDD_SOURCE_PATH and runs real installers in isolated HOME" {
   setup_test_home
+  setup_fake_optional_tools
 
   run env CDD_SELF_UPGRADE_SKIP_TESTS=1 CDD_SOURCE_PATH="$PROJECT_ROOT" "$CDD" self-upgrade
 
@@ -63,6 +65,7 @@ assert_installed_support() {
 
 @test "cdd self-upgrade skips tests with --skip-tests and -S" {
   setup_test_home
+  setup_fake_optional_tools
 
   for flag in --skip-tests -S; do
     run env CDD_SOURCE_PATH="$PROJECT_ROOT" "$CDD" self-upgrade "$flag"
@@ -80,6 +83,7 @@ assert_installed_support() {
 
 @test "cdd self-upgrade defaults to HOME Projects personal cdd source path" {
   setup_test_home
+  setup_fake_optional_tools
   mkdir -p "$HOME/Projects/personal"
   ln -s "$PROJECT_ROOT" "$HOME/Projects/personal/cdd"
 
@@ -91,6 +95,7 @@ assert_installed_support() {
 
 @test "cdd self-upgrade runs tests before installing" {
   setup_test_home
+  setup_fake_optional_tools
   fake_bin="$BATS_TEST_TMPDIR/bin"
   docker_log="$BATS_TEST_TMPDIR/docker.log"
   mkdir -p "$fake_bin"
@@ -101,7 +106,7 @@ exit 0
 EOF
   chmod +x "$fake_bin/docker"
 
-  run env PATH="$fake_bin:$PATH" CDD_SOURCE_PATH="$PROJECT_ROOT" "$CDD" self-upgrade
+  run env PATH="$PATH" CDD_SOURCE_PATH="$PROJECT_ROOT" "$CDD" self-upgrade
 
   assert_success
   assert_output_contains "Running CDD tests..."
