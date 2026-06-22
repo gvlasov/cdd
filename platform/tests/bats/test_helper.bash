@@ -9,6 +9,22 @@ setup_test_home() {
   git config --global --add safe.directory "$PROJECT_ROOT"
 }
 
+setup() {
+  export CDD_TEST_STARTED_AT_MS="$(date +%s%3N 2>/dev/null || date +%s)"
+}
+
+teardown() {
+  local ended_at_ms elapsed_ms escaped_started_at_ms
+  escaped_started_at_ms="${CDD_TEST_STARTED_AT_MS:-}"
+  [ -n "$escaped_started_at_ms" ] || return 0
+
+  ended_at_ms="$(date +%s%3N 2>/dev/null || date +%s)"
+  if [[ "$escaped_started_at_ms" =~ ^[0-9]+$ && "$ended_at_ms" =~ ^[0-9]+$ ]]; then
+    elapsed_ms="$((ended_at_ms - escaped_started_at_ms))"
+    printf '\033[37m[%s]\033[0m %s\n' "${elapsed_ms}ms" "${BATS_TEST_DESCRIPTION}" >&3
+  fi
+}
+
 setup_fake_optional_tools() {
   fake_bin="$BATS_TEST_TMPDIR/bin"
   mkdir -p "$fake_bin"
