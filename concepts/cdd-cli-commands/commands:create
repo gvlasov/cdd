@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Create a project command and open it in the editor
+set -euo pipefail
+
+if [ "$#" -ne 1 ]; then
+  printf 'usage: cdd commands:create <command-name>\n' >&2
+  exit 2
+fi
+
+command_name="$1"
+command_path="./commands/$command_name"
+command_dir="$(dirname "$command_path")"
+
+if [ -e "$command_path" ]; then
+  printf 'cdd commands:create: command already exists: %s\n' "$command_path" >&2
+  exit 1
+fi
+
+mkdir -p "$command_dir"
+cat > "$command_path" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+EOF
+chmod +x "$command_path"
+
+source_path="${BASH_SOURCE[0]}"
+while [ -L "$source_path" ]; do
+  source_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
+  source_path="$(readlink "$source_path")"
+  case "$source_path" in
+    /*) ;;
+    *) source_path="$source_dir/$source_path" ;;
+  esac
+done
+
+cdd_home="$(cd -P "$(dirname "$source_path")/../.." >/dev/null 2>&1 && pwd)"
+exec "$cdd_home/platform/cdd/cdd" ide:open "$command_path"

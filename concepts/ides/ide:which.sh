@@ -27,6 +27,6 @@ if command -v vi >/dev/null 2>&1; then
   exit 0
 fi
 
-printf 'cdd ide: editor is not set up.\n' >&2
+printf 'cdd ide:open: editor is not set up.\n' >&2
 printf 'Set EDITOR or install vim/vi, then run: %s\n' "${EDITOR:-\$EDITOR}" >&2
 exit 1

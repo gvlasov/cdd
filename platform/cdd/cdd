@@ -36,6 +36,10 @@ case "$command" in
     shift
     exec "$command_dir/source-code:print" "$@"
     ;;
+  commands:create)
+    shift
+    exec "$command_dir/commands:create" "$@"
+    ;;
   projects)
     shift
     exec "$command_dir/projects" "$@"

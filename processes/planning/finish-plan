@@ -46,4 +46,4 @@ if [ -e "$destination_plan" ]; then
 fi
 
 mv "$source_plan" "$destination_plan"
-exec "$cdd_home/concepts/cdd-cli-commands/ide" "$destination_plan"
+exec "$cdd_home/concepts/cdd-cli-commands/ide:open" "$destination_plan"

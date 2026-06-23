@@ -27,7 +27,7 @@ _cdd()
   fi
 
   case "$previous" in
-    ide|ide:which)
+    ide:open|ide:which)
       COMPREPLY=( $(compgen -f -- "$current") )
       compopt -o filenames 2>/dev/null || true
       return 0

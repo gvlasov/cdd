@@ -106,7 +106,7 @@ load test_helper
   [ "$output" = "problems" ]
 }
 
-@test "cdd ide bash completion offers files from current and relative directories" {
+@test "cdd ide:open bash completion offers files from current and relative directories" {
   project="$BATS_TEST_TMPDIR/project"
   mkdir -p "$project/sub"
   touch "$project/file.md" "$project/local-file.txt" "$project/sub/nested-file.txt"
@@ -114,32 +114,32 @@ load test_helper
   cd "$project"
   source "$PROJECT_ROOT/platform/bash/completions/cdd"
 
-  COMP_WORDS=(cdd ide "")
+  COMP_WORDS=(cdd ide:open "")
   COMP_CWORD=2
   COMPREPLY=()
   _cdd
   [ "$(printf '%s\n' "${COMPREPLY[@]}" | sort)" = $'file.md\nlocal-file.txt\nsub' ]
 
-  COMP_WORDS=(cdd ide file)
+  COMP_WORDS=(cdd ide:open file)
   COMP_CWORD=2
   COMPREPLY=()
   _cdd
   [ "$(printf '%s\n' "${COMPREPLY[@]}" | sort)" = "file.md" ]
 
-  COMP_WORDS=(cdd ide sub/)
+  COMP_WORDS=(cdd ide:open sub/)
   COMP_CWORD=2
   COMPREPLY=()
   _cdd
   [ "$(printf '%s\n' "${COMPREPLY[@]}" | sort)" = "sub/nested-file.txt" ]
 
-  COMP_WORDS=(cdd ide ../p)
+  COMP_WORDS=(cdd ide:open ../p)
   COMP_CWORD=2
   COMPREPLY=()
   _cdd
   [ "$(printf '%s\n' "${COMPREPLY[@]}" | sort)" = "../project" ]
 }
 
-@test "cdd ide uses CDD_IDE_CMD before editor discovery" {
+@test "cdd ide:open uses CDD_IDE_CMD before editor discovery" {
   project="$BATS_TEST_TMPDIR/project"
   mkdir -p "$project"
   touch "$project/file.txt"
@@ -152,7 +152,7 @@ printf '%s\n' "$@" > "$BATS_TEST_TMPDIR/ide-args.txt"
 EOF
   chmod +x "$fake_bin/ide-cmd"
 
-  run env BATS_TEST_TMPDIR="$BATS_TEST_TMPDIR" PATH="$fake_bin:$PATH" CDD_IDE_CMD="$fake_bin/ide-cmd" "$CDD" ide "$project/file.txt"
+  run env BATS_TEST_TMPDIR="$BATS_TEST_TMPDIR" PATH="$fake_bin:$PATH" CDD_IDE_CMD="$fake_bin/ide-cmd" "$CDD" ide:open "$project/file.txt"
 
   assert_success
   [ "$(<"$BATS_TEST_TMPDIR/ide-args.txt")" = "$(realpath "$project/file.txt")" ]
@@ -173,7 +173,7 @@ EOF
   [ "$output" = "$fake_bin/ide-cmd" ]
 }
 
-@test "cdd ide fish completion offers files from current and relative directories" {
+@test "cdd ide:open fish completion offers files from current and relative directories" {
   root="$BATS_TEST_TMPDIR/root"
   project="$root/project"
   mkdir -p "$project/sub"
@@ -181,24 +181,41 @@ EOF
 
   cd "$project"
 
-  run env PROJECT_ROOT="$PROJECT_ROOT" fish --no-config -c 'source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd ide "'
+  run env PROJECT_ROOT="$PROJECT_ROOT" fish --no-config -c 'source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd ide:open "'
 
   assert_success
   assert_output_contains "local-file.txt"
   assert_output_contains "sub"
 
-  run env PROJECT_ROOT="$PROJECT_ROOT" fish --no-config -c 'source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd ide file"'
+  run env PROJECT_ROOT="$PROJECT_ROOT" fish --no-config -c 'source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd ide:open file"'
 
   assert_success
   [ "$output" = "file.md" ]
 
-  run env PROJECT_ROOT="$PROJECT_ROOT" fish --no-config -c 'source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd ide sub/n"'
+  run env PROJECT_ROOT="$PROJECT_ROOT" fish --no-config -c 'source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd ide:open sub/n"'
 
   assert_success
   assert_output_contains "sub/nested-file.txt"
 
-  run env PROJECT_ROOT="$PROJECT_ROOT" BATS_TEST_TMPDIR="$BATS_TEST_TMPDIR" fish --no-config -c 'cd "$BATS_TEST_TMPDIR/root/project"; source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd ide ../p"'
+  run env PROJECT_ROOT="$PROJECT_ROOT" BATS_TEST_TMPDIR="$BATS_TEST_TMPDIR" fish --no-config -c 'cd "$BATS_TEST_TMPDIR/root/project"; source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd ide:open ../p"'
 
   assert_success
-  [ "$output" = "../project" ]
+  [ "$output" = "../project/" ]
+}
+
+@test "cdd ide:open fish completion uses fish path completion conventions" {
+  project="$BATS_TEST_TMPDIR/project"
+  mkdir -p "$project/home" "$project/tilde"
+  touch "$project/home/file.txt" "$project/tilde/file.txt"
+
+  run env PROJECT_ROOT="$PROJECT_ROOT" HOME="$project/home" fish --no-config -c 'cd "$argv[1]"; source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd ide:open ~/"' "$project"
+
+  assert_success
+  assert_output_contains "~/file.txt"
+
+  run env PROJECT_ROOT="$PROJECT_ROOT" fish --no-config -c 'cd "$argv[1]"; source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd ide:open /hom"' "$project"
+
+  assert_success
+  assert_output_contains "/home/"
+  ! printf '%s\n' "$output" | grep -q '/home $'
 }
