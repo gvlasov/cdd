@@ -16,6 +16,7 @@ complete -c cdd -n '__fish_use_subcommand' -a '(__cdd_top_level_commands)' -d 'R
 complete -c cdd -n '__fish_seen_subcommand_from init' -a '(__fish_complete_directories)'
 complete -c cdd -f -n '__cdd_ide_should_complete_paths' -a '(__fish_complete_path (commandline -ct))'
 complete -c cdd -f -n '__cdd_source_code_should_complete_paths' -a '(__cdd_source_code_paths)'
+complete -c cdd -n '__fish_seen_subcommand_from feature problem' -a '(__cdd_plans_open_complete (commandline -opc)[2] (commandline -ct))'
 complete -c cdd -n '__fish_seen_subcommand_from plans:finish' -a '(__cdd_plans_finish_complete (commandline -ct))'
 complete -c cdd -f -n '__cdd_projects_should_complete_subcommands' -a '(__cdd_projects_subcommands)'
 complete -c cdd -f -n '__cdd_projects_should_complete_paths' -a '(__cdd_projects_paths)'
@@ -23,30 +24,42 @@ complete -c cdd -f -n '__cdd_projects_should_complete_paths' -a '(__cdd_projects
 function __cdd_plans_finish_complete
     set -l current $argv[1]
     set -l plan_root plans
+    set -l prefix "$plan_root/$current"
+    set -l completions
 
     if test -z "$current"; and status --is-interactive
         set current (commandline -ct)
+        set prefix "$plan_root/$current"
     end
 
-    if string match -q -- "*/*" "$current"
-        set -l parts (string split -m 1 / -- "$current")
-        set -l category "$parts[1]"
-        set -l prefix "$plan_root/$category/"
+    for entry in (__fish_complete_path "$prefix")
+        set -l path (string split -m 1 \t -- "$entry")[1]
+        set path (string replace -r "^$plan_root/" "" -- "$path")
+        echo "$path"
+    end
+end
 
-        for path in $prefix*
-            test -e "$path"; or continue
-            set -l name (string replace -r "^$prefix" "" -- "$path")
-            if test -d "$path"
-                echo "$name/"
-            else
-                echo "$name"
-            end
+function __cdd_plans_open_complete
+    set -l kind $argv[1]
+    set -l current $argv[2]
+
+    if test (count $argv) -lt 2
+        set -l tokens (commandline -opc)
+        if test (count $tokens) -lt 2
+            return 1
         end
-    else
-        for category in problems features
-            test -d "$plan_root/$category"; or continue
-            echo "$category/"
-        end
+
+        set kind $tokens[2]
+        set current (commandline -ct)
+    end
+
+    set -l plan_root (string join '' plans/ $kind s)
+    set -l prefix "$plan_root/$current"
+
+    for entry in (__fish_complete_path "$prefix")
+        set -l path (string split -m 1 \t -- "$entry")[1]
+        set path (string replace -r "^$plan_root/" "" -- "$path")
+        echo "$path"
     end
 end
 

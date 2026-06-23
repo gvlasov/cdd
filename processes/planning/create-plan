@@ -3,13 +3,23 @@
 set -euo pipefail
 
 if [ "$#" -lt 2 ]; then
-  printf 'usage: plans:create:<kind> <description>\n' >&2
+  printf 'usage: plans:features:create|plans:problems:create <description>\n' >&2
   exit 2
 fi
 
 kind="$1"
 shift
 title="$*"
+
+case "$kind" in
+  feature|problem)
+    command_name="plans:${kind}s:create"
+    ;;
+  *)
+    printf 'plans:%s:create: unsupported kind\n' "$kind" >&2
+    exit 1
+    ;;
+esac
 
 source_path="${BASH_SOURCE[0]}"
 while [ -L "$source_path" ]; do
@@ -28,7 +38,7 @@ mkdir -p "$plan_dir"
 
 slug="$(printf '%s' "$title" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]\+/-/g; s/^-//; s/-$//')"
 if [ -z "$slug" ]; then
-  printf 'plans:create:%s: invalid description: %s\n' "$kind" "$title" >&2
+  printf '%s: invalid description: %s\n' "$command_name" "$title" >&2
   exit 1
 fi
 
@@ -66,10 +76,6 @@ Describe why the feature matters.
 ## Notes
 
 EOF
-      ;;
-    *)
-      printf 'plans:create:%s: unsupported kind\n' "$kind" >&2
-      exit 1
       ;;
   esac
 fi

@@ -41,6 +41,10 @@ _cdd()
       compopt -o filenames 2>/dev/null || true
       return 0
       ;;
+    feature|problem)
+      _cdd_complete_plan_open "$previous" "$current"
+      return 0
+      ;;
     plans:finish)
       _cdd_complete_plans_finish "$current"
       return 0
@@ -66,21 +70,30 @@ _cdd_complete_plans_finish()
   local completions=()
   local entry
 
-  if [[ "$current" == *"/"* ]]; then
-    while IFS= read -r entry; do
-      entry="${entry#${plan_root}/}"
-      completions+=("$entry")
-    done < <(compgen -f -d -- "$plan_root/$current")
-  else
-    for entry in problems features; do
-      if [[ -d "$plan_root/$entry" ]]; then
-        completions+=("$entry/")
-      fi
-    done
+  while IFS= read -r entry; do
+    entry="${entry#${plan_root}/}"
+    completions+=("$entry")
+  done < <(compgen -f -- "$plan_root/$current")
 
-    compopt -o nospace 2>/dev/null || true
-  fi
+  compopt -o nospace 2>/dev/null || true
 
+  COMPREPLY=("${completions[@]}")
+}
+
+_cdd_complete_plan_open()
+{
+  local kind="$1"
+  local current="$2"
+  local plan_root="plans/${kind}s"
+  local completions=()
+  local entry
+
+  while IFS= read -r entry; do
+    entry="${entry#${plan_root}/}"
+    completions+=("$entry")
+  done < <(compgen -f -- "$plan_root/$current")
+
+  compopt -o filenames 2>/dev/null || true
   COMPREPLY=("${completions[@]}")
 }
 

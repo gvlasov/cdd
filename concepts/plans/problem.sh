@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Create a problem plan and open it in the editor
+# Open an existing problem plan in the editor
 set -euo pipefail
 
 source_path="${BASH_SOURCE[0]}"
@@ -13,4 +13,4 @@ while [ -L "$source_path" ]; do
 done
 
 concept_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
-exec "$concept_dir/../plans/plans:problems:create" "$@"
+exec "$concept_dir/../../processes/planning/open-plan" problem "$@"

@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# Open an existing plan in the editor
+set -euo pipefail
+
+if [ "$#" -ne 2 ]; then
+  printf 'usage: cdd feature|problem <plan>\n' >&2
+  exit 2
+fi
+
+kind="$1"
+plan_ref="$2"
+command_name="cdd $kind"
+
+case "$kind" in
+  feature|problem)
+    ;;
+  *)
+    printf '%s: unsupported kind: %s\n' "$command_name" "$kind" >&2
+    exit 1
+    ;;
+esac
+
+source_path="${BASH_SOURCE[0]}"
+while [ -L "$source_path" ]; do
+  source_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
+  source_path="$(readlink "$source_path")"
+  case "$source_path" in
+    /*) ;;
+    *) source_path="$source_dir/$source_path" ;;
+  esac
+done
+
+cdd_home="$(cd -P "$(dirname "$source_path")/../.." >/dev/null 2>&1 && pwd)"
+project_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+plan_dir="$project_root/plans/${kind}s"
+
+resolve_plan_file() {
+  local candidate="$1"
+
+  if [ -f "$candidate" ]; then
+    printf '%s\n' "$candidate"
+    return 0
+  fi
+
+  if [ -f "$candidate.md" ]; then
+    printf '%s\n' "$candidate.md"
+    return 0
+  fi
+}
+
+if [[ "$plan_ref" == plans/* ]]; then
+  plan_file="$project_root/$plan_ref"
+  if ! plan_file="$(resolve_plan_file "$plan_file")"; then
+    plan_file=""
+  fi
+else
+  if ! plan_file="$(resolve_plan_file "$plan_dir/$plan_ref")"; then
+    if ! plan_file="$(resolve_plan_file "$project_root/$plan_ref")"; then
+      plan_file=""
+    fi
+  fi
+fi
+
+if [ -z "$plan_file" ]; then
+  printf '%s: plan not found: %s\n' "$command_name" "$plan_ref" >&2
+  exit 1
+fi
+
+exec "$cdd_home/concepts/cdd-cli-commands/ide:open" "$plan_file"
