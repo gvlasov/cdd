@@ -1,6 +1,6 @@
 A `cdd` CLI command is a command handled by the `cdd` entrypoint itself.
 
-CDD keeps these commands together so the entrypoint can discover, print, and dispatch them from one directory.
+CDD keeps these commands together so the entrypoint can discover, print, and dispatch them from one `kinds/` directory.
 
 ## Commands
 
@@ -30,5 +30,5 @@ CDD keeps these commands together so the entrypoint can discover, print, and dis
 
 ## Notes
 
-- The files in this directory are the source of truth for `cdd` command names and descriptions.
-- `cdd self-help` reads this directory and prints its contents in the same summary style as `cdd help`.
+- The files in `kinds/` are the source of truth for `cdd` command names and descriptions.
+- `cdd self-help` reads `kinds/` and prints its contents in the same summary style as `cdd help`.

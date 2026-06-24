@@ -16,7 +16,7 @@ source_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
 cdd_home="$(cd "$source_dir/../.." >/dev/null 2>&1 && pwd)"
 
 command="${1:-self-help}"
-command_dir="$cdd_home/concepts/cdd-cli-commands"
+command_dir="$cdd_home/concepts/cdd-cli-commands/kinds"
 case "$command" in
   self-help|--help|-h)
     exec "$command_dir/self-help"

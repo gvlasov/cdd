@@ -35,7 +35,7 @@ case "$#" in
     ;;
 esac
 
-cdd_home="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." >/dev/null 2>&1 && pwd)"
+cdd_home="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." >/dev/null 2>&1 && pwd)"
 directories_file="$cdd_home/concepts/project-directories/directories-list.json"
 
 if [ ! -f "$directories_file" ]; then

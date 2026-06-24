@@ -1,1 +1,0 @@
-../../platform/github/open.sh

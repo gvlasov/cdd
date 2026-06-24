@@ -20,3 +20,22 @@ EOF
   [ "$(cat "$opened_url")" = "$expected" ]
   [ ! -e "$PROJECT_ROOT/cdd" ]
 }
+
+@test "cdd github:open is offered by bash completion at top level" {
+  cd "$PROJECT_ROOT"
+  source "$PROJECT_ROOT/platform/bash/completions/cdd"
+
+  COMP_WORDS=(cdd g)
+  COMP_CWORD=1
+  COMPREPLY=()
+  _cdd
+
+  [ "$(printf '%s\n' "${COMPREPLY[@]}" | sort)" = "github:open" ]
+}
+
+@test "cdd github:open is offered by fish completion at top level" {
+  run env PROJECT_ROOT="$PROJECT_ROOT" fish --no-config -c 'source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd g"'
+
+  assert_success
+  assert_output_contains "github:open"
+}

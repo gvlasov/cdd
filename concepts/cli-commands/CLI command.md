@@ -30,7 +30,7 @@ CDD also implements some reusable shell support:
 
 ## `cdd` utility
 
-CDD provides a system-wide utility `cdd` that suggests [commands for common project operations](/home/chriego/Projects/personal/cdd/concepts/cdd-cli-commands/README.md):
+CDD provides a system-wide utility `cdd` that suggests [commands for common project operations](/home/chriego/Projects/personal/cdd/concepts/cdd-cli-commands/kinds):
 
 - `cdd init` initializes a project
 - `cdd github:open` opens the project on github

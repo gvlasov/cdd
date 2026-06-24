@@ -26,6 +26,7 @@ for dir in "${dirs[@]}"; do
 
     for filepath in "$dir"/*; do
         [ -f "$filepath" ] || continue
+        [ -x "$filepath" ] || continue
         case "$(basename "$filepath")" in
             *.sh) continue ;;
         esac

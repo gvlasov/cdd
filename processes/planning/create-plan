@@ -85,4 +85,4 @@ EOF
   esac
 fi
 
-exec "$cdd_home/concepts/cdd-cli-commands/ide:open" "$plan_file"
+exec "$cdd_home/platform/cdd/cdd" ide:open "$plan_file"

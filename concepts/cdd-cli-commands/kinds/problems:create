@@ -13,4 +13,4 @@ while [ -L "$source_path" ]; do
 done
 
 concept_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
-exec "$concept_dir/../plans/problems:create" "$@"
+exec "$concept_dir/../../plans/problems:create" "$@"
