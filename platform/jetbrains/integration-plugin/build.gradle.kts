@@ -31,7 +31,7 @@ intellijPlatform {
         """.trimIndent()
 
         changeNotes = """
-            Adds a CDD subpane under Startup Tasks for common project shell tasks.
+            Adds a CDD project type to the new project wizard and keeps the CDD startup task pane.
         """.trimIndent()
     }
 }

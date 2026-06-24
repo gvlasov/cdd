@@ -11,3 +11,11 @@ A project has
 CDD suggests storing project-only material such as the project description, icon, and other identity assets in `/project`.
 
 CDD suggests storing all projects in `$CDD_PROJECTS_DIRECTORY` which is `~/Projects` by default. `cdd` utility has `cdd projects` familiy of commands to operate on projects on current development machine.
+
+## Attributes of a project
+
+- Name
+- Logo
+- Description
+
+Some things that can be thought about as an attribute of a project are actually platform/concept concerns.

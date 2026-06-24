@@ -11,6 +11,8 @@ Examples of reflections of a process:
 - A description of the process
 
 ### Examples: 
+
 - a marketing project could have a process for a customer's journey
 - a climate model has the water cycle process
 - any activity of a subject within ontology can and should be represented as a process
+- a thought process of how a naming decision should be made

@@ -1,4 +1,4 @@
-# Concept-Driven Design
+![Concept-Driven Design](project/logo.png)
 
 CDD is a way to organize software so developers can find the right code by meaning, not by framework trivia.
 
@@ -113,4 +113,3 @@ CDD is useful when you want:
 ## Browse the concepts
 
 The repository is its own vocabulary. Browse `/concepts` to see the method explained through its own terms.
-

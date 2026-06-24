@@ -4,6 +4,7 @@ JetBrains IDE plugin for Concept-Driven Design projects.
 
 ## Current functionality
 
+- Adds a `CDD Project` entry to the new project wizard. It creates a CDD project in the selected directory and can set the git `origin` remote during initialization.
 - Adds a `CDD` scope to the Project tool window.
 - Adds `New Problem Plan` and `New Feature Plan` actions to the New menu. They always create files under `plans/problems` and `plans/features` in the project root.
 - Adds a `CDD` subpane under `Settings | Tools | Startup Tasks` with buttons for common CDD startup shell tasks.
