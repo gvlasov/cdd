@@ -36,18 +36,23 @@ project_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 plan_dir="$project_root/plans/${kind}s"
 mkdir -p "$plan_dir"
 
-slug="$(printf '%s' "$title" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]\+/-/g; s/^-//; s/-$//')"
-if [ -z "$slug" ]; then
+normalized_title="${title//$'\u00A0'/ }"
+if [[ "$normalized_title" =~ ^(.*[^[:space:]])\.md$ ]]; then
+  normalized_title="${BASH_REMATCH[1]}"
+fi
+normalized_title="$(printf '%s' "$normalized_title" | sed -E 's/[^[:alpha:] _,:-]+//g; s/^[[:space:]]+//; s/[[:space:]]+$//')"
+
+if [ -z "$normalized_title" ]; then
   printf '%s: invalid description: %s\n' "$command_name" "$title" >&2
   exit 1
 fi
 
-plan_file="$plan_dir/$slug.md"
+plan_file="$plan_dir/$normalized_title.md"
 if [ ! -f "$plan_file" ]; then
   case "$kind" in
     problem)
       cat > "$plan_file" <<EOF
-# $title
+# $normalized_title
 
 ## Problem
 
@@ -63,7 +68,7 @@ EOF
       ;;
     feature)
       cat > "$plan_file" <<EOF
-# $title
+# $normalized_title
 
 ## Feature
 

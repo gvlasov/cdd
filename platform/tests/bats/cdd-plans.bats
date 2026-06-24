@@ -45,9 +45,9 @@ EOF
   run env PATH="$fake_bin:$PATH" EDITOR="$fake_bin/editor" "$CDD" plans:problems:create "Problem description"
 
   assert_success
-  [ -f "$project/plans/problems/problem-description.md" ]
-  [ "$(cat "$opened_file")" = "$(realpath "$project/plans/problems/problem-description.md")" ]
-  grep -q '^# Problem description$' "$project/plans/problems/problem-description.md"
+  [ -f "$project/plans/problems/Problem description.md" ]
+  [ "$(cat "$opened_file")" = "$(realpath "$project/plans/problems/Problem description.md")" ]
+  grep -q '^# Problem description$' "$project/plans/problems/Problem description.md"
 }
 
 @test "cdd problems:create is a synonym for plans:problems:create" {
@@ -67,9 +67,9 @@ EOF
   run env PATH="$fake_bin:$PATH" EDITOR="$fake_bin/editor" "$CDD" problems:create "Problem description"
 
   assert_success
-  [ -f "$project/plans/problems/problem-description.md" ]
-  [ "$(cat "$opened_file")" = "$(realpath "$project/plans/problems/problem-description.md")" ]
-  grep -q '^# Problem description$' "$project/plans/problems/problem-description.md"
+  [ -f "$project/plans/problems/Problem description.md" ]
+  [ "$(cat "$opened_file")" = "$(realpath "$project/plans/problems/Problem description.md")" ]
+  grep -q '^# Problem description$' "$project/plans/problems/Problem description.md"
 }
 
 @test "cdd plans:features:create creates and opens a feature plan" {
@@ -89,9 +89,9 @@ EOF
   run env PATH="$fake_bin:$PATH" EDITOR="$fake_bin/editor" "$CDD" plans:features:create "Feature description"
 
   assert_success
-  [ -f "$project/plans/features/feature-description.md" ]
-  [ "$(cat "$opened_file")" = "$(realpath "$project/plans/features/feature-description.md")" ]
-  grep -q '^# Feature description$' "$project/plans/features/feature-description.md"
+  [ -f "$project/plans/features/Feature description.md" ]
+  [ "$(cat "$opened_file")" = "$(realpath "$project/plans/features/Feature description.md")" ]
+  grep -q '^# Feature description$' "$project/plans/features/Feature description.md"
 }
 
 @test "cdd features:create is a synonym for plans:features:create" {
@@ -111,9 +111,53 @@ EOF
   run env PATH="$fake_bin:$PATH" EDITOR="$fake_bin/editor" "$CDD" features:create "Feature description"
 
   assert_success
-  [ -f "$project/plans/features/feature-description.md" ]
-  [ "$(cat "$opened_file")" = "$(realpath "$project/plans/features/feature-description.md")" ]
-  grep -q '^# Feature description$' "$project/plans/features/feature-description.md"
+  [ -f "$project/plans/features/Feature description.md" ]
+  [ "$(cat "$opened_file")" = "$(realpath "$project/plans/features/Feature description.md")" ]
+  grep -q '^# Feature description$' "$project/plans/features/Feature description.md"
+}
+
+@test "cdd plans:features:create normalizes whitespace and punctuation in descriptions" {
+  project="$BATS_TEST_TMPDIR/project"
+  fake_bin="$BATS_TEST_TMPDIR/bin"
+  opened_file="$BATS_TEST_TMPDIR/opened-file"
+  mkdir -p "$project" "$fake_bin"
+
+  cat > "$fake_bin/editor" <<EOF
+#!/usr/bin/env bash
+printf '%s\n' "\$1" > "$opened_file"
+EOF
+  chmod +x "$fake_bin/editor"
+
+  cd "$project"
+
+  run env PATH="$fake_bin:$PATH" EDITOR="$fake_bin/editor" "$CDD" plans:features:create $'Feature\u00A0description, yes! @#'
+
+  assert_success
+  [ -f "$project/plans/features/Feature description, yes.md" ]
+  [ "$(cat "$opened_file")" = "$(realpath "$project/plans/features/Feature description, yes.md")" ]
+  grep -q '^# Feature description, yes$' "$project/plans/features/Feature description, yes.md"
+}
+
+@test "cdd plans:features:create trims a trailing dot md suffix from descriptions" {
+  project="$BATS_TEST_TMPDIR/project"
+  fake_bin="$BATS_TEST_TMPDIR/bin"
+  opened_file="$BATS_TEST_TMPDIR/opened-file"
+  mkdir -p "$project" "$fake_bin"
+
+  cat > "$fake_bin/editor" <<EOF
+#!/usr/bin/env bash
+printf '%s\n' "\$1" > "$opened_file"
+EOF
+  chmod +x "$fake_bin/editor"
+
+  cd "$project"
+
+  run env PATH="$fake_bin:$PATH" EDITOR="$fake_bin/editor" "$CDD" plans:features:create $'Feature description.md'
+
+  assert_success
+  [ -f "$project/plans/features/Feature description.md" ]
+  [ "$(cat "$opened_file")" = "$(realpath "$project/plans/features/Feature description.md")" ]
+  grep -q '^# Feature description$' "$project/plans/features/Feature description.md"
 }
 
 @test "cdd problem opens an existing problem plan in the editor" {

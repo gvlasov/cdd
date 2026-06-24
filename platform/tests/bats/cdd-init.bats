@@ -51,3 +51,20 @@ load test_helper
   [ -d plans/finished ]
   [ -d sandbox ]
 }
+
+@test "cdd init accepts github remotes and adds origin" {
+  root="$BATS_TEST_TMPDIR/projects"
+  mkdir -p "$root/ssh" "$root/https"
+
+  cd "$root/ssh"
+  run "$CDD" init 'git@github.com:chriego/cdd.git'
+  assert_success
+  assert_output_contains "Initialized CDD directory structure in ."
+  [ "$(git -C "$root/ssh" remote get-url origin)" = 'git@github.com:chriego/cdd.git' ]
+
+  cd "$root/https"
+  run "$CDD" init 'https://github.com/chriego/cdd.git'
+  assert_success
+  assert_output_contains "Initialized CDD directory structure in ."
+  [ "$(git -C "$root/https" remote get-url origin)" = 'https://github.com/chriego/cdd.git' ]
+}
