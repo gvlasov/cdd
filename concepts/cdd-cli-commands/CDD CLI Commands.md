@@ -16,6 +16,7 @@ CDD keeps these commands together so the entrypoint can discover, print, and dis
 - `source-code:volume:analyze` prints source files ordered by indexed byte size and can be restricted to given paths
 - `source-code:volume:assess` opens a terminal browser that ranks source-code items by aggregate volume
 - `skill:print` prints the freshest installed CDD skill
+- `codex:terminal` opens the last Codex session for this project in a tmuxinator-backed xterm
 - `plans` lists stored plans in the repository
 - `problem` opens an existing problem plan in the editor
 - `feature` opens an existing feature plan in the editor

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Opens Codex for this CDD project in an xterm-backed tmuxinator session
+# Opens the last Codex session for this CDD project in an xterm-backed tmuxinator session
 set -euo pipefail
 
 find_project_root() {

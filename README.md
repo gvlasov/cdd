@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="project/logo.png" alt="Concept-Driven Design" width="480">
+  <img src="project/logo.png" alt="CDD" width="480">
 </p>
 
 CDD is a way to organize software so developers can find the right code by meaning, not by framework trivia.

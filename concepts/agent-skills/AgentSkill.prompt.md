@@ -1,4 +1,4 @@
-You are generating code for a concept-driven design project. Follow these rules precisely.
+You are generating code for a CDD project. Follow these rules precisely.
 
 ## The unit of analysis is the expression, not the file
 

@@ -6,10 +6,13 @@ cd "$(git rev-parse --show-toplevel)"
 cat <<'EOF'
 ---
 name: concept_driven_design
-description: Apply concept-driven design methodology when generating or organizing code. Use when creating files, structuring projects, deciding where code belongs, or reasoning about concepts, stakeholders, reflections, subjects, processes, attributes, and platform boundaries.
+description: Apply CDD methodology when generating or organizing code. Use when creating files, structuring projects, deciding where code belongs, or reasoning about concepts, stakeholders, reflections, subjects, processes, attributes, and platform boundaries.
 ---
 
-# Concept Driven Design
+<!-- references/concepts.md -->
+# CDD
+
+CDD stands for {concept,cohesion,cli,convenience}-driven design
 
 Use this skill when a task benefits from organizing code by concepts rather than by technical layers.
 
@@ -21,9 +24,6 @@ Use this skill when a task benefits from organizing code by concepts rather than
 4. Keep platform and tool concerns separate from domain concepts when they do not express a domain meaning.
 5. Prefer existing concept directories and naming patterns before adding new structure.
 
-## Reference
-
-For the full CDD glossary and examples, read `references/concepts.md` only when needed for concept vocabulary or placement decisions.
 EOF
 
 echo
