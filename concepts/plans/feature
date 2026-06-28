@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Open an existing feature plan in the editor
+# Open an existing feature plan, or create it when missing
 set -euo pipefail
 
 source_path="${BASH_SOURCE[0]}"

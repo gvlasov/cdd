@@ -11,8 +11,10 @@ load test_helper
   assert_output_contains "install ${esc}[37m- install cdd support for the tools available on this machine.${esc}[0m"
   assert_output_contains "commands:create ${esc}[37m- create a project command and open it in the editor${esc}[0m"
   assert_output_contains "ide:open ${esc}[37m- open a file in the user's editor${esc}[0m"
-  assert_output_contains "plans ${esc}[37m- list stored plans in the repository${esc}[0m"
-  assert_output_contains "feature ${esc}[37m- open an existing feature plan in the editor${esc}[0m"
+  printf '%s\n' "$output" | grep -qx 'plans'
+  printf '%s\n' "$output" | grep -qx 'features'
+  printf '%s\n' "$output" | grep -qx 'problems'
+  assert_output_contains "feature ${esc}[37m- open an existing feature plan, or create it when missing${esc}[0m"
   assert_output_contains "problem ${esc}[37m- open an existing problem plan in the editor${esc}[0m"
   assert_output_contains "plans:features:create ${esc}[37m- create a feature plan and open it in the editor${esc}[0m"
   assert_output_contains "plans:problems:create ${esc}[37m- create a problem plan and open it in the editor${esc}[0m"
@@ -46,9 +48,11 @@ load test_helper
   assert_output_contains "cdd commands:create ${esc}[37m- create a project command and open it in the editor${esc}[0m"
   assert_output_contains "cdd ide:open ${esc}[37m- open a file in the user's editor${esc}[0m"
   assert_output_contains "cdd ide:which ${esc}[37m- print the IDE command CDD will use${esc}[0m"
-  assert_output_contains "cdd plans ${esc}[37m- list stored plans in the repository${esc}[0m"
+  printf '%s\n' "$output" | grep -qx 'cdd plans'
+  printf '%s\n' "$output" | grep -qx 'cdd features'
+  printf '%s\n' "$output" | grep -qx 'cdd problems'
   assert_output_contains "cdd problem ${esc}[37m- open an existing problem plan in the editor${esc}[0m"
-  assert_output_contains "cdd feature ${esc}[37m- open an existing feature plan in the editor${esc}[0m"
+  assert_output_contains "cdd feature ${esc}[37m- open an existing feature plan, or create it when missing${esc}[0m"
   assert_output_contains "cdd plans:features:create ${esc}[37m- create a feature plan and open it in the editor${esc}[0m"
   assert_output_contains "cdd plans:problems:create ${esc}[37m- create a problem plan and open it in the editor${esc}[0m"
   assert_output_contains "cdd features:create ${esc}[37m- create a feature plan and open it in the editor${esc}[0m"

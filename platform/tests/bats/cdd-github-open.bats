@@ -39,3 +39,35 @@ EOF
   assert_success
   assert_output_contains "github:open"
 }
+
+@test "cdd features and problems are offered by top-level bash completion" {
+  cd "$PROJECT_ROOT"
+  source "$PROJECT_ROOT/platform/bash/completions/cdd"
+
+  COMP_WORDS=(cdd f)
+  COMP_CWORD=1
+  COMPREPLY=()
+  _cdd
+
+  printf '%s\n' "${COMPREPLY[@]}" | grep -qx "features"
+
+  COMP_WORDS=(cdd p)
+  COMP_CWORD=1
+  COMPREPLY=()
+  _cdd
+
+  printf '%s\n' "${COMPREPLY[@]}" | grep -qx "problems"
+}
+
+@test "cdd features and problems are offered by top-level fish completion" {
+  run env PROJECT_ROOT="$PROJECT_ROOT" fish --no-config -c 'source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd f"'
+
+  assert_success
+  assert_output_contains "features"
+
+  run env PROJECT_ROOT="$PROJECT_ROOT" fish --no-config -c 'source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd p"'
+
+  assert_success
+  assert_output_contains "plans"
+  assert_output_contains "problems"
+}

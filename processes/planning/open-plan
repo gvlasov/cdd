@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
-# Open an existing plan in the editor
+# Open an existing plan in the editor, or create a feature plan when missing.
 set -euo pipefail
 
-if [ "$#" -ne 2 ]; then
+if [ "$#" -lt 2 ]; then
   printf 'usage: cdd feature|problem <plan>\n' >&2
   exit 2
 fi
 
 kind="$1"
-plan_ref="$2"
+shift
+plan_ref="$*"
 command_name="cdd $kind"
 
 case "$kind" in
@@ -62,6 +63,10 @@ else
 fi
 
 if [ -z "$plan_file" ]; then
+  if [ "$kind" = "feature" ]; then
+    exec "$cdd_home/processes/planning/create-plan" feature "$plan_ref"
+  fi
+
   printf '%s: plan not found: %s\n' "$command_name" "$plan_ref" >&2
   exit 1
 fi

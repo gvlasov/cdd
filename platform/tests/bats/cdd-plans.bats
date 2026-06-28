@@ -2,7 +2,7 @@
 
 load test_helper
 
-@test "cdd plans lists stored plans with grey descriptions" {
+@test "cdd plans lists stored plans without descriptions" {
   project="$BATS_TEST_TMPDIR/project"
   mkdir -p "$project/plans/problems" "$project/plans/features"
 
@@ -23,9 +23,58 @@ EOF
   run "$CDD" plans
 
   assert_success
-  esc=$'\033'
-  assert_output_contains "problems/login-failure ${esc}[37m- login failure${esc}[0m"
-  assert_output_contains "features/remember-me ${esc}[37m- remember me${esc}[0m"
+  [ "$output" = $'problems/login-failure\nfeatures/remember-me' ]
+  ! printf '%s\n' "$output" | grep -q '\.md'
+}
+
+@test "cdd features lists stored feature plans without extensions" {
+  project="$BATS_TEST_TMPDIR/project"
+  mkdir -p "$project/plans/features"
+
+  cat > "$project/plans/features/remember-me.md" <<'EOF'
+# Remember me
+
+Describe the feature.
+EOF
+
+  cat > "$project/plans/features/ship-fast.md" <<'EOF'
+# Ship fast
+
+Describe the feature.
+EOF
+
+  cd "$project"
+
+  run "$CDD" features
+
+  assert_success
+  [ "$output" = $'remember-me\nship-fast' ]
+  ! printf '%s\n' "$output" | grep -q '\.md'
+}
+
+@test "cdd problems lists stored problem plans without extensions" {
+  project="$BATS_TEST_TMPDIR/project"
+  mkdir -p "$project/plans/problems"
+
+  cat > "$project/plans/problems/login-failure.md" <<'EOF'
+# Login failure
+
+Describe the problem.
+EOF
+
+  cat > "$project/plans/problems/slow-builds.md" <<'EOF'
+# Slow builds
+
+Describe the problem.
+EOF
+
+  cd "$project"
+
+  run "$CDD" problems
+
+  assert_success
+  [ "$output" = $'login-failure\nslow-builds' ]
+  ! printf '%s\n' "$output" | grep -q '\.md'
 }
 
 @test "cdd plans:problems:create creates and opens a problem plan" {
@@ -210,6 +259,28 @@ EOF
 
   assert_success
   [ "$(cat "$opened_file")" = "$(realpath "$project/plans/features/remember-me.md")" ]
+}
+
+@test "cdd feature creates and opens a missing feature plan" {
+  project="$BATS_TEST_TMPDIR/project"
+  fake_bin="$BATS_TEST_TMPDIR/bin"
+  opened_file="$BATS_TEST_TMPDIR/opened-file"
+  mkdir -p "$project" "$fake_bin"
+
+  cat > "$fake_bin/editor" <<EOF
+#!/usr/bin/env bash
+printf '%s\n' "\$1" > "$opened_file"
+EOF
+  chmod +x "$fake_bin/editor"
+
+  cd "$project"
+
+  run env PATH="$fake_bin:$PATH" EDITOR="$fake_bin/editor" "$CDD" feature "name of feature"
+
+  assert_success
+  [ -f "$project/plans/features/name of feature.md" ]
+  [ "$(cat "$opened_file")" = "$(realpath "$project/plans/features/name of feature.md")" ]
+  grep -q '^# name of feature$' "$project/plans/features/name of feature.md"
 }
 
 @test "cdd plans:finish moves an active plan into finished and opens it" {

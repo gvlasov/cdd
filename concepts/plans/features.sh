@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Open an existing feature plan, or create it when missing
+# List feature plans in the repository
 set -euo pipefail
 
 source_path="${BASH_SOURCE[0]}"
@@ -13,4 +13,4 @@ while [ -L "$source_path" ]; do
 done
 
 concept_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
-exec "$concept_dir/../../processes/planning/open-plan" feature "$@"
+exec "$concept_dir/features" "$@"

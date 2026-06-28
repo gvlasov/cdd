@@ -18,8 +18,10 @@ CDD keeps these commands together so the entrypoint can discover, print, and dis
 - `skill:print` prints the freshest installed CDD skill
 - `codex:terminal` opens the last Codex session for this project in a tmuxinator-backed xterm
 - `plans` lists stored plans in the repository
+- `features` lists feature plans in the repository
+- `problems` lists problem plans in the repository
 - `problem` opens an existing problem plan in the editor
-- `feature` opens an existing feature plan in the editor
+- `feature` opens an existing feature plan, or creates it when missing
 - `plans:features:create` creates a feature plan
 - `plans:problems:create` creates a problem plan
 - `features:create` creates a feature plan

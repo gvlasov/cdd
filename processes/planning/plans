@@ -1,32 +1,37 @@
 #!/usr/bin/env bash
-# List stored plans in the repository.
+
 set -euo pipefail
 
 project_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 plans_dir="$project_root/plans"
-grey='\033[37m'
-reset='\033[0m'
+filter_kind="${1:-}"
 
-print_plan() {
-  local name="$1"
-  local title="$2"
-
-  if [ -n "$title" ]; then
-    title="$(echo "$title" | sed 's/./\L&/')"
-    echo -e "$name ${grey}- $title${reset}"
-  else
-    echo "$name"
-  fi
-}
+if [ -n "$filter_kind" ]; then
+  case "$filter_kind" in
+    feature|problem)
+      ;;
+    *)
+      printf 'usage: plans [feature|problem]\n' >&2
+      exit 2
+      ;;
+  esac
+fi
 
 for kind in problems features; do
+  if [ -n "$filter_kind" ] && [ "$kind" != "${filter_kind}s" ]; then
+    continue
+  fi
+
   kind_dir="$plans_dir/$kind"
   [ -d "$kind_dir" ] || continue
 
   for filepath in "$kind_dir"/*.md; do
     [ -f "$filepath" ] || continue
-    name="$kind/$(basename "$filepath" .md)"
-    title=$(awk 'NF && /^# / { sub(/^# /, ""); print; exit }' "$filepath")
-    print_plan "$name" "$title"
+    if [ -n "$filter_kind" ]; then
+      name="$(basename "$filepath" .md)"
+    else
+      name="$kind/$(basename "$filepath" .md)"
+    fi
+    echo "$name"
   done
 done
