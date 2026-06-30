@@ -32,5 +32,6 @@ run_installer "Fish support" fish "$cdd_home/commands/fish:install"
 run_installer "Codex skill" codex "$cdd_home/commands/codex:install"
 run_installer "Claude Code skill" claude "$cdd_home/commands/claude:install"
 run_installer "Codex project terminal launcher" tmuxinator "$cdd_home/commands/codex:project-terminal:install"
+run_installer "Claude Code project terminal launcher" tmuxinator "$cdd_home/commands/claude:project-terminal:install"
 
 printf 'Installed CDD support from %s\n' "$cdd_home"

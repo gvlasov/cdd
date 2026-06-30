@@ -17,6 +17,7 @@ assert_installed_support() {
   [ -f "$HOME/.claude/skills/concept_driven_design/SKILL.md" ]
   [ -f "$HOME/.claude/skills/concept_driven_design/references/concepts.md" ]
   [ -x "$HOME/.local/bin/terminal-tmuxinator-codex" ]
+  [ -x "$HOME/.local/bin/terminal-tmuxinator-claude" ]
 
   [ "$(sed -n '1p' "$HOME/.codex/skills/concept_driven_design/SKILL.md")" = "---" ]
   [ "$(sed -n '4p' "$HOME/.codex/skills/concept_driven_design/SKILL.md")" = "---" ]
@@ -43,6 +44,7 @@ assert_installed_support() {
   assert_output_contains "Installing Codex skill..."
   assert_output_contains "Installing Claude Code skill..."
   assert_output_contains "Installing Codex project terminal launcher..."
+  assert_output_contains "Installing Claude Code project terminal launcher..."
   assert_output_contains "Installed CDD support from $PROJECT_ROOT"
   assert_installed_support
 }
@@ -59,6 +61,7 @@ assert_installed_support() {
   assert_output_contains "Installing Codex skill..."
   assert_output_contains "Installing Claude Code skill..."
   assert_output_contains "Installing Codex project terminal launcher..."
+  assert_output_contains "Installing Claude Code project terminal launcher..."
   assert_output_contains "Upgraded CDD support from $PROJECT_ROOT"
   assert_installed_support
 }

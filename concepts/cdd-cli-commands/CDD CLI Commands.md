@@ -17,6 +17,7 @@ CDD keeps these commands together so the entrypoint can discover, print, and dis
 - `source-code:volume:assess` opens a terminal browser that ranks source-code items by aggregate volume
 - `skill:print` prints the freshest installed CDD skill
 - `codex:terminal` opens the last Codex session for this project in a tmuxinator-backed xterm
+- `claude:terminal` opens the last Claude Code session for this project in a tmuxinator-backed xterm
 - `plans` lists stored plans in the repository
 - `features` lists feature plans in the repository
 - `problems` lists problem plans in the repository
