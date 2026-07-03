@@ -72,3 +72,24 @@ load test_helper
   _cdd
   [ "$(printf '%s\n' "${COMPREPLY[@]}" | sort)" = "sub/nested.txt" ]
 }
+
+@test "cdd print bash completion offers relative paths" {
+  project="$BATS_TEST_TMPDIR/project"
+  mkdir -p "$project/sub"
+  touch "$project/file.txt" "$project/sub/nested.txt"
+
+  cd "$project"
+  source "$PROJECT_ROOT/platform/bash/completions/cdd"
+
+  COMP_WORDS=(cdd print f)
+  COMP_CWORD=2
+  COMPREPLY=()
+  _cdd
+  [ "$(printf '%s\n' "${COMPREPLY[@]}" | sort)" = "file.txt" ]
+
+  COMP_WORDS=(cdd print sub/)
+  COMP_CWORD=2
+  COMPREPLY=()
+  _cdd
+  [ "$(printf '%s\n' "${COMPREPLY[@]}" | sort)" = "sub/nested.txt" ]
+}

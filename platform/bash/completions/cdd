@@ -36,7 +36,7 @@ _cdd()
       COMPREPLY=( $(compgen -d -- "$current") )
       return 0
       ;;
-    source-code:print|source-code:volume|source-code:volume:analyze)
+    print|source-code:print|source-code:volume|source-code:volume:analyze)
       COMPREPLY=( $(compgen -f -d -- "$current") )
       compopt -o filenames 2>/dev/null || true
       return 0

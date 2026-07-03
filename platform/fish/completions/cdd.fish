@@ -123,7 +123,7 @@ function __cdd_source_code_should_complete_paths
     end
 
     switch $tokens[2]
-        case source-code:print source-code:volume source-code:volume:analyze
+        case print source-code:print source-code:volume source-code:volume:analyze
             return 0
     end
 
