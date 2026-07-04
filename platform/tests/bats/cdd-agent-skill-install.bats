@@ -5,7 +5,7 @@ load test_helper
 @test "install-generated.sh uses the real install binary even when commands/ shadows it on PATH" {
   cd "$PROJECT_ROOT"
 
-  skill_dir="$BATS_TEST_TMPDIR/skills/concept_driven_design"
+  skill_dir="$BATS_TEST_TMPDIR/skills/cdd"
   reference_dir="$skill_dir/references"
 
   run env PATH="$PROJECT_ROOT/commands:$PATH" timeout 30 \

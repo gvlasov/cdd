@@ -13,9 +13,9 @@ while [ -L "$source_path" ]; do
 done
 concept_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
 
-skill_dir="$HOME/.claude/skills/concept_driven_design"
+skill_dir="$HOME/.claude/skills/cdd"
 reference_dir="$skill_dir/references"
 
 "$concept_dir/install-generated.sh" "$skill_dir" "$reference_dir"
 
-echo "Installed concept-driven-design skill to ~/.claude/skills/concept_driven_design/SKILL.md"
+echo "Installed cdd skill to ~/.claude/skills/cdd/SKILL.md"

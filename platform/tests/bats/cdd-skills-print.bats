@@ -4,20 +4,20 @@ load test_helper
 
 @test "cdd skill:print prints the freshest installed skill" {
   HOME="$BATS_TEST_TMPDIR/home"
-  mkdir -p "$HOME/.codex/skills/concept_driven_design" "$HOME/.claude/skills/concept_driven_design"
+  mkdir -p "$HOME/.codex/skills/cdd" "$HOME/.claude/skills/cdd"
 
-  printf 'codex-skill\n' > "$HOME/.codex/skills/concept_driven_design/SKILL.md"
-  printf 'claude-skill\n' > "$HOME/.claude/skills/concept_driven_design/SKILL.md"
+  printf 'codex-skill\n' > "$HOME/.codex/skills/cdd/SKILL.md"
+  printf 'claude-skill\n' > "$HOME/.claude/skills/cdd/SKILL.md"
 
-  touch -t 202001010101 "$HOME/.codex/skills/concept_driven_design/SKILL.md"
-  touch -t 202101010101 "$HOME/.claude/skills/concept_driven_design/SKILL.md"
+  touch -t 202001010101 "$HOME/.codex/skills/cdd/SKILL.md"
+  touch -t 202101010101 "$HOME/.claude/skills/cdd/SKILL.md"
 
   run env HOME="$HOME" "$CDD" skill:print
 
   assert_success
   [ "$output" = "claude-skill" ]
 
-  touch -t 202201010101 "$HOME/.codex/skills/concept_driven_design/SKILL.md"
+  touch -t 202201010101 "$HOME/.codex/skills/cdd/SKILL.md"
 
   run env HOME="$HOME" "$CDD" skill:print
 

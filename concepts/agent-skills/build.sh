@@ -5,7 +5,7 @@ cd "$(git rev-parse --show-toplevel)"
 
 cat <<'EOF'
 ---
-name: concept_driven_design
+name: cdd
 description: Apply CDD methodology when generating or organizing code. Use when creating files, structuring projects, deciding where code belongs, or reasoning about concepts, stakeholders, reflections, subjects, processes, attributes, and platform boundaries.
 ---
 

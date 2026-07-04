@@ -14,8 +14,8 @@ load test_helper
   assert_output_contains "# concepts/agent-skills/AgentSkill.prompt.md"
 
   HOME="$BATS_TEST_TMPDIR/home"
-  mkdir -p "$HOME/.codex/skills/concept_driven_design"
-  printf '%s\n' "$output" > "$HOME/.codex/skills/concept_driven_design/SKILL.md"
+  mkdir -p "$HOME/.codex/skills/cdd"
+  printf '%s\n' "$output" > "$HOME/.codex/skills/cdd/SKILL.md"
 
   run env HOME="$HOME" "$CDD" skill:print
 

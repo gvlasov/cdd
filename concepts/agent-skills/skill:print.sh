@@ -2,8 +2,8 @@
 # Print the freshest installed CDD skill
 set -euo pipefail
 
-codex_skill="${HOME:-}/.codex/skills/concept_driven_design/SKILL.md"
-claude_skill="${HOME:-}/.claude/skills/concept_driven_design/SKILL.md"
+codex_skill="${HOME:-}/.codex/skills/cdd/SKILL.md"
+claude_skill="${HOME:-}/.claude/skills/cdd/SKILL.md"
 
 if [ ! -f "$codex_skill" ] && [ ! -f "$claude_skill" ]; then
   printf 'cdd skill:print: no installed skill found in %s or %s\n' "$codex_skill" "$claude_skill" >&2

@@ -12,24 +12,24 @@ assert_installed_support() {
   grep -q 'source "\$HOME/.bashrc.d/cdd.bash"' "$HOME/.bashrc"
   [ -f "$HOME/.config/fish/conf.d/cdd.fish" ]
   [ -f "$HOME/.config/fish/completions/cdd.fish" ]
-  [ -f "$HOME/.codex/skills/concept_driven_design/SKILL.md" ]
-  [ -f "$HOME/.codex/skills/concept_driven_design/references/concepts.md" ]
-  [ -f "$HOME/.claude/skills/concept_driven_design/SKILL.md" ]
-  [ -f "$HOME/.claude/skills/concept_driven_design/references/concepts.md" ]
+  [ -f "$HOME/.codex/skills/cdd/SKILL.md" ]
+  [ -f "$HOME/.codex/skills/cdd/references/concepts.md" ]
+  [ -f "$HOME/.claude/skills/cdd/SKILL.md" ]
+  [ -f "$HOME/.claude/skills/cdd/references/concepts.md" ]
   [ -x "$HOME/.local/bin/terminal-tmuxinator-codex" ]
   [ -x "$HOME/.local/bin/terminal-tmuxinator-claude" ]
 
-  [ "$(sed -n '1p' "$HOME/.codex/skills/concept_driven_design/SKILL.md")" = "---" ]
-  [ "$(sed -n '4p' "$HOME/.codex/skills/concept_driven_design/SKILL.md")" = "---" ]
-  grep -q 'name: concept_driven_design' "$HOME/.codex/skills/concept_driven_design/SKILL.md"
-  grep -q 'references/concepts.md' "$HOME/.codex/skills/concept_driven_design/SKILL.md"
-  grep -q '# concepts/agent-skills/AgentSkill.prompt.md' "$HOME/.codex/skills/concept_driven_design/references/concepts.md"
+  [ "$(sed -n '1p' "$HOME/.codex/skills/cdd/SKILL.md")" = "---" ]
+  [ "$(sed -n '4p' "$HOME/.codex/skills/cdd/SKILL.md")" = "---" ]
+  grep -q 'name: cdd' "$HOME/.codex/skills/cdd/SKILL.md"
+  grep -q 'references/concepts.md' "$HOME/.codex/skills/cdd/SKILL.md"
+  grep -q '# concepts/agent-skills/AgentSkill.prompt.md' "$HOME/.codex/skills/cdd/references/concepts.md"
 
-  [ "$(sed -n '1p' "$HOME/.claude/skills/concept_driven_design/SKILL.md")" = "---" ]
-  [ "$(sed -n '4p' "$HOME/.claude/skills/concept_driven_design/SKILL.md")" = "---" ]
-  grep -q 'name: concept_driven_design' "$HOME/.claude/skills/concept_driven_design/SKILL.md"
-  grep -q 'references/concepts.md' "$HOME/.claude/skills/concept_driven_design/SKILL.md"
-  grep -q '# concepts/agent-skills/AgentSkill.prompt.md' "$HOME/.claude/skills/concept_driven_design/references/concepts.md"
+  [ "$(sed -n '1p' "$HOME/.claude/skills/cdd/SKILL.md")" = "---" ]
+  [ "$(sed -n '4p' "$HOME/.claude/skills/cdd/SKILL.md")" = "---" ]
+  grep -q 'name: cdd' "$HOME/.claude/skills/cdd/SKILL.md"
+  grep -q 'references/concepts.md' "$HOME/.claude/skills/cdd/SKILL.md"
+  grep -q '# concepts/agent-skills/AgentSkill.prompt.md' "$HOME/.claude/skills/cdd/references/concepts.md"
 }
 
 @test "commands/install uses installed tools in isolated HOME" {
