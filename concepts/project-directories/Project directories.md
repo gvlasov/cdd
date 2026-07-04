@@ -12,6 +12,7 @@ The source of truth is [`directories-list.json`](directories-list.json).
 | [`processes`](/concepts/processes/Process.md)           | Process reflections |
 | `platform`                                              | Platform code and tooling support |
 | [`commands`](/concepts/commands/Command.md)             | Project commands for developers |
+| [`envs`](/concepts/environment/Environment.md)          | Environment-specific configuration and materials |
 | `plans`                                                 | Stored project plans |
 | `plans/problems`                                        | Active problem plans |
 | `plans/features`                                        | Active feature plans |
@@ -21,6 +22,14 @@ The source of truth is [`directories-list.json`](directories-list.json).
 ## `./commands`
 
 
+
+## `./envs`
+
+Environment-specific configuration and materials, grouped by environment: local development, CI/CD, staging, production, etc.
+
+### Examples
+- `envs/production/ssh.sh`
+- `envs/ci-cd/pipeline.yml`
 
 ## `./sandbox`
 

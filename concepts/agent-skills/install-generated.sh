@@ -22,8 +22,8 @@ install_from_cache() {
   local source_cache_dir="$1"
 
   mkdir -p "$destination_skill_dir" "$destination_reference_dir"
-  install -m 0644 "$source_cache_dir/SKILL.md" "$destination_skill_dir/SKILL.md"
-  install -m 0644 "$source_cache_dir/concepts.md" "$destination_reference_dir/concepts.md"
+  command -p install -m 0644 "$source_cache_dir/SKILL.md" "$destination_skill_dir/SKILL.md"
+  command -p install -m 0644 "$source_cache_dir/concepts.md" "$destination_reference_dir/concepts.md"
 }
 
 build_cache() {

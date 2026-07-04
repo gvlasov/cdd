@@ -78,11 +78,11 @@ Examples:
 
 In this project, `commands/refine` is an example of a CLI command entrypoint. It links to `processes/refinement/refine`, because the command belongs to the refinement process rather than to the command entrypoint directory itself.
 
-The usual pattern is to create the actual command script in a `/concept`/`/platform`/`/stakeholder`/`/process`/`/environment` directory and expose it with a symlink at `/commands`, with a name that does not necessarily mathc the original file. It is fine to give the original file an extension for additional context to indicate the language used in the script, but omit the extension for the exposed command for convenience.
+The usual pattern is to create the actual command script in a `/concept`/`/platform`/`/stakeholder`/`/process`/`/envs` directory and expose it with a symlink at `/commands`, with a name that does not necessarily mathc the original file. It is fine to give the original file an extension for additional context to indicate the language used in the script, but omit the extension for the exposed command for convenience.
 
 Examples:
 
-- `/environments/production/ssh.sh` -> `/commands/ssh:prod`
+- `/envs/production/ssh.sh` -> `/commands/ssh:prod`
 - `/platform/npm/npm.sh` -> `/commands/npm`
 
 ## Kinds

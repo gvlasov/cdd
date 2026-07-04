@@ -141,7 +141,7 @@ end
 
 function __cdd_projects_should_complete_subcommands
     set -l tokens (commandline -opc)
-    if test (count $tokens) -eq 2
+    if test (count $tokens) -eq 2; and test "$tokens[2]" = projects
         return 0
     end
 

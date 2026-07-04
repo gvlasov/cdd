@@ -21,6 +21,7 @@ public final class CddProjectDirectories {
             "processes",
             "platform",
             "commands",
+            "envs",
             "plans",
             "plans/problems",
             "plans/features",
