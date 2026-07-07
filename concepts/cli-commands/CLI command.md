@@ -96,18 +96,32 @@ Commands accessible from the project shell include:
 
 CDD organizes project CLI commands into a single system so a developer can operate the project from one shell.
 
-## Naming commands
+## Naming project-wide commands
 
-There are a few principles for naming new commands
+There are a few principles for naming new project-wide commands
 
-1. Commands are named with the names of concepts, processes, tools, verbs, project lifecycle phases
-2. If it is a very commonly used command, then a single verb or the name of a lifecycle phase is enough
+0. There are "full-form" commands whose name start with the concept they represent, that is the first "part". They use `:` as part separators. Then in the following order go optional parts that represent an
+   - attribute - noun
+   - subset - adverb
+   - operation - verb
+   - mode - adverb
+   Examples: 
+   - `errors:list`
+   - `errors:fatal:list`
+   - `errors:clear`
+   - `errors:fatal:clear`
+   - `users:create`
+This style is inherited from Laravel's `artisan` command naming style.
+The commands otherwise follow the standard POSIX convention: 
+1. If developer needs a command with a certain name for a certain operation, he must be free to create one.
+2. Commands are named with the names of concepts, processes, tools, verbs, project lifecycle phases
+3. If it is a very commonly used command, then a single verb or the name of a lifecycle phase is enough
 Examples: `build`, `tests`, `up`, `lint`
-3. Commands use `:` as namespacing separator right in the filenames, e.g. `ssh:prod`
-4. If the command is related to a concept in the problem domain, it should start with that concept's canonical name, e.g. `orders:create`, `users:delete`. Any level of nesting is allowed, e.g. `orders:create:from-template`.
-5. If the command is related to a tool, it should start with that tool name
+4. Commands use `:` as namespacing separator right in the filenames, e.g. `ssh:prod`
+5. If the command is related to a concept in the problem domain, it should start with that concept's canonical name, e.g. `orders:create`, `users:delete`. Any level of nesting is allowed, e.g. `orders:create:from-template`.
+6. If the command is related to a tool, it should start with that tool name
 Examples:
     - `compose` as a shorthand for `docker compose -f $service1 -f $service2 -f $service3`
     - `phpunit` as a shorthand for `docker compose exec app vendor/bin/phpunit "$@"`
-6. If a command runs something in another environment while being called in developer's local development envionrment, it can and must start with the target environment name.  Example: `prod:compose`  for production `docker compose` proxy, `ci-cd:run` to connect to CI/CD  server and run the pipeline.
-7. `cdd` subcommands use the same naming principles
+7. If a command runs something in another environment while being called in developer's local development envionrment, it can and must start with the target environment name.  Example: `prod:compose`  for production `docker compose` proxy, `ci-cd:run` to connect to CI/CD  server and run the pipeline.
+8. `cdd` subcommands use the same naming principles
