@@ -53,6 +53,10 @@ _cdd()
       _cdd_complete_projects "$current"
       return 0
       ;;
+    help)
+      _cdd_complete_help "$current"
+      return 0
+      ;;
   esac
 
   case "${COMP_WORDS[1]:-}" in
@@ -123,6 +127,28 @@ _cdd_complete_projects()
   esac
 
   COMPREPLY=("${completions[@]}")
+}
+
+_cdd_complete_help()
+{
+  local current="$1"
+  local commands="" command_dir cli_command
+
+  for command_dir in ./commands ./concepts/plans ./concepts/projects ./concepts/ides; do
+    if [[ -d "$command_dir" ]]; then
+      for cli_command in "$command_dir"/*; do
+        [[ -f "$cli_command" ]] || continue
+        [[ -x "$cli_command" ]] || continue
+        [[ "${cli_command##*.}" != "sh" ]] || continue
+        case " $commands " in
+          *" ${cli_command##*/} "*) continue ;;
+        esac
+        commands="$commands ${cli_command##*/}"
+      done
+    fi
+  done
+
+  COMPREPLY=( $(compgen -W "$commands" -- "$current") )
 }
 
 complete -F _cdd cdd

@@ -22,7 +22,8 @@ case "$command" in
     exec "$command_dir/self-help"
     ;;
   help)
-    exec "$command_dir/help"
+    shift
+    exec "$command_dir/help" "$@"
     ;;
   init)
     shift

@@ -29,6 +29,22 @@ load test_helper
   ! printf '%s\n' "$output" | grep -q '^cdd self-upgrade\b'
 }
 
+@test "cdd help <command> prints help for a single project command" {
+  run "$CDD" help ide:open
+
+  assert_success
+
+  esc=$'\033'
+  [ "$output" = "ide:open ${esc}[37m- open a file in the user's editor${esc}[0m" ]
+}
+
+@test "cdd help <command> fails for an unknown command" {
+  run "$CDD" help nonexistent-command
+
+  assert_failure
+  assert_output_contains "cdd help: unknown command: nonexistent-command"
+}
+
 @test "cdd help does not list legacy install command or cdd command entrypoint" {
   run "$CDD" help
 
@@ -62,7 +78,7 @@ load test_helper
   assert_output_contains "cdd source-code:volume:analyze ${esc}[37m- print source files ordered by indexed byte size${esc}[0m"
   assert_output_contains "cdd self-help ${esc}[37m- print cdd command subcommands${esc}[0m"
   assert_output_contains "cdd skill:print ${esc}[37m- print the freshest installed CDD skill${esc}[0m"
-  assert_output_contains "cdd help ${esc}[37m- print commands and their descriptions from project command directories${esc}[0m"
+  assert_output_contains "cdd help ${esc}[37m- print commands and their descriptions from project command directories, or help for one command${esc}[0m"
   assert_output_contains "cdd init ${esc}[37m- initialize a CDD directory structure and Git repository${esc}[0m"
   assert_output_contains "cdd print ${esc}[37m- print indexed project code to stdout${esc}[0m"
   assert_output_contains "cdd projects ${esc}[37m- list, resolve, or print projects from CDD_PROJECTS_DIRECTORY${esc}[0m"
@@ -86,4 +102,44 @@ load test_helper
   assert_output_contains "cdd help"
   assert_output_contains "cdd init"
   assert_output_contains "cdd projects"
+}
+
+@test "cdd help bash completion offers project commands" {
+  project="$BATS_TEST_TMPDIR/project"
+  mkdir -p "$project/commands"
+
+  cat > "$project/commands/up" <<'EOF'
+#!/usr/bin/env bash
+# Start the local environment
+EOF
+  chmod +x "$project/commands/up"
+
+  cd "$project"
+
+  source "$PROJECT_ROOT/platform/bash/completions/cdd"
+
+  COMP_WORDS=(cdd help "")
+  COMP_CWORD=2
+  COMPREPLY=()
+  _cdd
+
+  printf '%s\n' "${COMPREPLY[@]}" | grep -qx "up"
+}
+
+@test "cdd help fish completion offers project commands" {
+  project="$BATS_TEST_TMPDIR/project"
+  mkdir -p "$project/commands"
+
+  cat > "$project/commands/up" <<'EOF'
+#!/usr/bin/env bash
+# Start the local environment
+EOF
+  chmod +x "$project/commands/up"
+
+  cd "$project"
+
+  run env PROJECT_ROOT="$PROJECT_ROOT" fish --no-config -c 'source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd help "'
+
+  assert_success
+  assert_output_contains "up"
 }
