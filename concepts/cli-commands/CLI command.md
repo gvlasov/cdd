@@ -111,6 +111,11 @@ There are a few principles for naming new project-wide commands
    - `errors:clear`
    - `errors:fatal:clear`
    - `users:create`
+Exception: when is a proxy to run something in another environment (not in the local dev environment), the name of the environment becomes the first part
+Examples:
+   - `prod:composer`
+   - `cicd:run`
+   - `staging:database:reset`
 This style is inherited from Laravel's `artisan` command naming style.
 The commands otherwise follow the standard POSIX convention: 
 1. If developer needs a command with a certain name for a certain operation, he must be free to create one.
