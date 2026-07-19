@@ -16,6 +16,10 @@ All project code is separated into:
     - GUI commands (like some launcher)
   The idea is being able to introduce a command here easily whenever you need one, and having the common commands named after the literal actions they perform, like `build`
 - `/sandbox` - anything we have to actively work on but have yet to decide how to properly decompose it into concepts, stakeholders, processes, or platform. Staging area for ongoing experiments. Anything that goes here has to eventually move to `/concepts`, `/stakeholders`, `/processes`, or `/platform`.
+  - Temporary storage for plans
+  - For images being worked on
+  - For drafts
+  - For intermediate materials
 
 **The problem it solves:**
 For the entire software development history, project directory structures were created [[Tool-driven directory structure|for tools to ingest]], not for developers to understand the project. This manifests as:
@@ -36,6 +40,7 @@ Inspiration is drawn from:
 - Feature-sliced directory structure
 - Wikipedia – organizing everything about a concept in one place, with links between concepts and no single definitional hierarchy of the concepts, there is no "root" concept on Wikipedia – only reflections of the real world.
 - Bob Martin's "screaming architecture" concept
+- REST's convention of organizing an API around resources (nouns) rather than actions – CDD concepts generalize this noun-first organization from the network boundary to the whole repository
 
 See [[Diagram.url]]
 

@@ -28,6 +28,7 @@ CDD also borrows from
 - Wikipedia-style article organization - everything about a single concept lives in a single place
 - [Obsidian](https://obsidian.md)
 - Feature-sliced architecture (pushing it to its logical end)
+- REST's convention of organizing an API around nouns (resources) rather than actions - CDD generalizes this noun-first instinct from the network boundary to the whole repository
 
 ## The Terms You Need
 
