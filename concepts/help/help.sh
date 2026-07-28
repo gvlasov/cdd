@@ -21,7 +21,7 @@ print_command() {
 
 command_description() {
     local filepath="$1"
-    tail -n +2 "$filepath" | awk 'NF && /^#/ { print; exit }' | sed 's/^#[[:space:]]*//'
+    sed -n '2{/^#/{s/^#[[:space:]]*//;p};}' "$filepath"
 }
 
 if [ "$#" -eq 1 ]; then

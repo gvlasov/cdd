@@ -38,6 +38,26 @@ load test_helper
   [ "$output" = "ide:open ${esc}[37m- open a file in the user's editor${esc}[0m" ]
 }
 
+@test "cdd help <command> only uses the description immediately after the shebang" {
+  project="$BATS_TEST_TMPDIR/project"
+  mkdir -p "$project/commands"
+
+  cat > "$project/commands/greet" <<'EOF'
+#!/usr/bin/env bash
+echo Hello
+# 2nd line
+echo Goodbye
+EOF
+  chmod +x "$project/commands/greet"
+
+  cd "$project"
+
+  run "$CDD" help greet
+
+  assert_success
+  [ "$output" = "greet" ]
+}
+
 @test "cdd help <command> fails for an unknown command" {
   run "$CDD" help nonexistent-command
 
