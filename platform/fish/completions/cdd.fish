@@ -17,6 +17,7 @@ complete -c cdd -n '__fish_use_subcommand' -a '(__cdd_top_level_commands)'
 complete -c cdd -n '__fish_seen_subcommand_from init' -a '(__fish_complete_directories)'
 complete -c cdd -f -n '__cdd_help_should_complete_commands' -a '(__cdd_help_commands)'
 complete -c cdd -f -n '__cdd_ide_should_complete_paths' -a '(__fish_complete_path (commandline -ct))'
+complete -c cdd -f -n '__cdd_commands_ln_should_complete_paths' -a '(__fish_complete_path (commandline -ct))'
 complete -c cdd -f -n '__cdd_source_code_should_complete_paths' -a '(__cdd_source_code_paths)'
 complete -c cdd -n '__fish_seen_subcommand_from feature problem' -a '(__cdd_plans_open_complete (commandline -opc)[2] (commandline -ct))'
 complete -c cdd -n '__fish_seen_subcommand_from plans:finish' -a '(__cdd_plans_finish_complete (commandline -ct))'
@@ -146,6 +147,20 @@ function __cdd_ide_should_complete_paths
 
     switch $tokens[2]
         case ide:open
+            return 0
+    end
+
+    return 1
+end
+
+function __cdd_commands_ln_should_complete_paths
+    set -l tokens (commandline -opc)
+    if test (count $tokens) -ne 2
+        return 1
+    end
+
+    switch $tokens[2]
+        case 'commands:ln'
             return 0
     end
 

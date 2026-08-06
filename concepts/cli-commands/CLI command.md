@@ -85,6 +85,18 @@ Examples:
 - `/envs/production/ssh.sh` -> `/commands/ssh:prod`
 - `/platform/npm/npm.sh` -> `/commands/npm`
 
+### `cdd commands:ln`
+
+`cdd commands:ln <source-file> <command-name>` creates the symlink for you:
+
+```bash
+cdd commands:ln platform/npm/npm.sh npm
+cdd commands:ln envs/production/ssh.sh ssh:prod
+cdd commands:ln concepts/people/create-person.sh people:create
+```
+
+It makes the source file executable, creates `/commands` if missing, computes the correct relative symlink target regardless of how deep the source file is nested, and refuses to overwrite an existing command. This exists because the implementation belongs with its concept, stakeholder, process, or platform directory, while the exposed name lives in `/commands` — `commands:ln` makes that split easy so there is no temptation to shortcut it by writing the command body directly into `/commands`.
+
 ## Kinds
 
 Commands accessible from the project shell include:

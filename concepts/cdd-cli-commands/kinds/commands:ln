@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Expose a file as a project command by symlinking it into ./commands
+set -euo pipefail
+
+if [ "$#" -ne 2 ]; then
+  printf 'usage: cdd commands:ln <source-file> <command-name>\n' >&2
+  exit 2
+fi
+
+source_file="$1"
+command_name="$2"
+command_path="./commands/$command_name"
+
+if [ ! -e "$source_file" ]; then
+  printf 'cdd commands:ln: source file does not exist: %s\n' "$source_file" >&2
+  exit 1
+fi
+
+if [ -e "$command_path" ] || [ -L "$command_path" ]; then
+  printf 'cdd commands:ln: command already exists: %s\n' "$command_path" >&2
+  exit 1
+fi
+
+mkdir -p ./commands
+
+source_abs="$(cd -P "$(dirname "$source_file")" >/dev/null 2>&1 && pwd)/$(basename "$source_file")"
+commands_abs="$(cd -P ./commands >/dev/null 2>&1 && pwd)"
+relative_source="$(realpath --relative-to="$commands_abs" "$source_abs")"
+
+ln -s "$relative_source" "$command_path"
+chmod +x "$source_abs"
+
+printf '%s -> %s\n' "$command_path" "$relative_source"
