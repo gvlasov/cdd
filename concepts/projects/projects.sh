@@ -3,7 +3,7 @@
 set -euo pipefail
 
 usage() {
-  printf 'usage: cdd projects <ls|cd|pwd> [project]\n' >&2
+  printf 'usage: cdd projects <ls|pwd> [project]\n' >&2
   exit 2
 }
 
@@ -43,7 +43,7 @@ case "${1:-ls}" in
     [ "$#" -eq 1 ] || usage
     list_projects
     ;;
-  cd|pwd)
+  pwd)
     [ "$#" -eq 2 ] || usage
     resolve_project "$2"
     ;;

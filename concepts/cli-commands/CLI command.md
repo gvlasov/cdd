@@ -35,7 +35,7 @@ CDD provides a system-wide utility `cdd` that suggests [commands for common proj
 - `cdd init` initializes a project
 - `cdd github:open` opens the project on github
 - `cdd projects` lists projects in the projects directory
-- `cdd projects cd spotify` cds to the directory of project named `spotify`
+- `cdd projects:cd spotify` cds to the directory of project named `spotify`
 
 etc.
 

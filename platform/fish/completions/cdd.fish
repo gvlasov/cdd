@@ -13,6 +13,7 @@ complete -c cdd -n '__fish_use_subcommand' -a 'source-code:volume:assess' -d 'Br
 complete -c cdd -n '__fish_use_subcommand' -a 'skill:print' -d 'Print the freshest installed CDD skill'
 complete -c cdd -n '__fish_use_subcommand' -a self-upgrade -d 'Self-upgrade CDD support from CDD_SOURCE_PATH'
 complete -c cdd -n '__fish_use_subcommand' -a projects -d 'List, resolve, or print projects'
+complete -c cdd -n '__fish_use_subcommand' -a 'projects:cd' -d 'Resolve a project directory to change into'
 complete -c cdd -n '__fish_use_subcommand' -a '(__cdd_top_level_commands)'
 complete -c cdd -n '__fish_seen_subcommand_from init' -a '(__fish_complete_directories)'
 complete -c cdd -f -n '__cdd_help_should_complete_commands' -a '(__cdd_help_commands)'
@@ -101,7 +102,7 @@ function __cdd_command_description
 end
 
 function __cdd_projects_subcommands
-    printf "%s\n" ls cd pwd
+    printf "%s\n" ls pwd
 end
 
 function __cdd_help_commands
@@ -202,13 +203,18 @@ end
 function __cdd_projects_should_complete_paths
     set -l tokens (commandline -opc)
 
-    if test (count $tokens) -lt 3
-        return 1
+    if test (count $tokens) -ge 3
+        switch $tokens[3]
+            case pwd
+                return 0
+        end
     end
 
-    switch $tokens[3]
-        case cd pwd
-            return 0
+    if test (count $tokens) -ge 2
+        switch $tokens[2]
+            case 'projects:cd'
+                return 0
+        end
     end
 
     return 1
