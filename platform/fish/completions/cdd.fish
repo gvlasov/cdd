@@ -18,12 +18,38 @@ complete -c cdd -n '__fish_use_subcommand' -a '(__cdd_top_level_commands)'
 complete -c cdd -n '__fish_seen_subcommand_from init' -a '(__fish_complete_directories)'
 complete -c cdd -f -n '__cdd_help_should_complete_commands' -a '(__cdd_help_commands)'
 complete -c cdd -f -n '__cdd_ide_should_complete_paths' -a '(__fish_complete_path (commandline -ct))'
-complete -c cdd -f -n '__cdd_commands_ln_should_complete_paths' -a '(__fish_complete_path (commandline -ct))'
+complete -c cdd -f -n '__cdd_commands_ln_should_complete_paths' -a '(__cdd_repo_root_relative_complete (commandline -ct))'
 complete -c cdd -f -n '__cdd_source_code_should_complete_paths' -a '(__cdd_source_code_paths)'
 complete -c cdd -n '__fish_seen_subcommand_from feature problem' -a '(__cdd_plans_open_complete (commandline -opc)[2] (commandline -ct))'
 complete -c cdd -n '__fish_seen_subcommand_from plans:finish' -a '(__cdd_plans_finish_complete (commandline -ct))'
 complete -c cdd -f -n '__cdd_projects_should_complete_subcommands' -a '(__cdd_projects_subcommands)'
 complete -c cdd -f -n '__cdd_projects_should_complete_paths' -a '(__cdd_projects_paths)'
+
+function __cdd_repo_root_relative_complete
+    # cdd commands:ln's <source-file> is resolved relative to the repo root
+    # (see concepts/cdd-cli-commands/kinds/commands:ln), not the shell's cwd
+    # -- so completion has to run against the repo root too, the same
+    # prefix-strip shape as __cdd_plans_finish_complete below, but rooted at
+    # a discovered git toplevel instead of a fixed subdirectory name.
+    set -l current $argv[1]
+
+    if test -z "$current"; and status --is-interactive
+        set current (commandline -ct)
+    end
+
+    set -l repo_root (git rev-parse --show-toplevel 2>/dev/null)
+    if test -z "$repo_root"
+        return 1
+    end
+
+    set -l prefix "$repo_root/$current"
+
+    for entry in (__fish_complete_path "$prefix")
+        set -l path (string split -m 1 \t -- "$entry")[1]
+        set path (string replace -r "^$repo_root/" "" -- "$path")
+        echo "$path"
+    end
+end
 
 function __cdd_plans_finish_complete
     set -l current $argv[1]

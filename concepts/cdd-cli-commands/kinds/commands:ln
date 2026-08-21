@@ -3,16 +3,21 @@
 set -euo pipefail
 
 if [ "$#" -ne 2 ]; then
-  printf 'usage: cdd commands:ln <source-file> <command-name>\n' >&2
+  printf 'usage: cdd commands:ln <source-file-from-repo-root> <command-name>\n' >&2
   exit 2
 fi
 
-source_file="$1"
+# Falls back to cwd when not inside a git repository -- CDD projects are
+# conventionally git repos, but nothing here actually requires one, so this
+# stays usable in a plain directory tree too.
+repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || repo_root="$(pwd)"
+
+source_file="$repo_root/$1"
 command_name="$2"
-command_path="./commands/$command_name"
+command_path="$repo_root/commands/$command_name"
 
 if [ ! -e "$source_file" ]; then
-  printf 'cdd commands:ln: source file does not exist: %s\n' "$source_file" >&2
+  printf 'cdd commands:ln: source file does not exist (relative to repo root %s): %s\n' "$repo_root" "$1" >&2
   exit 1
 fi
 
@@ -21,10 +26,10 @@ if [ -e "$command_path" ] || [ -L "$command_path" ]; then
   exit 1
 fi
 
-mkdir -p ./commands
+mkdir -p "$repo_root/commands"
 
 source_abs="$(cd -P "$(dirname "$source_file")" >/dev/null 2>&1 && pwd)/$(basename "$source_file")"
-commands_abs="$(cd -P ./commands >/dev/null 2>&1 && pwd)"
+commands_abs="$(cd -P "$repo_root/commands" >/dev/null 2>&1 && pwd)"
 relative_source="$(realpath --relative-to="$commands_abs" "$source_abs")"
 
 ln -s "$relative_source" "$command_path"

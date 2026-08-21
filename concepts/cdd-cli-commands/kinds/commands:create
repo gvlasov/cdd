@@ -7,8 +7,13 @@ if [ "$#" -ne 1 ]; then
   exit 2
 fi
 
+# Falls back to cwd when not inside a git repository -- CDD projects are
+# conventionally git repos, but nothing here actually requires one, so this
+# stays usable in a plain directory tree too.
+repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || repo_root="$(pwd)"
+
 command_name="$1"
-command_path="./commands/$command_name"
+command_path="$repo_root/commands/$command_name"
 command_dir="$(dirname "$command_path")"
 
 if [ -e "$command_path" ]; then
