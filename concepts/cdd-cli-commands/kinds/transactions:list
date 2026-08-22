@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# List all transactions by scanning for write-operations directories
+set -euo pipefail
+
+repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || repo_root="$(pwd)"
+cd "$repo_root"
+
+while IFS= read -r -d '' write_operations_dir; do
+  concept_dir="$(dirname "$write_operations_dir")"
+  concept_path="${concept_dir#./}"
+
+  shopt -s nullglob
+  for transaction_dir in "$write_operations_dir"/*/; do
+    [ -d "$transaction_dir" ] || continue
+    transaction_name="$(basename "$transaction_dir")"
+    printf '%s\t%s\n' "$concept_path" "$transaction_name"
+  done
+  shopt -u nullglob
+done < <(find . -type d \( -name 'write-operations' -o -name 'WriteOperations' -o -name 'writeOperations' \) -not -path '*/node_modules/*' -not -path '*/vendor/*' -print0) |
+  LC_ALL=C sort |
+  awk -F '\t' '{ printf "%s: %s\n", $1, $2 }'

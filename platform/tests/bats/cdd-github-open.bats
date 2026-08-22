@@ -16,7 +16,7 @@ EOF
   run env PATH="$fake_bin:$PATH" "$CDD" github:open
 
   assert_success
-  expected="https://github.com/gvlasov/concept-driven-organization/tree/master"
+  expected="https://github.com/gvlasov/cdd/tree/master"
   [ "$(cat "$opened_url")" = "$expected" ]
   [ ! -e "$PROJECT_ROOT/cdd" ]
 }

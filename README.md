@@ -25,6 +25,7 @@ CDD is a complete implementation of the idea of a [screaming architecture](https
 CDD also borrows from
 
 - [Ontology](https://en.wikipedia.org/wiki/Ontology) as a philosophical study of being
+- [Set theory](https://en.wikipedia.org/wiki/Set_theory) - concepts are classes, their instances comprise a volume, and a project's modeled reality is that volume's real subset
 - Wikipedia-style article organization - everything about a single concept lives in a single place
 - [Obsidian](https://obsidian.md)
 - Feature-sliced architecture (pushing it to its logical end)

@@ -32,6 +32,7 @@ CDD keeps these commands together so the entrypoint can discover, print, and dis
 - `projects` lists or resolves projects from the projects directory
 - `self-help` lists the `cdd` commands
 - `self-upgrade` self-upgrades CDD support from `CDD_SOURCE_PATH`
+- `transactions:list` lists all transactions by scanning for `write-operations` directories
 
 ## Notes
 

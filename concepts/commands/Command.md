@@ -1,6 +1,6 @@
-A command is an action a [[User|user]] can ask a system to perform.
+A command is an action a [[Subject|subject]] can ask a system to perform. The asking subject need not be a person — a [[User|user]] is the common case, but a cron job or another process asking a system to do something is a subject too.
 
-Commands are how a subject turns intent into effects. A command can change [[State|state]], produce feedback, start a [[Process|process]], or combine these outcomes. The important thing is that the user is not just asking for information; the user is asking the system to do something.
+Commands are how a subject turns intent into effects. A command can change [[State|state]], produce feedback, start a [[Process|process]], or combine these outcomes. The important thing is that the subject is not just asking for information; the subject is asking the system to do something.
 
 Examples:
 
@@ -28,6 +28,8 @@ A command asks the system to perform an action:
 - "Retry failed jobs"
 
 This distinction follows Command-Query Separation and Command-Query Responsibility Segregation. In practice, a command may still return feedback, but feedback is not the primary purpose. The primary purpose is the requested action.
+
+A command that changes a concept's [[Real Volume|real volume]] is a [[Transaction|transaction]]. Every transaction is a command; not every command is a transaction — some only start a [[Process|process]] or produce feedback.
 
 ## Naming
 
