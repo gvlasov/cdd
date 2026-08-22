@@ -1,5 +1,12 @@
 A concept is a [[Cohesion|cohesion]] unit: the unifying principle of representations held together by meaning.
 
+A concept has:
+
+- Name
+- Attributes
+- The set of all instances of its reflections
+- 1+ kinds
+
 In a CDD  software project, a concept is represented as a collection of files in a directory. The files are the concept's representations. The directory name is also a representation of the concept: it gives the concept a name and makes it addressable in the project.
 
 Examples:
