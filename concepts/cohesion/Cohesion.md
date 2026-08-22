@@ -30,26 +30,30 @@ Concept-level cohesion units:
 - A concept is a cohesion unit of representations that belong together by meaning.
 - A concept directory groups the concept's reflections: code, tests, views, commands, documentation, assets, and other representations of that concept.
 
+Sub-concept-level cohesion units:
+
+- A [transaction](/concepts/transactions/Transaction.md) is a cohesion unit below the concept: it gathers everything that implements one state change to a concept's real volume — input constraints, transport, persistence, caching — into one place, spanning whichever application layers the change's path passes through.
+
 Process-level cohesion units:
 
-- An individual [[Process|process]] is a cohesion unit of representations that describe or implement that process.
+- An individual [process](/concepts/processes/Process.md) is a cohesion unit of representations that describe or implement that process.
 - Process documentation, process commands, process diagrams, and process scripts belong together when they are about the same process.
 
 Stakeholder-level cohesion units:
 
-- A [[Stakeholder|stakeholder]] is a cohesion unit for representations of a person or group concerned with the project.
+- A [stakeholder](/concepts/stakeholders/Stakeholder.md) is a cohesion unit for representations of a person or group concerned with the project.
 - Stakeholder documentation, goals, constraints, expectations, and research belong together when they are about the same stakeholder.
 
 Platform-level cohesion units:
 
-- A [[Tool|tool]] is a cohesion unit for its configuration, wrappers, support files, and sometimes its generated outputs.
+- A [tool](/concepts/tools/Tool.md) is a cohesion unit for its configuration, wrappers, support files, and sometimes its generated outputs.
 - Composer can have its configuration and `vendor` output grouped as a Composer/tool concern.
 - NPM can have its configuration and `node_modules` output grouped as an NPM/tool concern.
-- A [[Lifecycle phase|lifecycle phase]] is also a platform-level cohesion unit: testing, linting, CLI, compilation, deployment, and similar concerns group the tool setup needed to run the project.
+- A [lifecycle phase](/concepts/lifecycle-phases/Lifecycle phase.md) is also a platform-level cohesion unit: testing, linting, CLI, compilation, deployment, and similar concerns group the tool setup needed to run the project.
 
 Project-level cohesion unit:
 
-- A [[Project|project]] is a cohesion unit composed of concepts, stakeholders, processes, and platform.
+- A [project](/concepts/projects/Project.md) is a cohesion unit composed of concepts, stakeholders, processes, and platform.
 
 The hierarchy is not only about nesting files. It is about preserving meaning at every scale, from an expression inside a statement to the structure of the whole project.
 
@@ -67,13 +71,13 @@ Examples:
 
 ## Relation to concepts
 
-A [[Concept|concept]] is a unit of cohesion in a project.
+A [concept](/concepts/concepts/Concept.md) is a unit of cohesion in a project.
 
 A concept directory exists because its reflections belong together by meaning. A concept can contain classes, views, tests, commands, documentation, assets, fixtures, and any other reflections that are about that concept.
 
 Representations of a concept inside one concept directory are highly cohesive. They can be passed to an LLM by referencing the whole directory, and the LLM can understand the concept in its entirety because the directory contains the concept's related reflections instead of scattered technical fragments.
 
-This is why [[Concept-driven directory structure|concept-driven directory structure]] matters: it makes cohesion visible in the filesystem.
+This is why [concept-driven directory structure](/concepts/directory-structures/Concept-driven directory structure.md) matters: it makes cohesion visible in the filesystem.
 
 ## Signs of good cohesion
 
@@ -91,4 +95,4 @@ This is why [[Concept-driven directory structure|concept-driven directory struct
 - A directory groups things only because they use the same framework mechanism.
 - A developer has to know the framework's storage conventions before they can find conceptually related code.
 
-Poor cohesion creates [[Mess|mess]]: things are out of place, and the developer has to spend attention reassembling meaning from scattered fragments.
+Poor cohesion creates [mess](/concepts/systems/Mess.md): things are out of place, and the developer has to spend attention reassembling meaning from scattered fragments.

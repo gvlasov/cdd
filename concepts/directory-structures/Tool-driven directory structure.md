@@ -1,4 +1,4 @@
-Project directory structure that is dictated by the tools rather than by the conceptual structure. An opposite of [[Concept-driven directory structure]].
+Project directory structure that is dictated by the tools rather than by the conceptual structure. An opposite of [Concept-driven directory structure](/concepts/directory-structures/Concept-driven directory structure.md).
 
 Tools want files grouped *by the tool* that uses them: 
 - tests ran with PHPUnit in /tests, 

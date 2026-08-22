@@ -1,4 +1,4 @@
-An ordered change in [[state]] that propagates forward in [[time]] until its termination
+An ordered change in [state](/concepts/databases/State.md) that propagates forward in [time](/processes/time/Time.md) until its termination
 
 A process is how things happen. It encompasses state transitions, indirection, and the intentions behind them.
 

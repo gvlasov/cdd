@@ -1,1 +1,1 @@
-An inner [[Virtual reality]] of a [[subject]]
+An inner [Virtual reality](/concepts/reality/Virtual reality.md) of a [subject](/concepts/subjects/Subject.md)

@@ -1,4 +1,4 @@
-A command interface for a [[Project]]
+A command interface for a [Project](/concepts/projects/Project.md)
 
 A good project has a command available for every action that is required during development, deployment and CI/CD2
 

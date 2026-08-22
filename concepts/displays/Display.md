@@ -1,8 +1,8 @@
-A display is a layer that visually represents [[State|state]] to a [[User|user]] through a [[Screen|screen]].
+A display is a layer that visually represents [state](/concepts/databases/State.md) to a [user](/concepts/users/User.md) through a [screen](/concepts/screens/Screen.md).
 
 A display sits between the current state of a system and the screen where that state becomes visible. It determines what state is relevant, gathers or receives that state, shapes it into a visual representation, and sends that representation through a transport mechanism.
 
-A display usually uses a third-party transport mechanism, such as a UI library, terminal output library, game engine, dashboarding system, charting library, browser rendering engine, or visualization tool. The transport mechanism is not the display itself. It is the [[Tool|tool]] through which the display reaches a screen.
+A display usually uses a third-party transport mechanism, such as a UI library, terminal output library, game engine, dashboarding system, charting library, browser rendering engine, or visualization tool. The transport mechanism is not the display itself. It is the [tool](/concepts/tools/Tool.md) through which the display reaches a screen.
 
 **Structure:**
 A display may include:

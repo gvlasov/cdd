@@ -25,7 +25,7 @@ CDD groups files by the cohesion unit they belong to:
 - Tool
 - Lifecycle phase
 
-This improves [[Cohesion|cohesion]], which is the ultimate good of a codebase. Related files stay together by meaning instead of being scattered by technical role.
+This improves [cohesion](/concepts/cohesion/Cohesion.md), which is the ultimate good of a codebase. Related files stay together by meaning instead of being scattered by technical role.
 
 A developer looking for order behavior opens the orders concept. A developer looking for refinement workflow opens the refinement process. A developer looking for Docker setup opens the Docker tool/platform area. A developer looking for testing setup opens the testing lifecycle phase.
 

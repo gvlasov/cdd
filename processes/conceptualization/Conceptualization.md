@@ -3,7 +3,7 @@ is a process of building a concept by generalizing [facts](Fact.md), a process o
 The process consists of:
 1. Observation
 2. Analysis
-3. Building [[Reflection|reflections]]
+3. Building [reflections](/concepts/reflections/Reflection.md)
 
 Thus, conceptualization is the function from observation to building reflections.
 

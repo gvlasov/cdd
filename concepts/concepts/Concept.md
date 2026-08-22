@@ -1,4 +1,4 @@
-A concept is a [[Cohesion|cohesion]] unit: the unifying principle of representations held together by meaning.
+A concept is a [cohesion](/concepts/cohesion/Cohesion.md) unit: the unifying principle of representations held together by meaning.
 
 A concept has:
 
@@ -44,7 +44,7 @@ Examples:
   User.md            # written description of the user concept
 ```
 
-A concept is not one class, model, file, table, or component. Those are possible [[Reflection|reflections]] of a concept. The concept is the identity of the cohesive set of reflections.
+A concept is not one class, model, file, table, or component. Those are possible [reflections](/concepts/reflections/Reflection.md) of a concept. The concept is the identity of the cohesive set of reflections.
 
 A concept consists only of its representations. Its name is one of those representations, and not a separate substance behind them.
 
@@ -60,7 +60,7 @@ The name of a plural concept must be in plural, e.g. `bills`, `products`, `apple
 
 The name of a singleton concept must be in singular, e.g. `jimmy-the-client`
 
-Also [[substances|Substance]] are called in singular.
+Also [Substance](/concepts/substances/Substances.md) are called in singular.
 
 ### Examples of singleton concepts
 
@@ -94,7 +94,7 @@ A concept is different from an object-oriented class because a class is one poss
 
 ## Project hierarchy
 
-A [[Project|project]] is a cohesion unit composed of concepts, stakeholders, processes, and platform.
+A [project](/concepts/projects/Project.md) is a cohesion unit composed of concepts, stakeholders, processes, and platform.
 
 A concept sits below the project in the hierarchy of cohesion: a project contains concepts, and a concept contains reflections.
 

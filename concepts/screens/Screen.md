@@ -1,4 +1,4 @@
-A reflection of [[Virtual reality|virtual reality]] onto [[Physical reality|physical reality]]
+A reflection of [virtual reality](/concepts/reality/Virtual reality.md) onto [physical reality](/concepts/reality/Physical reality.md)
 
 **Examples:**
 A computer screen

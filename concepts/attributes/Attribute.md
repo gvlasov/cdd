@@ -1,4 +1,4 @@
-Something that has an immediate relation to an [[Instance]]
+Something that has an immediate relation to an [Instance](/concepts/instances/Instance.md)
 
 Example:
 Player character has health

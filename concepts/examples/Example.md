@@ -1,1 +1,1 @@
-An [[Instance]] of a [[Reflection]] of a [[Concept]]
+An [Instance](/concepts/instances/Instance.md) of a [Reflection](/concepts/reflections/Reflection.md) of a [Concept](/concepts/concepts/Concept.md)

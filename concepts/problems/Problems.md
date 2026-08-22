@@ -15,7 +15,7 @@ Twitter (or basically any social network):
 - Software engineers get paid for building the project
 - Owners get money from marketers – a specific kind of rich users who want to spread their specific kind of ideas for money
 
-Different problems often involve different [[processes|Process]] because they concern different stakeholders, and thus are about different sets of concepts and their interactions.
+Different problems often involve different [Process](/concepts/processes/Process.md) because they concern different stakeholders, and thus are about different sets of concepts and their interactions.
 
 ## Attributes of a problem
 
@@ -37,6 +37,6 @@ Different problems often involve different [[processes|Process]] because they co
 They are similar. But problem tracking is a more complete framework for finishing projects, because it is more transparent. Task tracking assumes that the task executor does not necessarily understand the motivation of the task author, or what exact problems does the task solve.
 
 # Problems as parts of a project ontology in CDD
-Problem statements give crucial [[Context]] for the project.
+Problem statements give crucial [Context](/concepts/contexts/Context.md) for the project.
 
 If an engineer can't formulate the problem statements for a project, he is not suited to build the project properly.

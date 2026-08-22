@@ -1,4 +1,4 @@
-A CLI command is a [[Command|command]] available from a shell.
+A CLI command is a [command](/concepts/commands/Command.md) available from a shell.
 
 CDD promotes creating as many CLI commands as makes the project easier to operate. Whenever a developer notices a repeated shell action, a long invocation, a hard-to-remember tool command, or a project operation that should be discoverable, they are encouraged to define a command for it.
 

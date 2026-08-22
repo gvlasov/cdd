@@ -19,7 +19,7 @@ class GrabUnderAbility {
 }
 ```
 
-See [[Collection]], [[State]]
+See [Collection](/concepts/collections/Collection.md), [State](/concepts/databases/State.md)
 
 Absolute most of the time dependency injection must be used to define singletons and inject them into each other. It must be used create non-singleton objects only when absolutely necessary. Basically it is a container of singletons of specific types. You tell it what type you need - it constructs it if it doesn't exist yet, persists it in memory and gives you the object reference.
 

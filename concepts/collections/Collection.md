@@ -1,4 +1,4 @@
-A code-level object that grants read/write access to a concept's [[Real Volume|real volume]] — the set of all its actual instances
+A code-level object that grants read/write access to a concept's [real volume](/concepts/classes/RealVolume.md) — the set of all its actual instances
 
 **Example:**
 

@@ -1,13 +1,13 @@
-A hierarchical directory structure of a [[Project]] suggested by the ontological approach to software engineering. 
+A hierarchical directory structure of a [Project](/concepts/projects/Project.md) suggested by the ontological approach to software engineering. 
 
 **Structure:**
 All project code is separated into:
-- `/concepts` - all [[reflections|Reflection]] of the concepts, grouped in directories by a specific concept
+- `/concepts` - all [Reflection](/concepts/reflections/Reflection.md) of the concepts, grouped in directories by a specific concept
 - `/project` - project-only materials such as the project description, icon, and other project identity assets
-- `/stakeholders` - all [[stakeholders|Stakeholder]] of the project, grouped in directories by a specific stakeholder
-- `/processes` - all [[processes|Process]]
-- `/platform` - code that sets up [[tools|Tool]] and [[runtime environment|Runtime environment]] - any means that run our application to reflect the problem being solved with it onto the hardware
-- `/commands` - commands for the project developer to operate the project, immediately available in the [[Project shell]]
+- `/stakeholders` - all [Stakeholder](/concepts/stakeholders/Stakeholder.md) of the project, grouped in directories by a specific stakeholder
+- `/processes` - all [Process](/concepts/processes/Process.md)
+- `/platform` - code that sets up [Tool](/concepts/tools/Tool.md) and [[runtime environment|Runtime environment]] - any means that run our application to reflect the problem being solved with it onto the hardware
+- `/commands` - commands for the project developer to operate the project, immediately available in the [Project shell](/concepts/project-shell/Project shell.md)
     - Setting up the project: `up`
     - Release lifecycle: `deploy`, `release`, `build`, `lint`
     - Bringing it up for manual testing
@@ -22,7 +22,7 @@ All project code is separated into:
   - For intermediate materials
 
 **The problem it solves:**
-For the entire software development history, project directory structures were created [[Tool-driven directory structure|for tools to ingest]], not for developers to understand the project. This manifests as:
+For the entire software development history, project directory structures were created [for tools to ingest](/concepts/directory-structures/Tool-driven directory structure.md), not for developers to understand the project. This manifests as:
 - Tools want files grouped *by the tool* that uses them: tests ran with PHPUnit in /tests, source code compiled with esbuild in /src/resources/typescript. This naturally creates a kind of [shotgun surgery](https://www.wikiwand.com/en/Shotgun_surgery) where changes that should be cohesive span not many files, but many directories: 
 	- backend changes in one directory, 
 	- frontend changes in another directory, 

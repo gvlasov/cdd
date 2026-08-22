@@ -1,6 +1,6 @@
-A command is an action a [[Subject|subject]] can ask a system to perform. The asking subject need not be a person — a [[User|user]] is the common case, but a cron job or another process asking a system to do something is a subject too.
+A command is an action a [subject](/concepts/subjects/Subject.md) can ask a system to perform. The asking subject need not be a person — a [user](/concepts/users/User.md) is the common case, but a cron job or another process asking a system to do something is a subject too.
 
-Commands are how a subject turns intent into effects. A command can change [[State|state]], produce feedback, start a [[Process|process]], or combine these outcomes. The important thing is that the subject is not just asking for information; the subject is asking the system to do something.
+Commands are how a subject turns intent into effects. A command can change [state](/concepts/databases/State.md), produce feedback, start a [process](/concepts/processes/Process.md), or combine these outcomes. The important thing is that the subject is not just asking for information; the subject is asking the system to do something.
 
 Examples:
 
@@ -29,7 +29,7 @@ A command asks the system to perform an action:
 
 This distinction follows Command-Query Separation and Command-Query Responsibility Segregation. In practice, a command may still return feedback, but feedback is not the primary purpose. The primary purpose is the requested action.
 
-A command that changes a concept's [[Real Volume|real volume]] is a [[Transaction|transaction]]. Every transaction is a command; not every command is a transaction — some only start a [[Process|process]] or produce feedback.
+A command that changes a concept's [real volume](/concepts/classes/RealVolume.md) is a [transaction](/concepts/transactions/Transaction.md). Every transaction is a command; not every command is a transaction — some only start a [process](/concepts/processes/Process.md) or produce feedback.
 
 ## Naming
 
@@ -53,7 +53,7 @@ A good namespace prefix is the thing the command belongs to:
 
 - Concept name: `orders:import`, `users:import`, `products:import`
 - Tool name: `composer:install`, `npm:build`, `docker:up`
-- [[Lifecycle phase|Lifecycle phase]] name: `test:unit`, `test:e2e`, `build:frontend`, `deploy:production`
+- [Lifecycle phase](/concepts/lifecycle-phases/Lifecycle phase.md) name: `test:unit`, `test:e2e`, `build:frontend`, `deploy:production`
 
 The command module can still be named as a verb phrase, such as `ImportOrder`, while the shell command name can use a namespaced form such as `orders:import`.
 
@@ -68,4 +68,4 @@ Commands can be reflected in many forms:
 - Queue jobs
 - Scheduled tasks
 
-If a command reflects a domain concept, its implementation belongs to that concept. If it exists to operate the project or its environment, it belongs with project commands such as [[CLI command|CLI commands]].
+If a command reflects a domain concept, its implementation belongs to that concept. If it exists to operate the project or its environment, it belongs with project commands such as [CLI commands](/concepts/cli-commands/CLI command.md).

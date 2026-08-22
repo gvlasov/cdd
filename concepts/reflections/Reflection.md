@@ -1,4 +1,4 @@
-A way for a [[Concept|concept]] to [[Existence|exist]]
+A way for a [concept](/concepts/concepts/Concept.md) to [exist](/concepts/reality/Existence.md)
 
 **Synonyms:**
 Manifestation

@@ -1,4 +1,4 @@
-A lifecycle phase is a recurring stage or operation in the life of a [[Project|project]].
+A lifecycle phase is a recurring stage or operation in the life of a [project](/concepts/projects/Project.md).
 
 Lifecycle phases are platform-level cohesion units. They group the commands, tool configuration, scripts, documentation, and generated outputs needed to move the project through a recurring operation.
 
@@ -16,7 +16,7 @@ Lifecycle phases are not usually domain concepts. They are about operating the p
 
 ## Commands
 
-Lifecycle phases commonly appear as [[CLI command|CLI commands]].
+Lifecycle phases commonly appear as [CLI commands](/concepts/cli-commands/CLI command.md).
 
 Examples:
 

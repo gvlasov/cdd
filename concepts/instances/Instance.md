@@ -1,1 +1,1 @@
-A particular appearance of a [[Reflection|reflection]] within a [[State]]
+A particular appearance of a [reflection](/concepts/reflections/Reflection.md) within a [State](/concepts/databases/State.md)

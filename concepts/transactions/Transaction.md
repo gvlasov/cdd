@@ -2,7 +2,7 @@
 
 The path data traces through a write operation: from a request, through validation, through mutation, into persistence and back — scoped so the whole path appears atomic from the outside
 
-A transaction is what changes the state of a [[Concept|concept]]'s [[Real Volume|real volume]]. A concept itself has no state — it has a name, attributes, and kinds. Its real volume, the set of its actual instances in the modeled reality, is what has state. Because that real volume is often mutable, a concept usually has one or more transactions: create, update, delete, and any domain-specific state change.
+A transaction is what changes the state of a [concept](/concepts/concepts/Concept.md)'s [real volume](/concepts/classes/RealVolume.md). A concept itself has no state — it has a name, attributes, and kinds. Its real volume, the set of its actual instances in the modeled reality, is what has state. Because that real volume is often mutable, a concept usually has one or more transactions: create, update, delete, and any domain-specific state change.
 
 <p align="center">
   <img src="transaction-path.png" alt="A transaction as a path: a user action becomes a request, is loaded into an Aggregate, passes through the repository to the database, and a Result returns through the same path." style="max-width: 80%;">
@@ -12,11 +12,12 @@ A transaction is what changes the state of a [[Concept|concept]]'s [[Real Volume
 
 **Structure:**
 
-A transaction's path spans application layers — from a concept's frontend repository mutation method to the database and back. It is a [[Cohesion|cohesion]] unit below the concept: it must contain the whole vertical slice across layers the data's path passes through, not a fragment of it.
+A transaction's path spans application layers — from a concept's frontend repository mutation method to the database and back. It is a [cohesion](/concepts/cohesion/Cohesion.md) unit below the concept: it must contain the whole vertical slice across layers the data's path passes through, not a fragment of it.
 
 A transaction encapsulates:
 
 - input constraints - what makes the requested change valid
+- rate limiting - how often the triggering subject is allowed to run this transaction
 - transport - how the request reaches the transaction and how the result returns
 - database queries (or, for a saga, calls to the services/steps involved) - how the change is carried out and, if it fails partway, undone
 - caching - how caches are invalidated or updated as a result
@@ -28,7 +29,7 @@ A transaction's boundary is its atomicity boundary. Everything the transaction d
 
 ## Relation to Repository
 
-A [[Repository|repository]] exposes read and write access to a concept's real volume, but does not by itself say where a write's atomicity boundary lives, or where its input constraints and caching concerns are encapsulated.
+A [repository](/concepts/repositories/Repository.md) exposes read and write access to a concept's real volume, but does not by itself say where a write's atomicity boundary lives, or where its input constraints and caching concerns are encapsulated.
 
 A transaction is the answer: it is the unit that owns the atomicity boundary for one state change, together with the constraints and side effects (caching, transport) that belong to that change. A repository's write methods are the reflections a transaction calls into to touch the database; the transaction is the cohesion unit that ties those calls to the constraints and side effects surrounding them, and it is also what defines where the atomic unit starts and ends.
 
@@ -40,7 +41,7 @@ An aggregate's boundary is drawn by asking what must be true together, atomicall
 
 ## Relation to Command
 
-A [[Command|command]] is any action a [[Subject|subject]] asks a system to perform, including ones that only start a [[Process|process]] or produce feedback without changing state.
+A [command](/concepts/commands/Command.md) is any action a [subject](/concepts/subjects/Subject.md) asks a system to perform, including ones that only start a [process](/concepts/processes/Process.md) or produce feedback without changing state.
 
 Every transaction is a command: it runs when its triggering subject — a person, a cron job, another process — asks for the state change. Not every command is a transaction — some only start a process or produce feedback without changing state.
 
@@ -48,7 +49,7 @@ A transaction is transport-independent: it does not require a CLI command, HTTP 
 
 ## Placement
 
-A concept or a [[Tool|tool]] may have a `write-operations` directory (also written `WriteOperations` or `writeOperations`, matching the surrounding naming convention) directly under its own directory. Each subdirectory of it corresponds to one transaction, named after that transaction; the files inside are that transaction's implementation across whichever application layers it touches. Everything that implements a transaction belongs inside its subdirectory — nothing about that transaction's constraint checking, transport, persistence, or caching lives outside it.
+A concept or a [tool](/concepts/tools/Tool.md) may have a `write-operations` directory (also written `WriteOperations` or `writeOperations`, matching the surrounding naming convention) directly under its own directory. Each subdirectory of it corresponds to one transaction, named after that transaction; the files inside are that transaction's implementation across whichever application layers it touches. Everything that implements a transaction belongs inside its subdirectory — nothing about that transaction's constraint checking, transport, persistence, or caching lives outside it.
 
 **Examples:**
 
@@ -64,6 +65,6 @@ A concept or a [[Tool|tool]] may have a `write-operations` directory (also writt
   OrdersRepository.php       # order persistence representation, called into by transactions
 ```
 
-Because every `write-operations` directory follows this fixed pattern, tooling can find every transaction in a project by scanning for directories named `write-operations`/`WriteOperations`/`writeOperations` and listing their immediate subdirectories. See `cdd transactions:list` in [[CDD CLI Commands]].
+Because every `write-operations` directory follows this fixed pattern, tooling can find every transaction in a project by scanning for directories named `write-operations`/`WriteOperations`/`writeOperations` and listing their immediate subdirectories. See `cdd transactions:list` in [CDD CLI Commands](/concepts/cdd-cli-commands/CDD CLI Commands.md).
 
-The runtime mechanism a transaction uses — HTTP endpoint, queue job, CLI command — is irrelevant to which transaction it belongs to, same as for any other [[Reflection|reflection]].
+The runtime mechanism a transaction uses — HTTP endpoint, queue job, CLI command — is irrelevant to which transaction it belongs to, same as for any other [reflection](/concepts/reflections/Reflection.md).

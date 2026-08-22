@@ -1,4 +1,4 @@
-Is a reflection of a [[Conceptual system]] in source code
+Is a reflection of a [Conceptual system](/concepts/concepts/Conceptual system.md) in source code
 
 Project itself consists of a set of reflections of the concepts of the conceptual system
 
@@ -6,7 +6,7 @@ Project itself consists of a set of reflections of the concepts of the conceptua
 
 A project has 
 - a name and 
-- a directory structure, ideally a [[Concept-driven directory structure|concept-driven]] one
+- a directory structure, ideally a [concept-driven](/concepts/directory-structures/Concept-driven directory structure.md) one
 
 CDD suggests storing project-only material such as the project description, icon, and other identity assets in `/project`.
 
