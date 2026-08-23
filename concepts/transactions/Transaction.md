@@ -49,7 +49,7 @@ A transaction is transport-independent: it does not require a CLI command, HTTP 
 
 ## Placement
 
-A concept, [stakeholder](/concepts/stakeholders/Stakeholder.md), or [tool](/concepts/tools/Tool.md) may have a `transactions` directory (also written `Transactions`, matching the surrounding naming convention) directly under its own directory. Each subdirectory of it corresponds to one transaction, named after that transaction; the files inside are that transaction's implementation across whichever application layers it touches. Everything that implements a transaction belongs inside its subdirectory — nothing about that transaction's constraint checking, transport, persistence, or caching lives outside it.
+A concept, [stakeholder](/concepts/stakeholders/Stakeholder.md), or [tool](/concepts/tools/Tool.md) may have a `transactions` directory (also written `Transactions`, matching the surrounding naming convention) directly under its own directory. Each subdirectory of it corresponds to one transaction, named after that transaction alone (e.g. `create`, not `orders:create`) — its namespaced identifier is the concept's name and the subdirectory's name glued with `:`, not something the directory name needs to spell out itself. The files inside the subdirectory are that transaction's implementation across whichever application layers it touches. Everything that implements a transaction belongs inside its subdirectory — nothing about that transaction's constraint checking, transport, persistence, or caching lives outside it.
 
 A transaction's end-to-end [tests](/concepts/tests/Tests.md) belong in its subdirectory too, following the same reasoning that puts other tests near what they test. A real e2e test drives the transaction from the frontend — e.g. a Playwright test that drives the UI action that triggers the request — through transport, persistence, and caching, so it belongs with the transaction, not in a separate `/tests` or `/e2e` directory grouped by test type.
 
@@ -58,11 +58,11 @@ A transaction's end-to-end [tests](/concepts/tests/Tests.md) belong in its subdi
 ```
 /concepts/orders/
   transactions/
-    orders:create/
+    create/
       CreateOrder.php            # constraints, persistence, cache invalidation
       CreateOrderController.php  # transport
       CreateOrder.e2e.ts         # Playwright test driving the UI action end-to-end
-    orders:cancel/
+    cancel/
       CancelOrder.php
   Order.php                  # order entity representation
   OrdersRepository.php       # order persistence representation, called into by transactions

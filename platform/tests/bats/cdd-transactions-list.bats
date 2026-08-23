@@ -2,14 +2,14 @@
 
 load test_helper
 
-@test "cdd transactions:list lists transactions with grey concept paths, sorted by name" {
+@test "cdd transactions:list glues concept and transaction names, with grey concept paths, sorted" {
   project="$BATS_TEST_TMPDIR/project"
-  mkdir -p "$project/concepts/orders/transactions/orders:cancel"
-  mkdir -p "$project/concepts/orders/transactions/orders:create"
-  mkdir -p "$project/concepts/users/Transactions/users:delete"
-  touch "$project/concepts/orders/transactions/orders:create/CreateOrder.php"
-  touch "$project/concepts/orders/transactions/orders:cancel/CancelOrder.php"
-  touch "$project/concepts/users/Transactions/users:delete/DeleteUser.php"
+  mkdir -p "$project/concepts/orders/transactions/cancel"
+  mkdir -p "$project/concepts/orders/transactions/create"
+  mkdir -p "$project/concepts/users/Transactions/delete"
+  touch "$project/concepts/orders/transactions/create/CreateOrder.php"
+  touch "$project/concepts/orders/transactions/cancel/CancelOrder.php"
+  touch "$project/concepts/users/Transactions/delete/DeleteUser.php"
 
   cd "$project"
   git init -q
@@ -28,7 +28,7 @@ users:delete ${esc}[37m- concepts/users${esc}[0m"
 
 @test "cdd transactions:list ignores transactions directories with no tracked files" {
   project="$BATS_TEST_TMPDIR/project"
-  mkdir -p "$project/concepts/orders/transactions/orders:create"
+  mkdir -p "$project/concepts/orders/transactions/create"
 
   cd "$project"
   git init -q
@@ -56,10 +56,10 @@ users:delete ${esc}[37m- concepts/users${esc}[0m"
 
 @test "cdd transactions:list skips gitignored transactions" {
   project="$BATS_TEST_TMPDIR/project"
-  mkdir -p "$project/concepts/orders/transactions/orders:create"
-  mkdir -p "$project/concepts/ignored-thing/transactions/ignored:txn"
-  touch "$project/concepts/orders/transactions/orders:create/CreateOrder.php"
-  touch "$project/concepts/ignored-thing/transactions/ignored:txn/Ignored.php"
+  mkdir -p "$project/concepts/orders/transactions/create"
+  mkdir -p "$project/concepts/ignored-thing/transactions/txn"
+  touch "$project/concepts/orders/transactions/create/CreateOrder.php"
+  touch "$project/concepts/ignored-thing/transactions/txn/Ignored.php"
 
   cd "$project"
   git init -q

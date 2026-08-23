@@ -13,15 +13,17 @@ while IFS= read -r -d '' path; do
   for i in "${!parts[@]}"; do
     case "${parts[$i]}" in
       transactions|Transactions)
+        [ "$i" -gt 0 ] || continue
         [ $((i + 1)) -lt "${#parts[@]}" ] || continue
         concept_dir="$(IFS='/'; echo "${parts[*]:0:i}")"
+        concept_name="${parts[$((i - 1))]}"
         transaction_name="${parts[$((i + 1))]}"
-        printf '%s\t%s\n' "$transaction_name" "$concept_dir"
+        printf '%s\t%s\n' "$concept_name:$transaction_name" "$concept_dir"
         ;;
     esac
   done
 done < <(git ls-files -z) |
   LC_ALL=C sort -u |
-  while IFS=$'\t' read -r transaction_name concept_dir; do
-    echo -e "$transaction_name ${grey}- $concept_dir${reset}"
+  while IFS=$'\t' read -r identifier concept_dir; do
+    echo -e "$identifier ${grey}- $concept_dir${reset}"
   done
