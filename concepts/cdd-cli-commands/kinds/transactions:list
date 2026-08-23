@@ -1,21 +1,27 @@
 #!/usr/bin/env bash
-# List all transactions by scanning for write-operations directories
+# List all transactions by scanning for transactions directories, skipping gitignored files
 set -euo pipefail
 
-repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || repo_root="$(pwd)"
-cd "$repo_root"
+grey='\033[37m'
+reset='\033[0m'
 
-while IFS= read -r -d '' write_operations_dir; do
-  concept_dir="$(dirname "$write_operations_dir")"
-  concept_path="${concept_dir#./}"
+git_root="$(git rev-parse --show-toplevel)"
+cd "$git_root"
 
-  shopt -s nullglob
-  for transaction_dir in "$write_operations_dir"/*/; do
-    [ -d "$transaction_dir" ] || continue
-    transaction_name="$(basename "$transaction_dir")"
-    printf '%s\t%s\n' "$concept_path" "$transaction_name"
+while IFS= read -r -d '' path; do
+  IFS='/' read -ra parts <<<"$path"
+  for i in "${!parts[@]}"; do
+    case "${parts[$i]}" in
+      transactions|Transactions)
+        [ $((i + 1)) -lt "${#parts[@]}" ] || continue
+        concept_dir="$(IFS='/'; echo "${parts[*]:0:i}")"
+        transaction_name="${parts[$((i + 1))]}"
+        printf '%s\t%s\n' "$transaction_name" "$concept_dir"
+        ;;
+    esac
   done
-  shopt -u nullglob
-done < <(find . -type d \( -name 'write-operations' -o -name 'WriteOperations' -o -name 'writeOperations' \) -not -path '*/node_modules/*' -not -path '*/vendor/*' -print0) |
-  LC_ALL=C sort |
-  awk -F '\t' '{ printf "%s: %s\n", $1, $2 }'
+done < <(git ls-files -z) |
+  LC_ALL=C sort -u |
+  while IFS=$'\t' read -r transaction_name concept_dir; do
+    echo -e "$transaction_name ${grey}- $concept_dir${reset}"
+  done

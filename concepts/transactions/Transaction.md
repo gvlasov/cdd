@@ -49,13 +49,13 @@ A transaction is transport-independent: it does not require a CLI command, HTTP 
 
 ## Placement
 
-A concept or a [tool](/concepts/tools/Tool.md) may have a `write-operations` directory (also written `WriteOperations` or `writeOperations`, matching the surrounding naming convention) directly under its own directory. Each subdirectory of it corresponds to one transaction, named after that transaction; the files inside are that transaction's implementation across whichever application layers it touches. Everything that implements a transaction belongs inside its subdirectory — nothing about that transaction's constraint checking, transport, persistence, or caching lives outside it.
+A concept or a [tool](/concepts/tools/Tool.md) may have a `transactions` directory (also written `Transactions`, matching the surrounding naming convention) directly under its own directory. Each subdirectory of it corresponds to one transaction, named after that transaction; the files inside are that transaction's implementation across whichever application layers it touches. Everything that implements a transaction belongs inside its subdirectory — nothing about that transaction's constraint checking, transport, persistence, or caching lives outside it.
 
 **Examples:**
 
 ```
 /concepts/orders/
-  write-operations/
+  transactions/
     orders:create/
       CreateOrder.php        # constraints, persistence, cache invalidation
       CreateOrderController.php  # transport
@@ -65,6 +65,6 @@ A concept or a [tool](/concepts/tools/Tool.md) may have a `write-operations` dir
   OrdersRepository.php       # order persistence representation, called into by transactions
 ```
 
-Because every `write-operations` directory follows this fixed pattern, tooling can find every transaction in a project by scanning for directories named `write-operations`/`WriteOperations`/`writeOperations` and listing their immediate subdirectories. See `cdd transactions:list` in [CDD CLI Commands](/concepts/cdd-cli-commands/CDD CLI Commands.md).
+Because every `transactions` directory follows this fixed pattern, tooling can find every transaction in a project by scanning tracked files for path segments named `transactions`/`Transactions` and listing the directory right after them. Scanning tracked files rather than the working tree means gitignored transactions are skipped. See `cdd transactions:list` in [CDD CLI Commands](/concepts/cdd-cli-commands/CDD CLI Commands.md).
 
 The runtime mechanism a transaction uses — HTTP endpoint, queue job, CLI command — is irrelevant to which transaction it belongs to, same as for any other [reflection](/concepts/reflections/Reflection.md).
