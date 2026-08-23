@@ -49,7 +49,7 @@ A transaction is transport-independent: it does not require a CLI command, HTTP 
 
 ## Placement
 
-A concept or a [tool](/concepts/tools/Tool.md) may have a `transactions` directory (also written `Transactions`, matching the surrounding naming convention) directly under its own directory. Each subdirectory of it corresponds to one transaction, named after that transaction; the files inside are that transaction's implementation across whichever application layers it touches. Everything that implements a transaction belongs inside its subdirectory — nothing about that transaction's constraint checking, transport, persistence, or caching lives outside it.
+A concept, [stakeholder](/concepts/stakeholders/Stakeholder.md), or [tool](/concepts/tools/Tool.md) may have a `transactions` directory (also written `Transactions`, matching the surrounding naming convention) directly under its own directory. Each subdirectory of it corresponds to one transaction, named after that transaction; the files inside are that transaction's implementation across whichever application layers it touches. Everything that implements a transaction belongs inside its subdirectory — nothing about that transaction's constraint checking, transport, persistence, or caching lives outside it.
 
 **Examples:**
 

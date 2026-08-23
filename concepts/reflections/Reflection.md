@@ -16,5 +16,17 @@ A reflection belongs to a concept directory based on what it is about, not how i
 - A SettleOrders job of the Orders concept (not a platform concern as one might think).
 - `/concepts/products/README.md` that explains the concept of products is a reflection
 
+## Relation to Stakeholder
+
+A reflection is usually a [stakeholder](/concepts/stakeholders/Stakeholder.md)'s view into a concept, not a neutral fact about it. Some reflections are stakeholder-universal: used the same way regardless of who is asking.
+
+**Examples:**
+
+- `OrderAdminView` reflects Order for the admin stakeholder.
+- `OrderReceipt` reflects Order for the customer stakeholder.
+- `Order.php`, the entity itself, is stakeholder-universal — every path that touches an order goes through it.
+
+A reflection's name already says what it is. A stakeholder-specific reflection needs no separate naming convention or directory scheme beyond that.
+
 **Axioms:**
 - There is no canonical reflection of a concept

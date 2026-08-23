@@ -1,9 +1,6 @@
-1. The engineering process of keeping information available to combine with. Basically caching of facts
+The engineering process of keeping information available to combine with, so a [subject](/concepts/subjects/Subject.md) can reason over multiple [facts](/concepts/facts/Fact.md) at once.
 
-To produce an observation, an engineer has to put multiple facts together in his attention and apply reasoning to them.
+**Attributes:**
 
-Attention inevitably spends engineer's energy on focus.
-
-2. The resource of a subject's psyche that is spent on keeping information in focus
-
-The point of 
+- Mechanism - attention works by caching facts: to produce an observation, a subject holds multiple facts in attention at once and applies reasoning to them.
+- Cost - attention is a resource of the subject's psyche, spent on keeping information in focus. It is finite, so engineering work should minimize how much of a system must be held in focus at once.
