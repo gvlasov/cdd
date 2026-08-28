@@ -26,7 +26,7 @@ CDD also implements some reusable shell support:
 
 - `platform/fish/cdd.fish` provides `help` through `cdd-help`
 - `platform/fish/cdd.fish` provides `cdd-cd` to jump to the project root
-- `platform/fish/cdd.fish` prepends `commands` to the shell path when it exists, so project commands take precedence over commands from the default path
+- `platform/fish/cdd.fish` keeps the current project's `commands` directory on `PATH`, so project commands take precedence over commands from the default path. It re-evaluates on every directory change: `cd`ing into another CDD project swaps in that project's commands, and `cd`ing outside every CDD project removes them.
 
 ## `cdd` utility
 

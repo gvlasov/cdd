@@ -70,6 +70,28 @@ load test_helper
   [ "$output" = "$(realpath "$projects_root/problems")" ]
 }
 
+@test "fish cdd.fish swaps the project commands directory on PATH when changing projects" {
+  root="$BATS_TEST_TMPDIR"
+  mkdir -p "$root/projA/commands" "$root/projA/deep/nested" "$root/projB/commands" "$root/plain"
+
+  run env PROJECT_ROOT="$PROJECT_ROOT" ROOT="$root" fish --no-config -c '
+    source "$PROJECT_ROOT/platform/fish/cdd.fish"
+    cd "$ROOT/projA/deep/nested"; echo "A=$CDD_COMMANDS_PATH_ENTRY"
+    cd "$ROOT/projB"
+    string match -q "*projA/commands*" -- "$PATH"; and echo "LEAK projA"
+    echo "B=$CDD_COMMANDS_PATH_ENTRY"
+    cd "$ROOT/plain"
+    string match -q "*proj*/commands*" -- "$PATH"; and echo "LEAK plain"
+    echo "plain=[$CDD_COMMANDS_PATH_ENTRY]"
+  '
+
+  assert_success
+  assert_output_contains "A=$(realpath "$root/projA/commands")"
+  assert_output_contains "B=$(realpath "$root/projB/commands")"
+  assert_output_contains "plain=[]"
+  ! grep -q LEAK <<<"$output"
+}
+
 @test "cdd projects bash completion offers subcommands then project names" {
   projects_root="$BATS_TEST_TMPDIR/projects"
   mkdir -p "$projects_root/problems" "$projects_root/features"
