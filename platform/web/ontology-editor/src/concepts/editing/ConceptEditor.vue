@@ -18,8 +18,12 @@ const { apply, conceptLabel } = useOntology()
 
 const concept = computed(() => conceptOf(props.ontology, props.conceptId))
 
+// Type options: every concept except this one (a concept can't be its own
+// attribute's type).
 const conceptItems = computed(() =>
-  ontologyConcepts(props.ontology).map((id) => ({ value: id, title: conceptLabel(id) ?? id })),
+  ontologyConcepts(props.ontology)
+    .filter((id) => id !== props.conceptId)
+    .map((id) => ({ value: id, title: conceptLabel(id) ?? id })),
 )
 
 const adding = ref(false)

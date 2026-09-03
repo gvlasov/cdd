@@ -6,7 +6,7 @@ import { conceptOf } from '@/concepts/ontology/Ontology'
 import { useOntology } from '@/concepts/ontology/useOntology'
 import { setPropertyValue } from '@/concepts/editing/editOntology'
 import { spawnValue, removeValue } from './spawnValue'
-import { isLeafConcept, isList, isRequired, type AttributeSpec } from './Attribute'
+import { isLeafConcept, isList, isRequired, CARDINALITIES, type AttributeSpec } from './Attribute'
 import InstanceForm from '@/concepts/editing/InstanceForm.vue'
 
 // Edits one attribute's value(s) on an owner instance.
@@ -20,6 +20,8 @@ const { ontology, apply, conceptLabel } = useOntology()
 const owner = computed(() => conceptOf(ontology(), props.ownerId))
 const leaf = computed(() => isLeafConcept(ontology(), props.spec.type))
 const list = computed(() => isList(props.spec.cardinality))
+const cardinalityValued = computed(() => props.spec.type === 'cdd.cardinality')
+const CARDS: string[] = [...CARDINALITIES]
 
 const raw = computed(() => {
   const p = (owner.value ?? []).find((x) => x.kind === props.spec.slug)
@@ -54,8 +56,18 @@ const canAdd = computed(() => list.value || valueIds.value.length === 0)
 
     <!-- leaf: single field (list of fields when 0+/1+) -->
     <template v-if="leaf">
+      <v-select
+        v-if="cardinalityValued"
+        :model-value="literalValue"
+        :items="CARDS"
+        :label="spec.name"
+        variant="outlined"
+        density="comfortable"
+        hide-details
+        @update:model-value="commitLiteral($event ?? '')"
+      />
       <v-text-field
-        v-if="!list"
+        v-else-if="!list"
         :model-value="literalValue"
         :label="spec.name"
         variant="outlined"
