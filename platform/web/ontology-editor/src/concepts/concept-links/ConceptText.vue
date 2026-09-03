@@ -5,9 +5,9 @@ import { conceptOf, rootConcept } from '@/concepts/ontology/Ontology'
 import { useOntology } from '@/concepts/ontology/useOntology'
 import { parseConceptLinks } from './parseConceptLinks'
 
-// Renders text that may embed [Label](identity) links to other concepts.
-// A leading dot in the target means "this ontology": `.attribute` →
-// `<rootSlug>.attribute`.
+// Renders text that may embed [Label](identity) links to other concepts and
+// `inline code` spans. A leading dot in a link target means "this ontology":
+// `.attribute` → `<rootSlug>.attribute`.
 const props = defineProps<{ text: string }>()
 
 const { ontology, navigate } = useOntology()
@@ -37,6 +37,7 @@ function known(target: string): boolean {
       <span v-else-if="seg.kind === 'link'" class="concept-link concept-link--broken">{{
         seg.label
       }}</span>
+      <code v-else-if="seg.kind === 'code'" class="inline-code">{{ seg.text }}</code>
       <template v-else>{{ seg.text }}</template>
     </template>
   </span>
@@ -52,5 +53,12 @@ function known(target: string): boolean {
 .concept-link--broken {
   color: rgb(var(--v-theme-error));
   cursor: default;
+}
+.inline-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: rgb(var(--v-theme-on-surface) / 0.08);
 }
 </style>

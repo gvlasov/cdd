@@ -77,21 +77,19 @@ which only re-keys `cdd.concept`-typed instances), moves its `instances` entry,
 and rewrites references. Every edit emits a new `Ontology` via
 `update:modelValue`.
 
-## Concept links in text
+## Rich text (`definition` / `description`)
 
-`definition` / `description` text may embed markdown-style links to other
-concepts:
+The text may embed markdown-style concept links and inline code:
 
 ```
-A concept is a collection of [properties](.property), and its
-[attributes](.attribute) declare what its instances may have.
+A concept is a collection of [properties](.property); run `git commit` to save.
 [Ontology](cdd.ontology)
 ```
 
-`[Label](identity)` links to that concept; a leading dot means "this ontology",
-so `.attribute` resolves to `<rootSlug>.attribute`. Known targets render as
-clickable links that navigate to the concept; unknown targets render in the
-error color and are inert.
+- `[Label](identity)` links to that concept; a leading dot means "this
+  ontology", so `.attribute` resolves to `<rootSlug>.attribute`. Known targets
+  are clickable and navigate; unknown targets render in the error color, inert.
+- `` `text` `` renders as monospace inline code.
 
 ## Reality & transactions
 

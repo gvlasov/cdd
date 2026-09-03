@@ -1,9 +1,10 @@
 import type { Identity } from '@/concepts/identity/Identity'
 
-// Text may contain markdown-style links to other concepts:
-//   [Label](cdd.attribute)      → link to the concept `cdd.attribute`
-//   [Attribute](.attribute)     → leading dot means "this ontology": the
-//                                 target is `<rootSlug>.attribute`
+// Text may contain:
+//   [Label](cdd.attribute)   → link to the concept `cdd.attribute`
+//   [Attribute](.attribute)  → leading dot means "this ontology": the target
+//                              is `<rootSlug>.attribute`
+//   `git commit`             → inline monospace code
 //
 // Everything else is plain text.
 
@@ -19,30 +20,40 @@ export interface LinkSegment {
   target: Identity
 }
 
-export type Segment = TextSegment | LinkSegment
+export interface CodeSegment {
+  kind: 'code'
+  text: string
+}
 
-const LINK = /\[([^\]]+)\]\(([^)]+)\)/g
+export type Segment = TextSegment | LinkSegment | CodeSegment
+
+// One combined scanner: a concept link, or an inline-code span.
+const TOKEN = /\[([^\]]+)\]\(([^)]+)\)|`([^`]+)`/g
 
 /**
- * Split `text` into plain and link segments. `rootSlug` resolves a leading-dot
- * target (`.attribute` → `<rootSlug>.attribute`); when omitted such a target is
- * left as written minus the dot.
+ * Split `text` into plain, link and code segments. `rootSlug` resolves a
+ * leading-dot link target (`.attribute` → `<rootSlug>.attribute`); when omitted
+ * such a target is left as written minus the dot.
  */
 export function parseConceptLinks(text: string, rootSlug?: string): Segment[] {
   const segments: Segment[] = []
   let last = 0
 
-  for (const match of text.matchAll(LINK)) {
-    const [whole, label, rawTarget] = match
+  for (const match of text.matchAll(TOKEN)) {
+    const [whole, label, rawTarget, code] = match
     const start = match.index ?? 0
     if (start > last) segments.push({ kind: 'text', text: text.slice(last, start) })
 
-    const target = rawTarget.startsWith('.')
-      ? rootSlug
-        ? `${rootSlug}${rawTarget}`
-        : rawTarget.slice(1)
-      : rawTarget
-    segments.push({ kind: 'link', label, target })
+    if (code !== undefined) {
+      segments.push({ kind: 'code', text: code })
+    } else {
+      const target = rawTarget.startsWith('.')
+        ? rootSlug
+          ? `${rootSlug}${rawTarget}`
+          : rawTarget.slice(1)
+        : rawTarget
+      segments.push({ kind: 'link', label, target })
+    }
     last = start + whole.length
   }
 
