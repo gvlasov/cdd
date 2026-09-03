@@ -60,6 +60,22 @@ that pointed at the old identity — the view follows the moved concept. Every e
 `Ontology` via `update:modelValue`. Adding/removing properties is not in this
 pass.
 
+## Concept links in text
+
+`definition` / `description` text may embed markdown-style links to other
+concepts:
+
+```
+A concept is a collection of [properties](.property), and its
+[attributes](.attribute) declare what its instances may have.
+[Ontology](cdd.ontology)
+```
+
+`[Label](identity)` links to that concept; a leading dot means "this ontology",
+so `.attribute` resolves to `<rootSlug>.attribute`. Known targets render as
+clickable links that navigate to the concept; unknown targets render in the
+error color and are inert.
+
 ## View
 
 The central component is the **instance renderer**: it fills the screen with one
@@ -98,6 +114,7 @@ src/concepts/
   instances/      Instance (= Property[]) and <InstanceRenderer> — the central component
   concepts/       Concept helpers (a concept is an instance with `attributes`)
   properties/     Property, PropertyKind, and kinds/ (one renderer per drawn kind)
+  concept-links/  parse & render [Label](identity) links embedded in text
   editing/        edit-mode: value-kind classification, immutable edits, <ConceptEditor>
   concept-view/   <ConceptView> — instance renderer + parents above + attributes below
   app/            local demo app (not part of the published bundle)

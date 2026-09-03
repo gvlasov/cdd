@@ -37,6 +37,10 @@ export type { PropertyKind } from '@/concepts/properties/PropertyKind'
 // A PropertyKind may carry `render` (view) and `edit` (edit-mode) components.
 export { propertyKinds, propertyKind } from '@/concepts/properties/kinds/property-kinds'
 
+export { default as ConceptText } from '@/concepts/concept-links/ConceptText.vue'
+export { parseConceptLinks } from '@/concepts/concept-links/parseConceptLinks'
+export type { Segment } from '@/concepts/concept-links/parseConceptLinks'
+
 export { default as ConceptEditor } from '@/concepts/editing/ConceptEditor.vue'
 export {
   setPropertyValue,

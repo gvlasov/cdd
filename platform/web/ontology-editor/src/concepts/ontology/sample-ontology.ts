@@ -36,7 +36,7 @@ export const sampleOntology: Ontology = {
       {
         kind: 'definition',
         value:
-          'A cohesion unit: the unifying principle of representations held together by meaning. A concept is a collection of properties, and its attributes declare what properties its instances may have.',
+          'A cohesion unit: the unifying principle of representations held together by meaning. A concept is a collection of [properties](.property), and its [attributes](.attribute) declare what properties its instances may have.',
       },
       {
         kind: 'attributes',
