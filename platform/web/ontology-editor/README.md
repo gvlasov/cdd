@@ -155,7 +155,9 @@ import '@cdd/ontology-editor/style.css'
 <OntologyEditor v-model="ontology" root-id="concept" />
 ```
 
-The component uses theme colors — `concept`, `attribute`, `relation`.
+The component uses theme colors — `concept`, `instance`, `attribute`, `relation`.
+The instance card is tinted `concept` when the instance declares `attributes`,
+else `instance`.
 Merge `ontologyTheme` into your Vuetify config so they resolve:
 
 ```ts

@@ -1,11 +1,13 @@
 import type { ThemeDefinition } from 'vuetify'
 
 // Domain colors for the ontology editor. Each names a part of an ontology:
-//  - concept:   a node in the graph
+//  - concept:   an instance that declares attributes
+//  - instance:  an instance that does not
 //  - attribute: a concept held by another concept
 //  - relation:  the labelled link between a concept and its attribute
 export const ontologyColors = {
   concept: '#3949AB', // indigo
+  instance: '#546E7A', // blue-grey
   attribute: '#00897B', // teal
   relation: '#8E24AA', // purple
 } as const
@@ -21,6 +23,7 @@ export const ontologyDarkTheme: ThemeDefinition = {
   dark: true,
   colors: {
     concept: '#7986CB',
+    instance: '#90A4AE',
     attribute: '#4DB6AC',
     relation: '#CE93D8',
   },

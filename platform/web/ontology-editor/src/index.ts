@@ -24,6 +24,7 @@ export type { Instance } from '@/concepts/instances/Instance'
 export { instanceName, instanceSlug, instanceIdentity } from '@/concepts/instances/Instance'
 export type { Concept } from '@/concepts/concepts/Concept'
 export {
+  isConcept,
   conceptIdentity,
   conceptSlug,
   conceptName,

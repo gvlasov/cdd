@@ -7,6 +7,11 @@ import { instanceName, instanceSlug, instanceIdentity } from '@/concepts/instanc
 // what properties its own instances may have.
 export type Concept = Instance
 
+/** Whether an instance is a concept — i.e. it declares `attributes`. */
+export function isConcept(instance: Instance): boolean {
+  return firstOfKind(instance, 'attributes') !== undefined
+}
+
 export const conceptIdentity = instanceIdentity
 export const conceptName = instanceName
 export const conceptSlug = instanceSlug
