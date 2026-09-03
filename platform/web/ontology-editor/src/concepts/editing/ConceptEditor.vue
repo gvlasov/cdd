@@ -15,6 +15,7 @@ const concept = computed(() => conceptOf(props.ontology, props.conceptId))
 const editable = computed(() =>
   [...(concept.value ?? [])]
     .map((property, i) => ({ property, i, position: propertyKind(property.kind)?.position ?? 99 }))
+    .filter((x) => x.property.kind !== 'identity')
     .sort((a, b) => a.position - b.position || a.i - b.i),
 )
 </script>

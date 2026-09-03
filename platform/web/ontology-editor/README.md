@@ -53,7 +53,7 @@ picks a generic input:
 - concept list (`concept`, `concepts`, `attributes`) → autocomplete over the
   ontology's concepts
 
-`identity` is read-only. Editing a `slug` recomputes the instance's identity
+`identity` is not shown in edit mode — it is derived. Editing a `slug` recomputes the instance's identity
 (`derivedIdentity`), moves its `instances` entry, updates its `identity`
 property, and rewrites every `attributes` / `concept` / `concepts` reference
 that pointed at the old identity — the view follows the moved concept. Every edit emits a new
