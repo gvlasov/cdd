@@ -11,7 +11,6 @@ const ontology = ref<Ontology>(sampleOntology)
   <v-app>
     <v-main>
       <v-container fluid>
-        <h1 class="text-h5 mb-4">CDD Ontology Editor — demo</h1>
         <div style="height: 70vh">
           <OntologyEditor v-model="ontology" />
         </div>
