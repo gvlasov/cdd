@@ -58,7 +58,7 @@ function remove(kind: PropertyKindName) {
         />
       </div>
 
-      <div v-if="addable.length" class="d-flex flex-wrap ga-2 pt-2">
+      <div v-if="addable.length" class="d-flex flex-wrap ga-2 pt-2 justify-center">
         <v-btn
           v-for="kind in addable"
           :key="kind"
