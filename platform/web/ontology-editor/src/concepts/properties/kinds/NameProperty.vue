@@ -59,8 +59,9 @@ const cardinalitySup = computed(() =>
         class="link"
         href="#"
         @click.prevent="navigate(nameLink)"
-        >{{ property.value }}<sup v-if="cardinalitySup" class="ms-1">{{ cardinalitySup }}</sup></a
-      ><template v-else>{{ property.value }}</template>
+        >{{ property.value }}</a
+      ><template v-else>{{ property.value }}</template
+      ><sup v-if="cardinalitySup" class="text-medium-emphasis">{{ cardinalitySup }}</sup>
     </h1>
     <code v-if="slug" class="text-caption text-disabled">{{ slug }}</code>
   </div>

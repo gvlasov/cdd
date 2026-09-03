@@ -30,7 +30,8 @@ const redundant = computed(() => {
   >
     <span>type</span>
     <v-chip color="concept" variant="outlined" size="small" link @click="navigate(target)">
-      {{ conceptLabel(target) ?? target }}<sup class="ms-1">{{ cardinality }}</sup>
+      {{ conceptLabel(target) ?? target }}
     </v-chip>
+    <sup>{{ cardinality }}</sup>
   </div>
 </template>
