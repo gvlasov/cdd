@@ -21,6 +21,7 @@ export const sampleOntology: Ontology = {
         kind: 'concepts',
         value: [
           'cdd.concept',
+          'cdd.instance',
           'cdd.attribute',
           'cdd.property',
           'cdd.name',
@@ -54,6 +55,17 @@ export const sampleOntology: Ontology = {
       },
       { kind: 'attributes', value: ['cdd.name', 'cdd.definition'] },
     ],
+    'cdd.instance': [
+      { kind: 'identity', value: 'cdd.instance' },
+      { kind: 'slug', value: 'instance' },
+      { kind: 'name', value: 'Instance' },
+      {
+        kind: 'definition',
+        value:
+          'Anything the ontology holds: a collection of [properties](.property) addressed by a unique identity. A [concept](.concept) is an instance that also declares [attributes](.attribute).',
+      },
+      { kind: 'attributes', value: ['cdd.name', 'cdd.definition', 'cdd.slug'] },
+    ],
     'cdd.property': [
       { kind: 'identity', value: 'cdd.property' },
       { kind: 'slug', value: 'property' },
@@ -61,7 +73,7 @@ export const sampleOntology: Ontology = {
       {
         kind: 'definition',
         value:
-          'Belongs to an instance. A value the instance holds in a slot its concept defines via an attribute.',
+          'Belongs to an [instance](.instance). A value the instance holds in a slot its [concept](.concept) defines via an [attribute](.attribute).',
       },
     ],
     'cdd.name': [
