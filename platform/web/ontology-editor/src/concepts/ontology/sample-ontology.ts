@@ -85,7 +85,7 @@ concept(
     attr('cdd.concept', 'name', 'cdd.name', '1'),
     attr('cdd.concept', 'slug', 'cdd.slug', '1'),
     attr('cdd.concept', 'definition', 'cdd.definition', '0-1'),
-    attr('cdd.concept', 'attribute', 'cdd.attribute', '0+'),
+    attr('cdd.concept', 'attributes', 'cdd.attribute', '0+'),
   ],
 )
 concept(
