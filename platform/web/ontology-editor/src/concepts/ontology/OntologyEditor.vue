@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { Ontology } from './Ontology'
+import type { Identity } from '@/concepts/identity/Identity'
+import { provideOntology } from './useOntology'
 import ConceptView from '@/concepts/concept-view/ConceptView.vue'
 
 const props = defineProps<{
-  /** The concept graph to display. */
+  /** The ontology to display. */
   modelValue: Ontology
-  /** Concept to show first. Defaults to the first node. */
-  rootId?: string
+  /** Identity of the concept to show first. Defaults to the first concept. */
+  rootId?: Identity
   /** Reserved: when true, editing controls become available (next iteration). */
   editable?: boolean
 }>()
@@ -17,30 +19,28 @@ defineEmits<{
   (e: 'update:modelValue', value: Ontology): void
 }>()
 
-const currentId = ref(props.rootId ?? props.modelValue.nodes[0]?.id ?? '')
+const firstId = computed(() => Object.keys(props.modelValue.concepts)[0] ?? '')
+const currentId = ref<Identity>(props.rootId ?? firstId.value)
 
 watch(
   () => [props.rootId, props.modelValue] as const,
   () => {
-    const stillExists = props.modelValue.nodes.some((n) => n.id === currentId.value)
-    if (!stillExists) {
-      currentId.value = props.rootId ?? props.modelValue.nodes[0]?.id ?? ''
+    if (!(currentId.value in props.modelValue.concepts)) {
+      currentId.value = props.rootId ?? firstId.value
     }
   },
 )
 
-function navigate(conceptId: string) {
-  currentId.value = conceptId
+function navigate(identity: Identity) {
+  currentId.value = identity
 }
+
+provideOntology({ ontology: () => props.modelValue, navigate })
 </script>
 
 <template>
   <div class="ontology-editor">
-    <ConceptView
-      :ontology="modelValue"
-      :concept-id="currentId"
-      @navigate="navigate"
-    />
+    <ConceptView :ontology="modelValue" :concept-id="currentId" />
   </div>
 </template>
 

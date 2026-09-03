@@ -1,13 +1,30 @@
 // Public entry point for the embeddable component.
 export { default as OntologyEditor } from '@/concepts/ontology/OntologyEditor.vue'
 export { default as ConceptView } from '@/concepts/concept-view/ConceptView.vue'
-export type { Ontology, OntologyNode, OntologyEdge } from '@/concepts/ontology/Ontology'
+
+export type { Ontology } from '@/concepts/ontology/Ontology'
 export {
   emptyOntology,
-  nodeById,
-  attributesOf,
-  parentsOf,
+  conceptOf,
+  parentIdentities,
+  identityRepository,
 } from '@/concepts/ontology/Ontology'
+
+export type { Identity } from '@/concepts/identity/Identity'
+export { IdentityRepository } from '@/concepts/identity/IdentityRepository'
+
+export type { Concept } from '@/concepts/concepts/Concept'
+export {
+  conceptIdentity,
+  conceptName,
+  conceptLabelOf,
+  conceptRefs,
+} from '@/concepts/concepts/Concept'
+
+export type { Attribute, AttributeKindName } from '@/concepts/attributes/Attribute'
+export type { AttributeKind } from '@/concepts/attributes/AttributeKind'
+export { attributeKinds, attributeKind } from '@/concepts/attributes/kinds/attribute-kinds'
+
 export {
   ontologyColors,
   ontologyTheme,

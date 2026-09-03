@@ -1,47 +1,30 @@
-// A generic concept graph.
-//
-// Every node is a concept. The one relation the editor navigates is
-// "has attribute": a concept has other concepts as its attributes, and is in
-// turn an attribute of its parent concepts. An attribute edge points from the
-// owning concept to the attribute concept.
-//
-// Format-agnostic — not tied to CDD's directory layout or any storage backend.
+import type { Identity } from '@/concepts/identity/Identity'
+import type { Concept } from '@/concepts/concepts/Concept'
+import { conceptRefs } from '@/concepts/concepts/Concept'
+import { IdentityRepository } from '@/concepts/identity/IdentityRepository'
 
-export interface OntologyNode {
-  id: string
-  /** Display name of the concept. Optional — a concept need not be named. */
-  name?: string
-  /** Markdown or plain-text description of the concept. Optional. */
-  description?: string
-}
-
-export interface OntologyEdge {
-  id: string
-  /** The concept that has the attribute. */
-  from: string
-  /** The attribute concept. */
-  to: string
-  /** Optional label for how `to` relates to `from`, e.g. "has", "is measured in". */
-  relation?: string
-}
-
+// An ontology is a flat, rhizomatic collection of concepts keyed by identity —
+// not a tree. Concepts reference each other by identity via `concept`
+// attributes.
 export interface Ontology {
-  nodes: OntologyNode[]
-  edges: OntologyEdge[]
+  concepts: Record<Identity, Concept>
 }
 
-export const emptyOntology = (): Ontology => ({ nodes: [], edges: [] })
+export const emptyOntology = (): Ontology => ({ concepts: {} })
 
-export function nodeById(ontology: Ontology, id: string): OntologyNode | undefined {
-  return ontology.nodes.find((n) => n.id === id)
+export function identityRepository(ontology: Ontology): IdentityRepository {
+  return new IdentityRepository(ontology.concepts)
 }
 
-/** Concepts that `conceptId` has as attributes. */
-export function attributesOf(ontology: Ontology, conceptId: string): OntologyEdge[] {
-  return ontology.edges.filter((e) => e.from === conceptId)
+export function conceptOf(ontology: Ontology, identity: Identity): Concept | undefined {
+  return ontology.concepts[identity]
 }
 
-/** Concepts that have `conceptId` as one of their attributes. */
-export function parentsOf(ontology: Ontology, conceptId: string): OntologyEdge[] {
-  return ontology.edges.filter((e) => e.to === conceptId)
+/** Identities of concepts that reference `identity` through a `concept` attribute. */
+export function parentIdentities(ontology: Ontology, identity: Identity): Identity[] {
+  const parents: Identity[] = []
+  for (const [ownerId, concept] of Object.entries(ontology.concepts)) {
+    if (conceptRefs(concept).includes(identity)) parents.push(ownerId)
+  }
+  return parents
 }

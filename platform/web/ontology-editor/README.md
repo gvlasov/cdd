@@ -1,16 +1,31 @@
 # CDD Ontology Editor
 
-An embeddable Vue 3 component for viewing — and, later, editing — a **generic
-concept graph** (an ontology). Every node is a concept; the one relation the
-editor navigates is "has attribute". Format-agnostic; not tied to CDD's
-directory layout or any storage backend.
+An embeddable Vue 3 component for viewing — and, later, editing — an ontology:
+a flat, rhizomatic collection of **concepts**. Format-agnostic; not tied to
+CDD's directory layout or any storage backend.
+
+## Model
+
+- A **concept is a collection of attributes** — nothing else. Name, definition,
+  examples and identity are all just attributes.
+- An **attribute** has a `kind` and a `value`. The value is another attribute
+  of the attribute, referenced (like everything) by **identity**.
+- An **identity** is a string, unique within the ontology. It is the base case:
+  an identity *is* its own literal content. `IdentityRepository` maps every
+  identity to the instance it represents; it is built from the ontology at load.
+- Predefined attribute kinds and their draw positions on the concept widget:
+  `name` (0), `definition` (1), `identity` (2), `concept` (3), `examples` (5).
+  Each kind ships a component that draws one attribute of that kind. Attributes
+  at the same position draw in renderer-defined order.
+- The ontology is **flat**: `{ concepts: { <identity>: Attribute[] } }`.
+  Concepts reference each other by identity via `concept` attributes.
 
 ## View
 
-One concept fills the screen at a time: its name (if any) as the title, its
-description (if any) below. Buttons above it are the **parent concepts** — the
-concepts that have this one as an attribute. Buttons below it are this concept's
-**attributes**. Clicking any button navigates to that concept.
+One concept fills the screen at a time. Its attributes are drawn in kind-position
+order (name as the title, definition below, and so on). Buttons above it are the
+**parent concepts** — those that reference this one through a `concept`
+attribute. Clicking any button navigates to that concept.
 
 Same stack as the `problems` app: Vue 3 + Vite + Vuetify 4 + TypeScript.
 No backend.
@@ -22,9 +37,9 @@ A `<OntologyEditor>` Vue component that other apps can embed.
 ## Status — first cut (task t203)
 
 - [x] Vite + Vue + Vuetify + TS project that builds
-- [x] `Ontology` data model (`src/concepts/ontology/Ontology.ts`)
-- [x] Single-concept view with parent / attribute navigation, fed by a fixture
-- [ ] In-place editing (add / rename / delete nodes and edges)
+- [x] Attribute-based concept model with an identity repository
+- [x] Single-concept view: attributes drawn by kind position, parent navigation
+- [ ] In-place editing (add / change / remove attributes and concepts)
 - [ ] Persistence adapters
 - [ ] `.d.ts` emission for the published bundle
 
@@ -32,8 +47,11 @@ A `<OntologyEditor>` Vue component that other apps can embed.
 
 ```
 src/concepts/
-  ontology/       Ontology model, sample fixture, <OntologyEditor> shell
-  concept-view/   <ConceptView> — one concept, its parents and its attributes
+  ontology/       Ontology aggregate, identity repo access, <OntologyEditor>, theme
+  identity/       Identity type, IdentityRepository
+  concepts/       Concept (= Attribute[]) helpers
+  attributes/     Attribute, AttributeKind, and kinds/ (one renderer per kind)
+  concept-view/   <ConceptView> — one concept and its parents
   app/            local demo app (not part of the published bundle)
 src/index.ts      public entry point for the embeddable component
 ```
@@ -72,7 +90,7 @@ import '@cdd/ontology-editor/style.css'
 <OntologyEditor v-model="ontology" root-id="concept" />
 ```
 
-The component uses three theme colors — `concept`, `attribute`, `relation`.
+The component uses theme colors — `concept`, `attribute`, `relation`.
 Merge `ontologyTheme` into your Vuetify config so they resolve:
 
 ```ts
