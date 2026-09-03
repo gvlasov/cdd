@@ -94,27 +94,25 @@ function submitNew() {
 
 <template>
   <div class="d-flex flex-column ga-2">
-    <div class="text-caption text-medium-emphasis">
-      <span class="font-weight-medium">{{ spec.name }}</span
-      >&nbsp;·&nbsp;{{ conceptLabel(spec.type ?? '') ?? spec.type ?? 'any' }}<sup>{{
-        spec.cardinality
-      }}</sup>
-    </div>
-
     <!-- leaf: single field (list of fields when 0+/1+) -->
     <template v-if="leaf">
-      <v-select
-        v-if="cardinalityValued"
-        :model-value="literalValue"
-        :items="CARDS"
-        variant="outlined"
-        density="comfortable"
-        hide-details
-        @update:model-value="commitLiteral($event ?? '')"
-      />
+      <div v-if="cardinalityValued">
+        <div class="text-caption text-medium-emphasis mb-1">{{ spec.name }}</div>
+        <v-btn-toggle
+          :model-value="literalValue"
+          variant="tonal"
+          density="comfortable"
+          divided
+          mandatory
+          @update:model-value="commitLiteral($event ?? '')"
+        >
+          <v-btn v-for="c in CARDS" :key="c" :value="c" size="small">{{ c }}</v-btn>
+        </v-btn-toggle>
+      </div>
       <v-text-field
         v-else-if="!list"
         :model-value="literalValue"
+        :label="spec.name"
         variant="outlined"
         density="comfortable"
         hide-details
@@ -123,6 +121,7 @@ function submitNew() {
       <v-combobox
         v-else
         :model-value="valueIds"
+        :label="spec.name"
         variant="outlined"
         density="comfortable"
         hide-details
