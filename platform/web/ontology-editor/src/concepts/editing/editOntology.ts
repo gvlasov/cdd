@@ -20,8 +20,8 @@ function cloneInstances(ontology: Ontology): Record<Identity, Instance> {
 }
 
 /**
- * Set the value of one existing property of an instance. Identity is not
- * editable; slug goes through `renameSlug` so the instance is re-keyed.
+ * Set the value of a property of an instance, inserting it if absent. Identity
+ * is not editable; slug goes through `renameSlug` so the instance is re-keyed.
  */
 export function setPropertyValue(
   ontology: Ontology,
@@ -37,8 +37,8 @@ export function setPropertyValue(
   if (!instance) return ontology
 
   const i = instance.findIndex((p) => p.kind === kind)
-  if (i === -1) return ontology
-  instance[i] = { kind, value }
+  if (i === -1) instance.push({ kind, value })
+  else instance[i] = { kind, value }
   return { ...ontology, instances }
 }
 
@@ -168,9 +168,13 @@ export function newConceptIdentity(ontology: Ontology, slug: Slug): Identity {
   return id in ontology.instances ? '' : id
 }
 
+/** The type identity a `createConcept` instance gets. */
+export const CONCEPT_TYPE: Identity = 'cdd.concept'
+
 /**
- * Create a new concept from a slug: adds the instance (identity + slug) and
- * appends its identity to the ontology root's `concepts` list.
+ * Create a new concept from a slug: adds an instance typed `cdd.concept`
+ * (identity + concept + slug) and appends its identity to the ontology root's
+ * `concepts` list.
  */
 export function createConcept(ontology: Ontology, slug: Slug): Ontology {
   const id = newConceptIdentity(ontology, slug)
@@ -179,6 +183,7 @@ export function createConcept(ontology: Ontology, slug: Slug): Ontology {
   const instances = cloneInstances(ontology)
   instances[id] = [
     { kind: 'identity', value: id },
+    { kind: 'concept', value: CONCEPT_TYPE },
     { kind: 'slug', value: slug },
   ]
 

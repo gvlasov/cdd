@@ -22,13 +22,13 @@ export function conceptLabelOf(concept: Concept): string | undefined {
 }
 
 /**
- * The concepts this concept relates to, by referenced identity: its `attributes`
- * and `concept` properties, plus — for an ontology — its `concepts` list.
+ * The concepts this one relates to, by referenced identity: its `attributes`
+ * list plus — for an ontology — its `concepts` list. (`concept` is the
+ * instance's type, shown separately.)
  */
 export function conceptRefs(concept: Concept): Identity[] {
   return [
     ...propertiesOfKind(concept, 'attributes'),
-    ...propertiesOfKind(concept, 'concept'),
     ...propertiesOfKind(concept, 'concepts'),
   ]
     .map((p) => (Array.isArray(p.value) ? p.value : [p.value]))
@@ -43,4 +43,12 @@ export function conceptAttributes(concept: Concept): Identity[] {
   const property = firstOfKind(concept, 'attributes')
   if (!property) return []
   return Array.isArray(property.value) ? property.value : [property.value]
+}
+
+/** Whether an attribute concept marks itself required (has a truthy `required`). */
+export function attributeRequired(attribute: Concept): boolean {
+  const p = firstOfKind(attribute, 'required')
+  if (!p) return false
+  const v = Array.isArray(p.value) ? p.value[0] : p.value
+  return v === 'true' || v === '1' || v === 'yes'
 }

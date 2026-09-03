@@ -20,6 +20,7 @@ export const propertyValueKind: Record<PropertyKindName, PropertyValueKind> = {
   transactions: 'concept-list',
   effect: 'literal',
   params: 'literal-list',
+  required: 'literal',
 }
 
 export const ALL_PROPERTY_KINDS: PropertyKindName[] = [
@@ -35,4 +36,5 @@ export const ALL_PROPERTY_KINDS: PropertyKindName[] = [
   'transactions',
   'effect',
   'params',
+  'required',
 ]

@@ -6,13 +6,16 @@ CDD's directory layout or any storage backend.
 
 ## Model
 
-- A **concept is a collection of properties** — nothing else. Name, definition,
-  examples, identity and slug are all just properties.
-- A **property** belongs to the concept as an instance: a `kind` and a `value`
-  it holds in a slot. An **attribute** is the slot — itself a concept — that
-  defines what property an instance may have. A concept's `attributes` property
-  is the list of attribute-concept identities its instances may carry (Name,
-  Definition, Slug, …).
+- Everything is an **instance**: a collection of properties addressed by a
+  unique identity. Every instance has a **type** — a concept — named by its
+  `concept` property.
+- A **concept** is an instance (typed `cdd.concept`) that also carries an
+  `attributes` property. Every type is a concept; any concept can be a type.
+- A **property** is a `kind` and a `value` an instance holds in a slot. An
+  **attribute** is the slot — itself a concept — that defines what property an
+  instance of a type may have. A concept's `attributes` property is the list of
+  attribute-concept identities (Name, Definition, Slug, …). An attribute concept
+  with a truthy `required` property (and a non-list value kind) is mandatory.
 - An **ontology** is itself a concept — its root instance. That instance is the
   root concept of itself; its `concepts` property is the list of concept
   identities the ontology contains.
@@ -43,30 +46,34 @@ CDD's directory layout or any storage backend.
 ## Edit
 
 Pass `editable` to show **New concept** and **Edit** buttons. **New concept**
-asks for a slug (validated, must be unique), creates a concept with just
-`identity` + `slug` — identity is `<rootSlug>.<slug>` — appends it to the
-ontology root's `concepts` list, then opens it in edit mode to fill in the rest.
+asks for a slug (validated, must be unique) and creates an instance typed
+`cdd.concept` (`identity` + `concept` + `slug`; identity is `<rootSlug>.<slug>`),
+appends it to the ontology root's `concepts` list, and opens it in edit mode.
 
-In edit mode the open concept's
-properties become inputs, ordered by property-kind position. A property kind can
-ship its own `edit` component (like its `render`); otherwise the value kind
-picks a generic input:
+The edit form is driven by the instance's **type**: one row per attribute the
+type declares.
 
-- `definition` / `description` → textarea (the kind renders its own editor)
-- other literals (`name`, `slug`) → outlined text field labelled with the kind
-- literal list (`examples`) → combobox with chips; type new entries
-- concept list (`concept`, `concepts`, `attributes`) → autocomplete over the
-  ontology's concepts
+- **required** attributes (truthy `required`, non-list) render as inputs from
+  the start
+- **optional** attributes appear via a centered **+attribute** button bar
+- any extra property the instance already has is shown too; each row has a
+  remove button
 
-`identity` is not shown in edit mode — it is derived. Editing a `slug` recomputes the instance's identity
-(`derivedIdentity`), moves its `instances` entry, updates its `identity`
-property, and rewrites every `attributes` / `concept` / `concepts` reference
-that pointed at the old identity — the view follows the moved concept. Every edit emits a new
-`Ontology` via `update:modelValue`.
+A property kind can ship its own `edit` component (like its `render`);
+otherwise the value kind picks a generic input:
 
-Each editor row has a remove button. Below them, a **+kind** button bar adds any
-property kind the concept doesn't have yet (`identity` excluded) — the new
-property appears as an empty editor.
+- `definition` / `description` → textarea
+- other literals (`name`, `slug`) → outlined text field
+- literal list (`examples`, `params`) → combobox with chips
+- concept list (`concepts`, `attributes`, `transactions`) → autocomplete over
+  the ontology's concepts
+- `effect` → monospace textarea
+
+`identity` and `concept` (the type) are not editable rows. Editing a `slug`
+recomputes the instance's identity (`derivedIdentity`), moves its `instances`
+entry, updates its `identity` property, and rewrites every
+`attributes` / `concepts` reference that pointed at the old identity — the view
+follows. Every edit emits a new `Ontology` via `update:modelValue`.
 
 ## Concept links in text
 
@@ -135,7 +142,7 @@ A `<OntologyEditor>` Vue component that other apps can embed.
 - [x] Edit mode: change property values, slug rename re-keys the identity
 - [x] Create concepts (slug → identity, added to the ontology's concept list)
 - [x] Reality + concept transactions with executable `effect` (constructor etc.)
-- [x] Add / remove properties in edit mode (+kind button bar, per-row remove)
+- [x] Type-driven edit form: required attributes upfront, optional via +attribute
 - [ ] Editing: delete concepts
 - [ ] Persistence adapters
 - [ ] `.d.ts` emission for the published bundle

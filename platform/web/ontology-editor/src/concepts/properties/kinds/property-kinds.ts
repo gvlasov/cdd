@@ -36,6 +36,7 @@ export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   concepts: { name: 'concepts', position: 4 },
   attributes: { name: 'attributes', position: 5 },
   transactions: { name: 'transactions', position: 5 },
+  required: { name: 'required', position: 5 },
   params: { name: 'params', position: 6 },
   examples: { name: 'examples', position: 7, render: ExamplesProperty },
   effect: { name: 'effect', position: 8, render: EffectProperty, edit: EffectEdit },

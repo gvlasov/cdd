@@ -21,7 +21,12 @@ export type { Slug } from '@/concepts/identity/Slug'
 export { SLUG_PATTERN, isSlug, identityFromSlugChain } from '@/concepts/identity/Slug'
 
 export type { Instance } from '@/concepts/instances/Instance'
-export { instanceName, instanceSlug, instanceIdentity } from '@/concepts/instances/Instance'
+export {
+  instanceName,
+  instanceSlug,
+  instanceIdentity,
+  instanceType,
+} from '@/concepts/instances/Instance'
 export type { Concept } from '@/concepts/concepts/Concept'
 export {
   isConcept,
@@ -31,6 +36,7 @@ export {
   conceptLabelOf,
   conceptRefs,
   conceptAttributes,
+  attributeRequired,
 } from '@/concepts/concepts/Concept'
 
 export type { Property, PropertyKindName } from '@/concepts/properties/Property'
@@ -56,6 +62,8 @@ export {
 } from '@/concepts/editing/editOntology'
 export type { PropertyValueKind } from '@/concepts/editing/PropertyValueKind'
 export { propertyValueKind } from '@/concepts/editing/PropertyValueKind'
+export { typeAttributes } from '@/concepts/editing/instanceForm'
+export type { FormAttribute } from '@/concepts/editing/instanceForm'
 
 export type { Reality } from '@/concepts/reality/Reality'
 export { emptyReality, realityInstance, instancesOfConcept } from '@/concepts/reality/Reality'

@@ -34,6 +34,7 @@ export type PropertyKindName =
   | 'transactions'
   | 'effect'
   | 'params'
+  | 'required'
 
 export function propertiesOfKind(
   properties: Property[],
