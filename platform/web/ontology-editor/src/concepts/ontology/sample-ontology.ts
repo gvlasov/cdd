@@ -1,25 +1,25 @@
 import type { Ontology } from './Ontology'
 
 // Flat and rhizomatic: concepts keyed by identity, each a list of properties.
-// The `ontology` entry is the root concept of itself. Every other concept has a
+// The `cdd` entry is the root concept of itself (its slug is `cdd`). Every other concept has a
 // slug, so its key is the dotted metaentity chain `<rootSlug>.<conceptSlug>`.
 // The root's `attributes` property declares the property kinds its instances
 // (every concept below it) may have.
 export const sampleOntology: Ontology = {
-  root: 'ontology',
+  root: 'cdd',
   concepts: {
-    ontology: [
-      { kind: 'identity', value: 'ontology' },
-      { kind: 'slug', value: 'ontology' },
+    cdd: [
+      { kind: 'identity', value: 'cdd' },
+      { kind: 'slug', value: 'cdd' },
       { kind: 'name', value: 'CDD' },
       { kind: 'definition', value: 'The ontology being viewed — the root concept of itself.' },
       { kind: 'attributes', value: ['identity', 'slug', 'name', 'definition', 'concept', 'examples'] },
-      { kind: 'concept', value: 'ontology.concept' },
-      { kind: 'concept', value: 'ontology.attribute' },
-      { kind: 'concept', value: 'ontology.property' },
+      { kind: 'concept', value: 'cdd.concept' },
+      { kind: 'concept', value: 'cdd.attribute' },
+      { kind: 'concept', value: 'cdd.property' },
     ],
-    'ontology.concept': [
-      { kind: 'identity', value: 'ontology.concept' },
+    'cdd.concept': [
+      { kind: 'identity', value: 'cdd.concept' },
       { kind: 'slug', value: 'concept' },
       { kind: 'name', value: 'Concept' },
       {
@@ -27,13 +27,13 @@ export const sampleOntology: Ontology = {
         value:
           'A cohesion unit: the unifying principle of representations held together by meaning. A concept is a collection of properties, and its attributes declare what properties its instances may have.',
       },
-      { kind: 'concept', value: 'ontology.name' },
-      { kind: 'concept', value: 'ontology.definition' },
-      { kind: 'concept', value: 'ontology.attribute' },
-      { kind: 'concept', value: 'ontology.slug' },
+      { kind: 'concept', value: 'cdd.name' },
+      { kind: 'concept', value: 'cdd.definition' },
+      { kind: 'concept', value: 'cdd.attribute' },
+      { kind: 'concept', value: 'cdd.slug' },
     ],
-    'ontology.attribute': [
-      { kind: 'identity', value: 'ontology.attribute' },
+    'cdd.attribute': [
+      { kind: 'identity', value: 'cdd.attribute' },
       { kind: 'slug', value: 'attribute' },
       { kind: 'name', value: 'Attribute' },
       {
@@ -41,10 +41,10 @@ export const sampleOntology: Ontology = {
         value:
           'Belongs to a concept. Defines what property an instance of that concept may have.',
       },
-      { kind: 'concept', value: 'ontology.name' },
+      { kind: 'concept', value: 'cdd.name' },
     ],
-    'ontology.property': [
-      { kind: 'identity', value: 'ontology.property' },
+    'cdd.property': [
+      { kind: 'identity', value: 'cdd.property' },
       { kind: 'slug', value: 'property' },
       { kind: 'name', value: 'Property' },
       {
@@ -53,8 +53,8 @@ export const sampleOntology: Ontology = {
           'Belongs to an instance. A value the instance holds in a slot its concept defines via an attribute.',
       },
     ],
-    'ontology.name': [
-      { kind: 'identity', value: 'ontology.name' },
+    'cdd.name': [
+      { kind: 'identity', value: 'cdd.name' },
       { kind: 'slug', value: 'name' },
       { kind: 'name', value: 'Name' },
       {
@@ -62,14 +62,14 @@ export const sampleOntology: Ontology = {
         value: 'A string of symbols that uniquely identifies a concept or a reflection.',
       },
     ],
-    'ontology.definition': [
-      { kind: 'identity', value: 'ontology.definition' },
+    'cdd.definition': [
+      { kind: 'identity', value: 'cdd.definition' },
       { kind: 'slug', value: 'definition' },
       { kind: 'name', value: 'Definition' },
       { kind: 'definition', value: 'The text that says what a concept is.' },
     ],
-    'ontology.slug': [
-      { kind: 'identity', value: 'ontology.slug' },
+    'cdd.slug': [
+      { kind: 'identity', value: 'cdd.slug' },
       { kind: 'slug', value: 'slug' },
       { kind: 'name', value: 'Slug' },
       {

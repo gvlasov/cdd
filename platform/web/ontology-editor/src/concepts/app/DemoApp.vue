@@ -12,7 +12,7 @@ const ontology = ref<Ontology>(sampleOntology)
     <v-main>
       <v-container fluid>
         <div style="height: 70vh">
-          <OntologyEditor v-model="ontology" root-id="ontology.concept" />
+          <OntologyEditor v-model="ontology" root-id="cdd.concept" />
         </div>
       </v-container>
     </v-main>
