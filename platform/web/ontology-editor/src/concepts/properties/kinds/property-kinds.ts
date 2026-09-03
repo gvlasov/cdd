@@ -16,24 +16,24 @@ import ExamplesProperty from './ExamplesProperty.vue'
 //    below the instance as navigable chips, not inside it
 export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   name: { name: 'name', position: 0, render: NameProperty },
+  slug: { name: 'slug', position: 1, render: SlugProperty },
   definition: {
     name: 'definition',
-    position: 1,
+    position: 2,
     render: DefinitionProperty,
     edit: DefinitionEdit,
   },
   description: {
     name: 'description',
-    position: 1,
+    position: 2,
     render: DefinitionProperty,
     edit: DefinitionEdit,
   },
-  identity: { name: 'identity', position: 2 },
-  slug: { name: 'slug', position: 2, render: SlugProperty },
-  concept: { name: 'concept', position: 3 },
-  concepts: { name: 'concepts', position: 3 },
-  attributes: { name: 'attributes', position: 4 },
-  examples: { name: 'examples', position: 5, render: ExamplesProperty },
+  identity: { name: 'identity', position: 3 },
+  concept: { name: 'concept', position: 4 },
+  concepts: { name: 'concepts', position: 4 },
+  attributes: { name: 'attributes', position: 5 },
+  examples: { name: 'examples', position: 6, render: ExamplesProperty },
 }
 
 export function propertyKind(name: PropertyKindName): PropertyKind {

@@ -27,8 +27,8 @@ CDD's directory layout or any storage backend.
   `<ontologySlug>.<conceptSlug>.<instanceSlug>`. The ontology is the root
   concept of itself (`ontology.root` names its own entry).
 - Predefined property kinds and their draw positions inside the instance
-  renderer: `name` (0), `definition` / `description` (1), `slug` (2),
-  `examples` (5). Properties
+  renderer: `name` (0), `slug` (1), `definition` / `description` (2),
+  `examples` (6). Properties
   at the same position draw in renderer-defined order. `identity`, `concept`,
   `concepts` and `attributes` have no in-instance renderer: `identity` is the
   key; `concept` / `concepts` references and the declared `attributes` are drawn
