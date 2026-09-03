@@ -17,13 +17,15 @@ import type { Cardinality } from '@/concepts/attributes/Attribute'
 const instances: Record<Identity, Instance> = {}
 
 // Declare an attribute belonging to `ownerId`, returning its identity.
+// Attributes are keyed `<ownerId>:<slug>` — a `:` so they never collide with a
+// concept id (which is a dotted slug chain).
 function attr(
   ownerId: Identity,
   slug: string,
   type: Identity,
   cardinality: Cardinality,
 ): Identity {
-  const id = `${ownerId}.${slug}`
+  const id = `${ownerId}:${slug}`
   instances[id] = [
     { kind: 'identity', value: id },
     { kind: 'concept', value: 'cdd.attribute' },

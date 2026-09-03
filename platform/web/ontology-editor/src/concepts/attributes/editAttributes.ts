@@ -1,9 +1,7 @@
 import type { Identity } from '@/concepts/identity/Identity'
 import type { Instance } from '@/concepts/instances/Instance'
 import type { Ontology } from '@/concepts/ontology/Ontology'
-import { conceptOf, rootConcept } from '@/concepts/ontology/Ontology'
-import { conceptSlug } from '@/concepts/concepts/Concept'
-import { identityFromSlugChain, isSlug } from '@/concepts/identity/Slug'
+import { isSlug } from '@/concepts/identity/Slug'
 import type { Cardinality } from './Attribute'
 
 function cloneInstances(ontology: Ontology): Record<Identity, Instance> {
@@ -21,19 +19,17 @@ export interface NewAttribute {
   cardinality: Cardinality
 }
 
-/** Identity a new attribute of `owner` with `slug` would get. */
+/**
+ * Identity a new attribute of `owner` with `slug` would get: `<ownerId>:<slug>`
+ * — a `:` so it never collides with a concept id.
+ */
 export function newAttributeIdentity(
   ontology: Ontology,
   ownerId: Identity,
   slug: string,
 ): Identity {
   if (!isSlug(slug)) return ''
-  const owner = conceptOf(ontology, ownerId)
-  const ownerSlug = owner ? conceptSlug(owner) : undefined
-  const root = rootConcept(ontology)
-  const rootSlug = root ? conceptSlug(root) : undefined
-  const chain = [rootSlug, ownerSlug, slug].filter((s): s is string => !!s)
-  const id = chain.length ? identityFromSlugChain(chain) : slug
+  const id = `${ownerId}:${slug}`
   return id in ontology.instances ? '' : id
 }
 
