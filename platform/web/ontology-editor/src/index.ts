@@ -36,6 +36,15 @@ export type { Property, PropertyKindName } from '@/concepts/properties/Property'
 export type { PropertyKind } from '@/concepts/properties/PropertyKind'
 export { propertyKinds, propertyKind } from '@/concepts/properties/kinds/property-kinds'
 
+export { default as ConceptEditor } from '@/concepts/editing/ConceptEditor.vue'
+export {
+  setPropertyValue,
+  renameSlug,
+  identityAfterSlug,
+} from '@/concepts/editing/editOntology'
+export type { PropertyValueKind } from '@/concepts/editing/PropertyValueKind'
+export { propertyValueKind } from '@/concepts/editing/PropertyValueKind'
+
 export {
   ontologyColors,
   ontologyTheme,

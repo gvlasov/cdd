@@ -38,6 +38,24 @@ CDD's directory layout or any storage backend.
   addressable store. Concept membership is the root instance's `concepts`
   property; concepts reference each other via `concept` properties.
 
+## Edit
+
+Pass `editable` to show an **Edit** toggle. In edit mode the open concept's
+properties become inputs, ordered by property-kind position:
+
+- literal (`name`, `definition`, `slug`) → outlined text field labelled with the
+  property kind
+- literal list (`examples`) → combobox with chips; type new entries
+- concept list (`concept`, `concepts`) → autocomplete over the ontology's concepts
+- kind list (`attributes`) → select over the known property kinds
+
+`identity` is read-only. Editing a `slug` recomputes the instance's identity
+(`derivedIdentity`), moves its `instances` entry, updates its `identity`
+property, and rewrites every `concept` / `concepts` reference that pointed at the
+old identity — the view follows the moved concept. Every edit emits a new
+`Ontology` via `update:modelValue`. Adding/removing properties is not in this
+pass.
+
 ## View
 
 The central component is the **instance renderer**: it fills the screen with one
@@ -61,7 +79,8 @@ A `<OntologyEditor>` Vue component that other apps can embed.
 - [x] Vite + Vue + Vuetify + TS project that builds
 - [x] Property-based concept model with an identity repository
 - [x] Instance renderer + concept view (parents above, attributes below)
-- [ ] In-place editing (add / change / remove properties and concepts)
+- [x] Edit mode: change property values, slug rename re-keys the identity
+- [ ] Editing: add / remove properties and concepts
 - [ ] Persistence adapters
 - [ ] `.d.ts` emission for the published bundle
 
@@ -74,6 +93,7 @@ src/concepts/
   instances/      Instance (= Property[]) and <InstanceRenderer> — the central component
   concepts/       Concept helpers (a concept is an instance with `attributes`)
   properties/     Property, PropertyKind, and kinds/ (one renderer per drawn kind)
+  editing/        edit-mode: value-kind classification, immutable edits, <ConceptEditor>
   concept-view/   <ConceptView> — instance renderer + parents above + attributes below
   app/            local demo app (not part of the published bundle)
 src/index.ts      public entry point for the embeddable component
