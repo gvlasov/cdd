@@ -74,8 +74,16 @@ leaf(
   'How many values an attribute holds: `0-1`, `1`, `0+` or `1+`.',
 )
 
-// cdd.concept is the type of every concept — so it declares the name / slug /
-// definition attributes every concept-instance may hold, plus `attribute`.
+leaf(
+  'cdd.transaction',
+  'transaction',
+  'Transaction',
+  'A write operation on a [concept](.concept) — how its instances come to be and change. Identified `<conceptId>:<name>`.',
+)
+
+// cdd.concept is the type of every concept — it declares the name / slug /
+// definition attributes every concept-instance may hold, plus `attributes` and
+// `transactions`.
 concept(
   'cdd.concept',
   'concept',
@@ -86,8 +94,23 @@ concept(
     attr('cdd.concept', 'slug', 'cdd.slug', '1'),
     attr('cdd.concept', 'definition', 'cdd.definition', '0-1'),
     attr('cdd.concept', 'attributes', 'cdd.attribute', '0+'),
+    attr('cdd.concept', 'transactions', 'cdd.transaction', '0+'),
   ],
 )
+// A constructor transaction on cdd.concept: spawns a concept instance.
+instances['cdd.concept'].push({ kind: 'transactions', value: ['cdd.concept:create'] })
+instances['cdd.concept:create'] = [
+  { kind: 'identity', value: 'cdd.concept:create' },
+  { kind: 'concept', value: 'cdd.transaction' },
+  { kind: 'name', value: 'create' },
+  { kind: 'definition', value: 'Constructor: spawn a new concept instance into the reality.' },
+  { kind: 'params', value: ['name', 'definition'] },
+  {
+    kind: 'effect',
+    value:
+      "return reality.add('cdd.concept', { name: input.name, definition: input.definition })",
+  },
+]
 concept(
   'cdd.instance',
   'instance',
@@ -132,6 +155,7 @@ instances['cdd'] = [
       'cdd.definition',
       'cdd.slug',
       'cdd.cardinality',
+      'cdd.transaction',
     ],
   },
 ]

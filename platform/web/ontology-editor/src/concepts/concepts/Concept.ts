@@ -29,12 +29,13 @@ export function conceptLabelOf(concept: Concept): string | undefined {
 
 /**
  * The concepts this one relates to, by referenced identity: its `attributes`
- * list plus — for an ontology — its `concepts` list. (`concept` is the
- * instance's type, shown separately.)
+ * and `transactions` lists plus — for an ontology — its `concepts` list.
+ * (`concept` is the instance's type, shown separately.)
  */
 export function conceptRefs(concept: Concept): Identity[] {
   return [
     ...propertiesOfKind(concept, 'attributes'),
+    ...propertiesOfKind(concept, 'transactions'),
     ...propertiesOfKind(concept, 'concepts'),
   ]
     .map((p) => (Array.isArray(p.value) ? p.value : [p.value]))
