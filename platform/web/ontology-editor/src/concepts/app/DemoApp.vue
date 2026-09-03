@@ -20,6 +20,7 @@ const reality = ref<Reality>(emptyReality())
             v-model:reality="reality"
             root-id="cdd.concept"
             editable
+            history
           />
         </div>
       </v-container>

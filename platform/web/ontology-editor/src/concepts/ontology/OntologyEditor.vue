@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import type { Ontology } from './Ontology'
 import type { Identity } from '@/concepts/identity/Identity'
 import type { Slug } from '@/concepts/identity/Slug'
@@ -30,6 +30,12 @@ const props = defineProps<{
   rootId?: Identity
   /** Allow entering edit mode and creating concepts. */
   editable?: boolean
+  /**
+   * Sync the open concept to the URL hash (`#<identity>`) and honour the
+   * browser's back / forward buttons. Off by default so an embedding host's
+   * history is untouched.
+   */
+  history?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -64,9 +70,38 @@ watch(
   },
 )
 
+// --- URL-hash history (opt-in via `history`) ---
+function hashIdentity(): Identity | '' {
+  return decodeURIComponent(window.location.hash.replace(/^#/, ''))
+}
+function pushHash(identity: Identity) {
+  const next = `#${encodeURIComponent(identity)}`
+  if (window.location.hash !== next) window.history.pushState({ ontologyConcept: identity }, '', next)
+}
+function onPopState() {
+  const id = hashIdentity()
+  if (id && id in props.modelValue.instances) {
+    currentId.value = id
+    editing.value = false
+  }
+}
+
+onMounted(() => {
+  if (!props.history) return
+  const id = hashIdentity()
+  if (id && id in props.modelValue.instances) currentId.value = id
+  else pushHash(currentId.value)
+  window.addEventListener('popstate', onPopState)
+})
+onBeforeUnmount(() => {
+  if (props.history) window.removeEventListener('popstate', onPopState)
+})
+
 function navigate(identity: Identity) {
+  if (identity === currentId.value) return
   currentId.value = identity
   editing.value = false
+  if (props.history) pushHash(identity)
 }
 
 function apply(mutate: (ontology: Ontology) => Ontology) {
@@ -76,7 +111,10 @@ function apply(mutate: (ontology: Ontology) => Ontology) {
 function renameSlug(instanceId: Identity, slug: Slug) {
   const nextId = identityAfterSlug(props.modelValue, instanceId, slug)
   emit('update:modelValue', renameSlugEdit(props.modelValue, instanceId, slug))
-  if (currentId.value === instanceId) currentId.value = nextId
+  if (currentId.value === instanceId && nextId !== instanceId) {
+    currentId.value = nextId
+    if (props.history) window.history.replaceState({ ontologyConcept: nextId }, '', `#${encodeURIComponent(nextId)}`)
+  }
 }
 
 function createConcept(slug: Slug) {

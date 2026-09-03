@@ -50,6 +50,10 @@ CDD's directory layout or any storage backend.
 The toolbar has a **concept search** — an autocomplete over every concept,
 filtered by name; picking one navigates to it.
 
+Pass `history` to sync the open concept to the URL hash (`#<identity>`) and
+honour the browser's **back / forward** buttons. Off by default so an embedding
+host's history is untouched.
+
 ## Edit
 
 Pass `editable` to show **New concept** and **Edit** buttons. **New concept**
