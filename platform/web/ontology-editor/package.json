@@ -1,0 +1,45 @@
+{
+  "name": "@cdd/ontology-editor",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Embeddable Vue component for viewing and editing a generic concept graph (ontology)",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/ontology-editor.umd.cjs",
+  "module": "./dist/ontology-editor.js",
+  "exports": {
+    ".": {
+      "import": "./dist/ontology-editor.js",
+      "require": "./dist/ontology-editor.umd.cjs"
+    },
+    "./style.css": "./dist/ontology-editor.css"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "build:lib": "vue-tsc -b && vite build --mode lib",
+    "check": "vue-tsc --noEmit",
+    "preview": "vite preview"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "dependencies": {
+    "vuetify": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@vitejs/plugin-vue": "^6.0.5",
+    "@vue/tsconfig": "^0.7.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vite-plugin-vuetify": "^2.0.4",
+    "vue": "^3.5.30",
+    "vue-tsc": "^2.2.0"
+  }
+}
