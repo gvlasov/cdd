@@ -129,9 +129,9 @@ instance drawn as its properties, in kind-position order (name as the title,
 definition below, and so on).
 
 `ConceptView` wraps it: **parent concepts** above (those that reference this one
-through an `attributes` / `concept` / `concepts` property), and — when the
-instance is a concept — its referenced concepts below as navigable chips (its
-attributes, `concept` parts, and an ontology's `concepts` list). Clicking any
+through an `attributes` / `concepts` property), and **attribute chips** below —
+the attributes the instance's type declares (the slots it fills), plus any it
+declares itself as a concept, plus an ontology's `concepts` list. Clicking any
 chip navigates.
 
 Same stack as the `problems` app: Vue 3 + Vite + Vuetify 4 + TypeScript.
