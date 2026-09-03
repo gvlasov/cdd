@@ -32,11 +32,11 @@ const owner = computed(() => {
 <template>
   <div class="d-flex align-baseline ga-2 justify-center flex-wrap">
     <h1 class="text-h3">
-      <template v-if="isAttribute && owner">
-        <a class="owner-link" href="#" @click.prevent="navigate(owner.id)">{{ owner.label }}</a>
-        <span class="mx-1 text-medium-emphasis">·</span>
-      </template>
-      {{ property.value }}
+      <template v-if="isAttribute && owner"
+        ><a class="owner-link" href="#" @click.prevent="navigate(owner.id)">{{
+          owner.label
+        }}</a><span class="text-medium-emphasis">&nbsp;·&nbsp;</span></template
+      >{{ property.value }}
     </h1>
     <code v-if="slug" class="text-caption text-disabled">{{ slug }}</code>
   </div>

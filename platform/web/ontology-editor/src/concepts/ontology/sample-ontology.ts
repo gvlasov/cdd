@@ -1,208 +1,150 @@
 import type { Ontology } from './Ontology'
+import type { Instance } from '@/concepts/instances/Instance'
+import type { Identity } from '@/concepts/identity/Identity'
+import type { Cardinality } from '@/concepts/attributes/Attribute'
 
 // Every entry is an instance; its `concept` property names its type.
 //
-//  - Leaf concepts (`cdd.name`, `cdd.slug`, `cdd.definition`) declare no
-//    attributes — their values edit as plain fields.
+//  - Leaf concepts (`cdd.name`, `cdd.slug`, `cdd.definition`, `cdd.cardinality`)
+//    declare no attributes — their values edit as plain fields.
 //  - An attribute is an instance typed `cdd.attribute` with `slug` (the property
 //    key), `type` (the value concept) and `cardinality` (0-1 | 1 | 0+ | 1+).
-//  - A concept's `attributes` property lists attribute-instance identities.
+//    Each attribute belongs to exactly one concept — its identity is
+//    `<ownerId>.<slug>`.
+//  - A concept's `attributes` property lists its own attribute-instance ids.
 //  - The `cdd` instance is an ontology — the root concept of itself.
-export const sampleOntology: Ontology = {
-  root: 'cdd',
-  instances: {
-    cdd: [
-      { kind: 'identity', value: 'cdd' },
-      { kind: 'concept', value: 'cdd.concept' },
-      { kind: 'slug', value: 'cdd' },
-      { kind: 'name', value: 'CDD' },
-      { kind: 'definition', value: 'The ontology being viewed — the root concept of itself.' },
-      { kind: 'attributes', value: ['cdd.concept.name', 'cdd.concept.slug', 'cdd.concept.definition'] },
-      {
-        kind: 'concepts',
-        value: [
-          'cdd.concept',
-          'cdd.instance',
-          'cdd.attribute',
-          'cdd.property',
-          'cdd.name',
-          'cdd.definition',
-          'cdd.slug',
-          'cdd.cardinality',
-        ],
-      },
-    ],
 
-    // ---- the Concept concept and its attributes ----
-    'cdd.concept': [
-      { kind: 'identity', value: 'cdd.concept' },
-      { kind: 'concept', value: 'cdd.concept' },
-      { kind: 'slug', value: 'concept' },
-      { kind: 'name', value: 'Concept' },
-      {
-        kind: 'definition',
-        value:
-          'A cohesion unit. A concept is a collection of [properties](.property); its [attributes](.attribute) declare what its instances may hold.',
-      },
-      {
-        kind: 'attributes',
-        value: [
-          'cdd.concept.name',
-          'cdd.concept.slug',
-          'cdd.concept.definition',
-          'cdd.concept.attribute',
-        ],
-      },
-    ],
-    'cdd.concept.name': [
-      { kind: 'identity', value: 'cdd.concept.name' },
-      { kind: 'concept', value: 'cdd.attribute' },
-      { kind: 'slug', value: 'name' },
-      { kind: 'name', value: 'name' },
-      { kind: 'type', value: 'cdd.name' },
-      { kind: 'cardinality', value: '1' },
-    ],
-    'cdd.concept.slug': [
-      { kind: 'identity', value: 'cdd.concept.slug' },
-      { kind: 'concept', value: 'cdd.attribute' },
-      { kind: 'slug', value: 'slug' },
-      { kind: 'name', value: 'slug' },
-      { kind: 'type', value: 'cdd.slug' },
-      { kind: 'cardinality', value: '1' },
-    ],
-    'cdd.concept.definition': [
-      { kind: 'identity', value: 'cdd.concept.definition' },
-      { kind: 'concept', value: 'cdd.attribute' },
-      { kind: 'slug', value: 'definition' },
-      { kind: 'name', value: 'definition' },
-      { kind: 'type', value: 'cdd.definition' },
-      { kind: 'cardinality', value: '0-1' },
-    ],
-    'cdd.concept.attribute': [
-      { kind: 'identity', value: 'cdd.concept.attribute' },
-      { kind: 'concept', value: 'cdd.attribute' },
-      { kind: 'slug', value: 'attribute' },
-      { kind: 'name', value: 'attribute' },
-      { kind: 'type', value: 'cdd.attribute' },
-      { kind: 'cardinality', value: '0+' },
-    ],
+const instances: Record<Identity, Instance> = {}
 
-    // ---- leaf concepts used as attribute types ----
-    'cdd.name': [
-      { kind: 'identity', value: 'cdd.name' },
-      { kind: 'concept', value: 'cdd.concept' },
-      { kind: 'slug', value: 'name' },
-      { kind: 'name', value: 'Name' },
-      { kind: 'definition', value: 'A string that identifies a concept or a reflection.' },
-    ],
-    'cdd.slug': [
-      { kind: 'identity', value: 'cdd.slug' },
-      { kind: 'concept', value: 'cdd.concept' },
-      { kind: 'slug', value: 'slug' },
-      { kind: 'name', value: 'Slug' },
-      {
-        kind: 'definition',
-        value:
-          'A `[a-zA-Z0-9_-]` word, unique within the ontology. An [instance](.instance)’s identity is its metaentity chain of slugs joined by `.` — `<ontology>.<concept>.<instance>`.',
-      },
-    ],
-    'cdd.definition': [
-      { kind: 'identity', value: 'cdd.definition' },
-      { kind: 'concept', value: 'cdd.concept' },
-      { kind: 'slug', value: 'definition' },
-      { kind: 'name', value: 'Definition' },
-      { kind: 'definition', value: 'The text that says what a concept is.' },
-    ],
+// Declare an attribute belonging to `ownerId`, returning its identity.
+function attr(
+  ownerId: Identity,
+  slug: string,
+  type: Identity,
+  cardinality: Cardinality,
+): Identity {
+  const id = `${ownerId}.${slug}`
+  instances[id] = [
+    { kind: 'identity', value: id },
+    { kind: 'concept', value: 'cdd.attribute' },
+    { kind: 'slug', value: slug },
+    { kind: 'name', value: slug },
+    { kind: 'type', value: type },
+    { kind: 'cardinality', value: cardinality },
+  ]
+  return id
+}
 
-    // ---- other concepts ----
-    'cdd.instance': [
-      { kind: 'identity', value: 'cdd.instance' },
-      { kind: 'concept', value: 'cdd.concept' },
-      { kind: 'slug', value: 'instance' },
-      { kind: 'name', value: 'Instance' },
-      {
-        kind: 'definition',
-        value:
-          'Anything the ontology holds: a collection of [properties](.property) addressed by a unique identity, typed by its `concept` property. A [concept](.concept) is an instance that also declares [attributes](.attribute).',
-      },
-      {
-        kind: 'attributes',
-        value: ['cdd.concept.name', 'cdd.concept.slug', 'cdd.concept.definition'],
-      },
-    ],
-    'cdd.attribute': [
-      { kind: 'identity', value: 'cdd.attribute' },
-      { kind: 'concept', value: 'cdd.concept' },
-      { kind: 'slug', value: 'attribute' },
-      { kind: 'name', value: 'Attribute' },
-      {
-        kind: 'definition',
-        value:
-          'Belongs to a [concept](.concept). Defines one slot — name, type and cardinality — on that concept’s instances.',
-      },
-      {
-        kind: 'attributes',
-        value: [
-          'cdd.attribute.name',
-          'cdd.attribute.slug',
-          'cdd.attribute.type',
-          'cdd.attribute.cardinality',
-        ],
-      },
-    ],
-    'cdd.attribute.name': [
-      { kind: 'identity', value: 'cdd.attribute.name' },
-      { kind: 'concept', value: 'cdd.attribute' },
-      { kind: 'slug', value: 'name' },
-      { kind: 'name', value: 'name' },
-      { kind: 'type', value: 'cdd.name' },
-      { kind: 'cardinality', value: '1' },
-    ],
-    'cdd.attribute.slug': [
-      { kind: 'identity', value: 'cdd.attribute.slug' },
-      { kind: 'concept', value: 'cdd.attribute' },
-      { kind: 'slug', value: 'slug' },
-      { kind: 'name', value: 'slug' },
-      { kind: 'type', value: 'cdd.slug' },
-      { kind: 'cardinality', value: '1' },
-    ],
-    'cdd.attribute.type': [
-      { kind: 'identity', value: 'cdd.attribute.type' },
-      { kind: 'concept', value: 'cdd.attribute' },
-      { kind: 'slug', value: 'type' },
-      { kind: 'name', value: 'type' },
-      { kind: 'type', value: 'cdd.concept' },
-      { kind: 'cardinality', value: '1' },
-    ],
-    'cdd.attribute.cardinality': [
-      { kind: 'identity', value: 'cdd.attribute.cardinality' },
-      { kind: 'concept', value: 'cdd.attribute' },
-      { kind: 'slug', value: 'cardinality' },
-      { kind: 'name', value: 'cardinality' },
-      { kind: 'type', value: 'cdd.cardinality' },
-      { kind: 'cardinality', value: '1' },
-    ],
-    'cdd.cardinality': [
-      { kind: 'identity', value: 'cdd.cardinality' },
-      { kind: 'concept', value: 'cdd.concept' },
-      { kind: 'slug', value: 'cardinality' },
-      { kind: 'name', value: 'Cardinality' },
-      { kind: 'definition', value: 'How many values an attribute holds: 0-1, 1, 0+ or 1+.' },
-    ],
-    'cdd.property': [
-      { kind: 'identity', value: 'cdd.property' },
-      { kind: 'concept', value: 'cdd.concept' },
-      { kind: 'slug', value: 'property' },
-      { kind: 'name', value: 'Property' },
-      {
-        kind: 'definition',
-        value:
-          'Belongs to an [instance](.instance). A value the instance holds in a slot its [concept](.concept) defines via an [attribute](.attribute).',
-      },
-      {
-        kind: 'attributes',
-        value: ['cdd.concept.name', 'cdd.concept.slug', 'cdd.concept.definition'],
-      },
+// A concept with name/slug/definition attributes plus any extras.
+function concept(
+  id: Identity,
+  slug: string,
+  name: string,
+  definition: string,
+  extras: Identity[] = [],
+) {
+  instances[id] = [
+    { kind: 'identity', value: id },
+    { kind: 'concept', value: 'cdd.concept' },
+    { kind: 'slug', value: slug },
+    { kind: 'name', value: name },
+    { kind: 'definition', value: definition },
+    {
+      kind: 'attributes',
+      value: [
+        attr(id, 'name', 'cdd.name', '1'),
+        attr(id, 'slug', 'cdd.slug', '1'),
+        attr(id, 'definition', 'cdd.definition', '0-1'),
+        ...extras,
+      ],
+    },
+  ]
+}
+
+// A leaf concept — no attributes.
+function leaf(id: Identity, slug: string, name: string, definition: string) {
+  instances[id] = [
+    { kind: 'identity', value: id },
+    { kind: 'concept', value: 'cdd.concept' },
+    { kind: 'slug', value: slug },
+    { kind: 'name', value: name },
+    { kind: 'definition', value: definition },
+  ]
+}
+
+leaf('cdd.name', 'name', 'Name', 'A string that identifies a concept or a reflection.')
+leaf(
+  'cdd.slug',
+  'slug',
+  'Slug',
+  'A `[a-zA-Z0-9_-]` word, unique within the ontology. An [instance](.instance)’s identity is its metaentity chain of slugs joined by `.` — `<ontology>.<concept>.<instance>`.',
+)
+leaf('cdd.definition', 'definition', 'Definition', 'The text that says what a concept is.')
+leaf(
+  'cdd.cardinality',
+  'cardinality',
+  'Cardinality',
+  'How many values an attribute holds: `0-1`, `1`, `0+` or `1+`.',
+)
+
+concept(
+  'cdd.concept',
+  'concept',
+  'Concept',
+  'A cohesion unit. A concept is a collection of [properties](.property); its [attributes](.attribute) declare what its instances may hold.',
+  [attr('cdd.concept', 'attribute', 'cdd.attribute', '0+')],
+)
+concept(
+  'cdd.instance',
+  'instance',
+  'Instance',
+  'Anything the ontology holds: a collection of [properties](.property) addressed by a unique identity, typed by its `concept` property. A [concept](.concept) is an instance that also declares [attributes](.attribute).',
+)
+concept(
+  'cdd.attribute',
+  'attribute',
+  'Attribute',
+  'Belongs to a [concept](.concept). Defines one slot — name, `type` and `cardinality` — on that concept’s instances.',
+  [
+    attr('cdd.attribute', 'type', 'cdd.concept', '1'),
+    attr('cdd.attribute', 'cardinality', 'cdd.cardinality', '1'),
+  ],
+)
+concept(
+  'cdd.property',
+  'property',
+  'Property',
+  'Belongs to an [instance](.instance). A value the instance holds in a slot its [concept](.concept) defines via an [attribute](.attribute).',
+)
+
+// The ontology root.
+instances['cdd'] = [
+  { kind: 'identity', value: 'cdd' },
+  { kind: 'concept', value: 'cdd.concept' },
+  { kind: 'slug', value: 'cdd' },
+  { kind: 'name', value: 'CDD' },
+  { kind: 'definition', value: 'The ontology being viewed — the root concept of itself.' },
+  {
+    kind: 'attributes',
+    value: [
+      attr('cdd', 'name', 'cdd.name', '1'),
+      attr('cdd', 'slug', 'cdd.slug', '1'),
+      attr('cdd', 'definition', 'cdd.definition', '0-1'),
     ],
   },
-}
+  {
+    kind: 'concepts',
+    value: [
+      'cdd.concept',
+      'cdd.instance',
+      'cdd.attribute',
+      'cdd.property',
+      'cdd.name',
+      'cdd.definition',
+      'cdd.slug',
+      'cdd.cardinality',
+    ],
+  },
+]
+
+export const sampleOntology: Ontology = { root: 'cdd', instances }
