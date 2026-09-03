@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import type { Instance } from './Instance'
 import { isConcept } from '@/concepts/concepts/Concept'
+import { instanceType } from './Instance'
 import { propertyKind } from '@/concepts/properties/kinds/property-kinds'
 
 // The central component: renders one instance as its properties, in
@@ -9,9 +10,12 @@ import { propertyKind } from '@/concepts/properties/kinds/property-kinds'
 // `attributes` are NOT drawn here — they belong below the instance, not inside.
 const props = defineProps<{ instance: Instance }>()
 
-// Concept-colored ground when the instance declares attributes, else
-// instance-colored.
-const tone = computed(() => (isConcept(props.instance) ? 'concept' : 'instance'))
+// Ground color: `attribute` for an attribute instance, `concept` when it
+// declares attributes, else `instance`.
+const tone = computed(() => {
+  if (instanceType(props.instance) === 'cdd.attribute') return 'attribute'
+  return isConcept(props.instance) ? 'concept' : 'instance'
+})
 
 const drawn = computed(() =>
   [...props.instance]

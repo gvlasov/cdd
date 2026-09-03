@@ -8,7 +8,7 @@ import type { ThemeDefinition } from 'vuetify'
 export const ontologyColors = {
   concept: '#3949AB', // indigo
   instance: '#546E7A', // blue-grey
-  attribute: '#00897B', // teal
+  attribute: '#C62828', // red
   relation: '#8E24AA', // purple
 } as const
 
@@ -24,7 +24,7 @@ export const ontologyDarkTheme: ThemeDefinition = {
   colors: {
     concept: '#7986CB',
     instance: '#90A4AE',
-    attribute: '#4DB6AC',
+    attribute: '#EF9A9A',
     relation: '#CE93D8',
   },
 }

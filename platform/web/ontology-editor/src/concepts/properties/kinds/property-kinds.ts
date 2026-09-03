@@ -7,6 +7,8 @@ import DefinitionEdit from './DefinitionEdit.vue'
 import ExamplesProperty from './ExamplesProperty.vue'
 import EffectProperty from './EffectProperty.vue'
 import EffectEdit from './EffectEdit.vue'
+import TypeProperty from './TypeProperty.vue'
+import CardinalityProperty from './CardinalityProperty.vue'
 
 // The predefined property kinds and their draw positions inside the instance
 // renderer. Equal positions draw in renderer-defined order. A kind with no
@@ -37,8 +39,8 @@ export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   attributes: { name: 'attributes', position: 5 },
   transactions: { name: 'transactions', position: 5 },
   required: { name: 'required', position: 5 },
-  type: { name: 'type', position: 5 },
-  cardinality: { name: 'cardinality', position: 5 },
+  type: { name: 'type', position: 5, render: TypeProperty },
+  cardinality: { name: 'cardinality', position: 5, render: CardinalityProperty },
   params: { name: 'params', position: 6 },
   examples: { name: 'examples', position: 7, render: ExamplesProperty },
   effect: { name: 'effect', position: 8, render: EffectProperty, edit: EffectEdit },
