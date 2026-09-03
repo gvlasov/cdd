@@ -15,6 +15,7 @@ the same stack as the `problems` app (Vue 3 + Vite + Vuetify 4 + TypeScript).
 
 ## Commands
 
-- `editor:open` — serve the demo app with Vite and open it in the browser; code
-  edits reflect immediately via HMR.
+- `editor:up` — bring up the local environment: install deps if needed and start
+  the Vite dev server (HMR). No backend.
+- `editor:open` — `editor:up` plus opening the demo app in the browser.
 - `editor:build` — build the embeddable component bundle into `dist/` here.

@@ -35,7 +35,8 @@ src/index.ts    public entry point for the embeddable component
 From anywhere in the repo:
 
 ```bash
-editor:open      # serve the demo app with Vite + HMR, open it in the browser
+editor:up        # install deps if needed + start the Vite dev server (HMR)
+editor:open      # editor:up, and open the demo app in the browser
 editor:build     # build the embeddable bundle into /concepts/ontology-editor/dist
 ```
 
