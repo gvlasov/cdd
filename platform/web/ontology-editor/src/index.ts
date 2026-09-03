@@ -1,6 +1,7 @@
 // Public entry point for the embeddable component.
 export { default as OntologyEditor } from '@/concepts/ontology/OntologyEditor.vue'
 export { default as ConceptView } from '@/concepts/concept-view/ConceptView.vue'
+export { default as InstanceRenderer } from '@/concepts/instances/InstanceRenderer.vue'
 
 export type { Ontology } from '@/concepts/ontology/Ontology'
 export {
@@ -18,6 +19,7 @@ export { IdentityRepository } from '@/concepts/identity/IdentityRepository'
 export type { Slug } from '@/concepts/identity/Slug'
 export { SLUG_PATTERN, isSlug, identityFromSlugChain } from '@/concepts/identity/Slug'
 
+export type { Instance } from '@/concepts/instances/Instance'
 export type { Concept } from '@/concepts/concepts/Concept'
 export {
   conceptIdentity,

@@ -21,11 +21,12 @@ CDD's directory layout or any storage backend.
   the entry's identity is those slugs joined by `.` —
   `<ontologySlug>.<conceptSlug>.<instanceSlug>`. The ontology is the root
   concept of itself (`ontology.root` names its own entry).
-- Predefined property kinds and their draw positions on the concept widget:
-  `name` (0), `definition` (1), `slug` (2), `concept` (3), `attributes` (4),
-  `examples` (5). Each kind ships a component that draws one property of that
-  kind; properties at the same position draw in renderer-defined order.
-  `identity` (position 2) has no renderer — it is the concept's key, not shown.
+- Predefined property kinds and their draw positions inside the instance
+  renderer: `name` (0), `definition` (1), `slug` (2), `examples` (5). Properties
+  at the same position draw in renderer-defined order. `identity`, `concept` and
+  `attributes` have no in-instance renderer: `identity` is the key; `concept`
+  references and the declared `attributes` are drawn *below* the instance by
+  `ConceptView`.
 - Title / slug rendering: the `name` renderer shows the title and, if the
   concept has a slug, the slug right beside it. The `slug` renderer draws the
   slug only when the concept has no name; otherwise it stays silent.
@@ -34,10 +35,14 @@ CDD's directory layout or any storage backend.
 
 ## View
 
-One concept fills the screen at a time. Its properties are drawn in kind-position
-order (name as the title, definition below, and so on). Buttons above it are the
-**parent concepts** — those that reference this one through a `concept`
-property. Clicking any button navigates to that concept.
+The central component is the **instance renderer**: it fills the screen with one
+instance drawn as its properties, in kind-position order (name as the title,
+definition below, and so on).
+
+`ConceptView` wraps it: **parent concepts** above (those that reference this one
+through a `concept` property), and — when the instance is a concept — its
+**attributes** below: the concepts it consists of as navigable chips, plus the
+property kinds it declares for its instances. Clicking any chip navigates.
 
 Same stack as the `problems` app: Vue 3 + Vite + Vuetify 4 + TypeScript.
 No backend.
@@ -50,7 +55,7 @@ A `<OntologyEditor>` Vue component that other apps can embed.
 
 - [x] Vite + Vue + Vuetify + TS project that builds
 - [x] Property-based concept model with an identity repository
-- [x] Single-concept view: properties drawn by kind position, parent navigation
+- [x] Instance renderer + concept view (parents above, attributes below)
 - [ ] In-place editing (add / change / remove properties and concepts)
 - [ ] Persistence adapters
 - [ ] `.d.ts` emission for the published bundle
@@ -61,9 +66,10 @@ A `<OntologyEditor>` Vue component that other apps can embed.
 src/concepts/
   ontology/       Ontology aggregate, identity repo access, <OntologyEditor>, theme
   identity/       Identity & Slug types, IdentityRepository, slug-chain identity
-  concepts/       Concept (= Property[]) helpers
-  properties/     Property, PropertyKind, and kinds/ (one renderer per kind)
-  concept-view/   <ConceptView> — one concept and its parents
+  instances/      Instance (= Property[]) and <InstanceRenderer> — the central component
+  concepts/       Concept helpers (a concept is an instance with `attributes`)
+  properties/     Property, PropertyKind, and kinds/ (one renderer per drawn kind)
+  concept-view/   <ConceptView> — instance renderer + parents above + attributes below
   app/            local demo app (not part of the published bundle)
 src/index.ts      public entry point for the embeddable component
 ```
