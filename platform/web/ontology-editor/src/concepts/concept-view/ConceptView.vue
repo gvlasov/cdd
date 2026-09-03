@@ -3,8 +3,7 @@ import { computed } from 'vue'
 import type { Ontology } from '@/concepts/ontology/Ontology'
 import type { Identity } from '@/concepts/identity/Identity'
 import { conceptOf, parentIdentities } from '@/concepts/ontology/Ontology'
-import { conceptRefs, conceptAttributes } from '@/concepts/concepts/Concept'
-import { instanceType } from '@/concepts/instances/Instance'
+import { conceptRefs } from '@/concepts/concepts/Concept'
 import { useOntology } from '@/concepts/ontology/useOntology'
 import InstanceRenderer from '@/concepts/instances/InstanceRenderer.vue'
 import TransactionBar from '@/concepts/transactions/TransactionBar.vue'
@@ -20,16 +19,10 @@ const { conceptLabel, navigate } = useOntology()
 const concept = computed(() => conceptOf(props.ontology, props.conceptId))
 const parents = computed(() => parentIdentities(props.ontology, props.conceptId))
 
-// Attribute chips below the instance: the attributes its type declares (the
-// slots it fills), plus any it declares itself (as a concept), plus — for an
-// ontology — its `concepts` list. De-duplicated, type's attributes first.
-const refs = computed(() => {
-  if (!concept.value) return []
-  const typeId = instanceType(concept.value)
-  const type = typeId ? conceptOf(props.ontology, typeId) : undefined
-  const fromType = type ? conceptAttributes(type) : []
-  return [...new Set([...fromType, ...conceptRefs(concept.value)])]
-})
+// Attribute chips below the instance: the attributes it declares itself (as a
+// concept) and — for an ontology — its `concepts` list. Not the type's
+// attributes — those belong on the type's own page.
+const refs = computed(() => (concept.value ? conceptRefs(concept.value) : []))
 </script>
 
 <template>

@@ -130,9 +130,9 @@ definition below, and so on).
 
 `ConceptView` wraps it: **parent concepts** above (those that reference this one
 through an `attributes` / `concepts` property), and **attribute chips** below —
-the attributes the instance's type declares (the slots it fills), plus any it
-declares itself as a concept, plus an ontology's `concepts` list. Clicking any
-chip navigates.
+the attributes this concept declares itself, plus an ontology's `concepts` list.
+The type's attributes are not repeated here; they live on the type's own page.
+Clicking any chip navigates.
 
 Same stack as the `problems` app: Vue 3 + Vite + Vuetify 4 + TypeScript.
 No backend.
