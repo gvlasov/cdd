@@ -47,6 +47,10 @@ export {
   setPropertyValue,
   renameSlug,
   identityAfterSlug,
+  createConcept,
+  newConceptIdentity,
+  addToList,
+  removeFromList,
 } from '@/concepts/editing/editOntology'
 export type { PropertyValueKind } from '@/concepts/editing/PropertyValueKind'
 export { propertyValueKind } from '@/concepts/editing/PropertyValueKind'

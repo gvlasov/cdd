@@ -20,6 +20,10 @@ the same stack as the `problems` app (Vue 3 + Vite + Vuetify 4 + TypeScript).
 - `dist/` (here) — the built embeddable bundle, produced by `cdd editor:build`.
   Generated, git-ignored; run the command to (re)create it.
 
+Pass `editable` for edit mode: change an instance's property values (slug
+renames re-key the identity and rewrite references) and create new concepts from
+a slug.
+
 ## Commands
 
 - `editor:up` — bring up the local environment: install deps if needed and start

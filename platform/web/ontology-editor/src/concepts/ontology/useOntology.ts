@@ -17,6 +17,8 @@ export interface OntologyContext {
   apply: (mutate: (ontology: Ontology) => Ontology) => void
   /** Rename an instance's slug: re-key, rewrite references, follow the move. */
   renameSlug: (instanceId: Identity, newSlug: Slug) => void
+  /** Create a concept from a slug, then open it in edit mode. */
+  createConcept: (slug: Slug) => void
 }
 
 const key: InjectionKey<OntologyContext> = Symbol('ontology')
@@ -26,6 +28,7 @@ export function provideOntology(ctx: {
   navigate: (identity: Identity) => void
   apply: (mutate: (ontology: Ontology) => Ontology) => void
   renameSlug: (instanceId: Identity, newSlug: Slug) => void
+  createConcept: (slug: Slug) => void
 }): void {
   const label = (identity: Identity) => {
     const concept = conceptOf(ctx.ontology(), identity)
@@ -36,6 +39,7 @@ export function provideOntology(ctx: {
     navigate: ctx.navigate,
     apply: ctx.apply,
     renameSlug: ctx.renameSlug,
+    createConcept: ctx.createConcept,
     conceptLabel: label,
     conceptOptions: () =>
       ontologyConcepts(ctx.ontology()).map((id) => ({ value: id, title: label(id) ?? id })),

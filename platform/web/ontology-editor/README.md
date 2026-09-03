@@ -42,7 +42,12 @@ CDD's directory layout or any storage backend.
 
 ## Edit
 
-Pass `editable` to show an **Edit** toggle. In edit mode the open concept's
+Pass `editable` to show **New concept** and **Edit** buttons. **New concept**
+asks for a slug (validated, must be unique), creates a concept with just
+`identity` + `slug` — identity is `<rootSlug>.<slug>` — appends it to the
+ontology root's `concepts` list, then opens it in edit mode to fill in the rest.
+
+In edit mode the open concept's
 properties become inputs, ordered by property-kind position. A property kind can
 ship its own `edit` component (like its `render`); otherwise the value kind
 picks a generic input:
@@ -101,7 +106,8 @@ A `<OntologyEditor>` Vue component that other apps can embed.
 - [x] Property-based concept model with an identity repository
 - [x] Instance renderer + concept view (parents above, attributes below)
 - [x] Edit mode: change property values, slug rename re-keys the identity
-- [ ] Editing: add / remove properties and concepts
+- [x] Create concepts (slug → identity, added to the ontology's concept list)
+- [ ] Editing: add / remove properties; delete concepts
 - [ ] Persistence adapters
 - [ ] `.d.ts` emission for the published bundle
 
@@ -115,7 +121,7 @@ src/concepts/
   concepts/       Concept helpers (a concept is an instance with `attributes`)
   properties/     Property, PropertyKind, and kinds/ (one renderer per drawn kind)
   concept-links/  parse & render [Label](identity) links embedded in text
-  editing/        edit-mode: value-kind classification, immutable edits, <ConceptEditor>
+  editing/        edit-mode: value-kind classification, immutable edits (incl. createConcept), <ConceptEditor>
   concept-view/   <ConceptView> — instance renderer + parents above + attributes below
   app/            local demo app (not part of the published bundle)
 src/index.ts      public entry point for the embeddable component

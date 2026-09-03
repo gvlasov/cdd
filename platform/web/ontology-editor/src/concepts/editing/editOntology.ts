@@ -4,7 +4,9 @@ import { isSlug } from '@/concepts/identity/Slug'
 import type { Instance } from '@/concepts/instances/Instance'
 import type { Property, PropertyKindName } from '@/concepts/properties/Property'
 import type { Ontology } from '@/concepts/ontology/Ontology'
-import { derivedIdentity } from '@/concepts/ontology/Ontology'
+import { derivedIdentity, rootConcept } from '@/concepts/ontology/Ontology'
+import { conceptSlug } from '@/concepts/concepts/Concept'
+import { identityFromSlugChain } from '@/concepts/identity/Slug'
 
 // Pure, immutable edits to an ontology. Each returns a new Ontology; callers
 // emit it via update:modelValue.
@@ -114,6 +116,46 @@ export function identityAfterSlug(
   const derived = derivedIdentity(probe, instanceId)
   if (!derived || derived === instanceId || ontology.instances[derived]) return instanceId
   return derived
+}
+
+/**
+ * The identity a new concept with `slug` would get: `<rootSlug>.<slug>` when the
+ * ontology root is slugged, else just the slug. Empty when the slug is invalid
+ * or already taken.
+ */
+export function newConceptIdentity(ontology: Ontology, slug: Slug): Identity {
+  if (!isSlug(slug)) return ''
+  const root = rootConcept(ontology)
+  const rootSlug = root ? conceptSlug(root) : undefined
+  const id = rootSlug ? identityFromSlugChain([rootSlug, slug]) : slug
+  return id in ontology.instances ? '' : id
+}
+
+/**
+ * Create a new concept from a slug: adds the instance (identity + slug) and
+ * appends its identity to the ontology root's `concepts` list.
+ */
+export function createConcept(ontology: Ontology, slug: Slug): Ontology {
+  const id = newConceptIdentity(ontology, slug)
+  if (!id) return ontology
+
+  const instances = cloneInstances(ontology)
+  instances[id] = [
+    { kind: 'identity', value: id },
+    { kind: 'slug', value: slug },
+  ]
+
+  const root = instances[ontology.root]
+  if (root) {
+    const i = root.findIndex((p) => p.kind === 'concepts')
+    const current =
+      i !== -1 && Array.isArray(root[i].value) ? (root[i].value as Identity[]) : []
+    const value = [...current, id]
+    if (i !== -1) root[i] = { kind: 'concepts', value }
+    else root.push({ kind: 'concepts', value })
+  }
+
+  return { ...ontology, instances }
 }
 
 /** The remaining value after removing one entry from a list property. */
