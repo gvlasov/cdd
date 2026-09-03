@@ -24,7 +24,7 @@ const drawn = computed(() =>
         v-for="entry in drawn"
         :key="entry.i"
         :property="entry.property"
-        :concept="instance"
+        :instance="instance"
       />
     </v-card-text>
   </v-card>

@@ -1,28 +1,16 @@
 import type { Property, PropertyKindName } from '@/concepts/properties/Property'
 import type { Identity } from '@/concepts/identity/Identity'
 import { firstOfKind, propertiesOfKind } from '@/concepts/properties/Property'
+import type { Instance } from '@/concepts/instances/Instance'
+import { instanceName, instanceSlug, instanceIdentity } from '@/concepts/instances/Instance'
 
-// A concept IS its collection of properties. It has no fields of its own —
-// name, definition, examples, identity, slug are all just properties. Its
-// `attributes` property declares what properties its own instances may have.
-export type Concept = Property[]
+// A concept is an instance that also declares, via its `attributes` property,
+// what properties its own instances may have.
+export type Concept = Instance
 
-function literal(property: Property | undefined): string | undefined {
-  if (!property) return undefined
-  return Array.isArray(property.value) ? property.value[0] : property.value
-}
-
-export function conceptIdentity(concept: Concept): Identity | undefined {
-  return literal(firstOfKind(concept, 'identity'))
-}
-
-export function conceptName(concept: Concept): string | undefined {
-  return literal(firstOfKind(concept, 'name'))
-}
-
-export function conceptSlug(concept: Concept): Identity | undefined {
-  return literal(firstOfKind(concept, 'slug'))
-}
+export const conceptIdentity = instanceIdentity
+export const conceptName = instanceName
+export const conceptSlug = instanceSlug
 
 /** A short human label for a concept: its name, else its identity. */
 export function conceptLabelOf(concept: Concept): string | undefined {

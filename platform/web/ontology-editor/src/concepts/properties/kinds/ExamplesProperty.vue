@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { Property } from '@/concepts/properties/Property'
-import type { Concept } from '@/concepts/concepts/Concept'
+import type { Instance } from '@/concepts/instances/Instance'
 import { useOntology } from '@/concepts/ontology/useOntology'
 
 // `examples` value identity references a concept whose own properties are the
 // individual examples. Fall back to showing the raw value if it is a literal.
-const props = defineProps<{ property: Property; concept: Concept }>()
+const props = defineProps<{ property: Property; instance: Instance }>()
 const { conceptLabel } = useOntology()
 
 const items = computed(() => {

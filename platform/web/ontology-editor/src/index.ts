@@ -20,6 +20,7 @@ export type { Slug } from '@/concepts/identity/Slug'
 export { SLUG_PATTERN, isSlug, identityFromSlugChain } from '@/concepts/identity/Slug'
 
 export type { Instance } from '@/concepts/instances/Instance'
+export { instanceName, instanceSlug, instanceIdentity } from '@/concepts/instances/Instance'
 export type { Concept } from '@/concepts/concepts/Concept'
 export {
   conceptIdentity,

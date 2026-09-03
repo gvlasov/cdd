@@ -75,7 +75,7 @@ export const sampleOntology: Ontology = {
       {
         kind: 'definition',
         value:
-          'A [a-zA-Z0-9_-] word that uniquely identifies a concept within the ontology; the metaentity chain of slugs joined by "." builds an identity.',
+          'A [a-zA-Z0-9_-] word that uniquely identifies an instance within the ontology; the metaentity chain of slugs joined by "." builds an identity.',
       },
     ],
   },

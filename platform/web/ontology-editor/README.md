@@ -15,8 +15,9 @@ CDD's directory layout or any storage backend.
 - An **identity** is a string, unique within the ontology. It is the base case:
   an identity *is* its own literal content. `IdentityRepository` maps every
   identity to the instance it represents; it is built from the ontology at load.
-- A **slug** is a `[a-zA-Z0-9_-]+` word, unique within the ontology. The ontology,
-  a concept, and an instance can each carry one. When an entry and every entity
+- A **slug** is a `[a-zA-Z0-9_-]+` word, unique within the ontology, that
+  identifies an **instance** — the ontology and a concept are just instances
+  that commonly carry one. When an entry and every entity
   above it in the metaentity chain (instance → concept → ontology) are slugged,
   the entry's identity is those slugs joined by `.` —
   `<ontologySlug>.<conceptSlug>.<instanceSlug>`. The ontology is the root
@@ -28,8 +29,8 @@ CDD's directory layout or any storage backend.
   references and the declared `attributes` are drawn *below* the instance by
   `ConceptView`.
 - Title / slug rendering: the `name` renderer shows the title and, if the
-  concept has a slug, the slug right beside it. The `slug` renderer draws the
-  slug only when the concept has no name; otherwise it stays silent.
+  instance has a slug, the slug right beside it. The `slug` renderer draws the
+  slug only when the instance has no name; otherwise it stays silent.
 - The ontology is **flat**: `{ root, concepts: { <identity>: Property[] } }`.
   Concepts reference each other by identity via `concept` properties.
 
