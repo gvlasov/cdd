@@ -95,9 +95,10 @@ function submitNew() {
 <template>
   <div class="d-flex flex-column ga-2">
     <div class="text-caption text-medium-emphasis">
-      {{ spec.name }}
-      <span class="ms-1">· {{ conceptLabel(spec.type ?? '') ?? spec.type ?? 'any' }}</span>
-      <span class="ms-1">· {{ spec.cardinality }}</span>
+      <span class="font-weight-medium">{{ spec.name }}</span
+      >&nbsp;·&nbsp;{{ conceptLabel(spec.type ?? '') ?? spec.type ?? 'any' }}<sup>{{
+        spec.cardinality
+      }}</sup>
     </div>
 
     <!-- leaf: single field (list of fields when 0+/1+) -->
@@ -106,7 +107,6 @@ function submitNew() {
         v-if="cardinalityValued"
         :model-value="literalValue"
         :items="CARDS"
-        :label="spec.name"
         variant="outlined"
         density="comfortable"
         hide-details
@@ -115,7 +115,6 @@ function submitNew() {
       <v-text-field
         v-else-if="!list"
         :model-value="literalValue"
-        :label="spec.name"
         variant="outlined"
         density="comfortable"
         hide-details
@@ -124,7 +123,6 @@ function submitNew() {
       <v-combobox
         v-else
         :model-value="valueIds"
-        :label="spec.name"
         variant="outlined"
         density="comfortable"
         hide-details
@@ -163,7 +161,6 @@ function submitNew() {
         v-else
         :model-value="list ? valueIds : literalValue"
         :items="conceptItems"
-        :label="spec.name"
         :multiple="list"
         :chips="list"
         :closable-chips="list"
