@@ -101,7 +101,7 @@ const canAdd = computed(() => list.value || valueIds.value.length === 0)
 
     <div v-if="canAdd && !leaf" class="d-flex justify-center">
       <v-btn prepend-icon="mdi-plus" variant="tonal" size="small" @click="addStructured">
-        {{ spec.name }}
+        {{ conceptLabel(spec.type ?? '') ?? spec.name }}
       </v-btn>
     </div>
 

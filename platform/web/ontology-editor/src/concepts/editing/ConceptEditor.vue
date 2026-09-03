@@ -63,8 +63,8 @@ function submit() {
       <InstanceForm :concept-id="conceptId" />
 
       <div class="d-flex justify-center pt-2">
-        <v-btn prepend-icon="mdi-plus" variant="tonal" size="small" @click="adding = true">
-          attribute
+        <v-btn prepend-icon="mdi-cog-outline" variant="tonal" size="small" @click="adding = true">
+          define attribute
         </v-btn>
       </div>
     </v-card-text>
