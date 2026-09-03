@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Serve the ontology editor demo app with Vite and open it in the browser.
+# Code edits are reflected immediately via Vite HMR.
+set -euo pipefail
+
+source_path="${BASH_SOURCE[0]}"
+while [ -L "$source_path" ]; do
+  source_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
+  source_path="$(readlink "$source_path")"
+  case "$source_path" in
+    /*) ;;
+    *) source_path="$source_dir/$source_path" ;;
+  esac
+done
+project_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
+cd "$project_dir"
+
+if [ ! -d node_modules ]; then
+  printf 'editor:open: installing dependencies...\n' >&2
+  npm install
+fi
+
+repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || repo_root="$project_dir"
+open_in_browser="$repo_root/commands/open-in-browser"
+
+# Preferred port for this project; Vite falls through to the next free one.
+port="${EDITOR_PORT:-5273}"
+
+# Start Vite, watch its output for the served URL, open it once, keep running.
+opened=0
+npm run dev -- --host 127.0.0.1 --port "$port" 2>&1 | while IFS= read -r line; do
+  printf '%s\n' "$line"
+  if [ "$opened" -eq 0 ]; then
+    url="$(printf '%s' "$line" | grep -oE 'http://(localhost|127\.0\.0\.1):[0-9]+/?' | head -n1)"
+    if [ -n "$url" ]; then
+      opened=1
+      [ -x "$open_in_browser" ] && "$open_in_browser" "$url" || true
+    fi
+  fi
+done

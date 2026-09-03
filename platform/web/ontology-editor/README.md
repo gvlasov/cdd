@@ -32,13 +32,25 @@ src/index.ts    public entry point for the embeddable component
 
 ## Develop
 
+From anywhere in the repo:
+
+```bash
+editor:open      # serve the demo app with Vite + HMR, open it in the browser
+editor:build     # build the embeddable bundle into /concepts/ontology-editor/dist
+```
+
+Or directly:
+
 ```bash
 cd platform/web/ontology-editor
 npm install
-npm run dev      # demo app
-npm run check    # type-check
-npm run build:lib  # build the embeddable bundle into dist/
+npm run dev        # demo app
+npm run check      # type-check
+npm run build:lib  # build the embeddable bundle into ./dist
 ```
+
+`editor:open` serves on port 5273 (override with `EDITOR_PORT`), falling through
+to the next free port if taken.
 
 ## Embed
 
