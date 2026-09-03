@@ -13,7 +13,10 @@ import InstanceForm from '@/concepts/editing/InstanceForm.vue'
 //  - leaf type            → a plain text field on the owner's `slug` property
 //  - structured type      → a nested InstanceForm per value instance
 //  - list cardinality     → repeat, with add / remove
-const props = defineProps<{ ownerId: Identity; spec: AttributeSpec }>()
+const props = withDefaults(
+  defineProps<{ ownerId: Identity; spec: AttributeSpec; ancestors?: Identity[] }>(),
+  { ancestors: () => [] },
+)
 
 const { ontology, apply, conceptLabel } = useOntology()
 
@@ -107,7 +110,7 @@ const canAdd = computed(() => list.value || valueIds.value.length === 0)
             @click="removeStructured(id)"
           />
         </div>
-        <InstanceForm :concept-id="id" />
+        <InstanceForm :concept-id="id" :ancestors="[...ancestors, ownerId]" />
       </v-card>
     </template>
 
