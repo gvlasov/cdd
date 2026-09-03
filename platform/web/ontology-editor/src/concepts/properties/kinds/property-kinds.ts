@@ -3,6 +3,7 @@ import type { PropertyKindName } from '@/concepts/properties/Property'
 import SlugProperty from './SlugProperty.vue'
 import NameProperty from './NameProperty.vue'
 import DefinitionProperty from './DefinitionProperty.vue'
+import DefinitionEdit from './DefinitionEdit.vue'
 import ExamplesProperty from './ExamplesProperty.vue'
 
 // The predefined property kinds and their draw positions inside the instance
@@ -15,7 +16,18 @@ import ExamplesProperty from './ExamplesProperty.vue'
 //    below the instance as navigable chips, not inside it
 export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   name: { name: 'name', position: 0, render: NameProperty },
-  definition: { name: 'definition', position: 1, render: DefinitionProperty },
+  definition: {
+    name: 'definition',
+    position: 1,
+    render: DefinitionProperty,
+    edit: DefinitionEdit,
+  },
+  description: {
+    name: 'description',
+    position: 1,
+    render: DefinitionProperty,
+    edit: DefinitionEdit,
+  },
   identity: { name: 'identity', position: 2 },
   slug: { name: 'slug', position: 2, render: SlugProperty },
   concept: { name: 'concept', position: 3 },

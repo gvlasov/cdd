@@ -10,7 +10,13 @@ export interface PropertyKind {
   position: number
   /**
    * Component that renders one property of this kind, given props
-   * `{ property, concept }`. Omitted for kinds that are not drawn.
+   * `{ property, instance }`. Omitted for kinds that are not drawn.
    */
   render?: Component
+  /**
+   * Component that edits one property of this kind, given props
+   * `{ instanceId, property }`. Omitted kinds fall back to the generic editor
+   * driven by their value kind; `identity` is never editable.
+   */
+  edit?: Component
 }

@@ -34,6 +34,7 @@ export {
 
 export type { Property, PropertyKindName } from '@/concepts/properties/Property'
 export type { PropertyKind } from '@/concepts/properties/PropertyKind'
+// A PropertyKind may carry `render` (view) and `edit` (edit-mode) components.
 export { propertyKinds, propertyKind } from '@/concepts/properties/kinds/property-kinds'
 
 export { default as ConceptEditor } from '@/concepts/editing/ConceptEditor.vue'

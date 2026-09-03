@@ -26,7 +26,8 @@ CDD's directory layout or any storage backend.
   `<ontologySlug>.<conceptSlug>.<instanceSlug>`. The ontology is the root
   concept of itself (`ontology.root` names its own entry).
 - Predefined property kinds and their draw positions inside the instance
-  renderer: `name` (0), `definition` (1), `slug` (2), `examples` (5). Properties
+  renderer: `name` (0), `definition` / `description` (1), `slug` (2),
+  `examples` (5). Properties
   at the same position draw in renderer-defined order. `identity`, `concept`,
   `concepts` and `attributes` have no in-instance renderer: `identity` is the
   key; `concept` / `concepts` references and the declared `attributes` are drawn
@@ -41,10 +42,12 @@ CDD's directory layout or any storage backend.
 ## Edit
 
 Pass `editable` to show an **Edit** toggle. In edit mode the open concept's
-properties become inputs, ordered by property-kind position:
+properties become inputs, ordered by property-kind position. A property kind can
+ship its own `edit` component (like its `render`); otherwise the value kind
+picks a generic input:
 
-- literal (`name`, `definition`, `slug`) → outlined text field labelled with the
-  property kind
+- `definition` / `description` → textarea (the kind renders its own editor)
+- other literals (`name`, `slug`) → outlined text field labelled with the kind
 - literal list (`examples`) → combobox with chips; type new entries
 - concept list (`concept`, `concepts`) → autocomplete over the ontology's concepts
 - kind list (`attributes`) → select over the known property kinds

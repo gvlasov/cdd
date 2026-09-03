@@ -3,21 +3,23 @@ import { computed } from 'vue'
 import type { Identity } from '@/concepts/identity/Identity'
 import type { Property } from '@/concepts/properties/Property'
 import { useOntology } from '@/concepts/ontology/useOntology'
+import { propertyKind } from '@/concepts/properties/kinds/property-kinds'
 import { setPropertyValue } from './editOntology'
 import { propertyValueKind, ALL_PROPERTY_KINDS } from './PropertyValueKind'
 
-const kindItems: string[] = [...ALL_PROPERTY_KINDS]
-
-// Edits one property of the given instance. The value kind decides the input.
+// Edits one property of the given instance. If the property kind ships its own
+// `edit` component, that is used; otherwise the value kind picks a generic input.
 const props = defineProps<{ instanceId: Identity; property: Property }>()
 
 const { apply, renameSlug, conceptOptions } = useOntology()
 
+const kindEditor = computed(() => propertyKind(props.property.kind)?.edit)
 const valueKind = computed(() => propertyValueKind[props.property.kind])
 const asString = computed(() => (Array.isArray(props.property.value) ? '' : props.property.value))
 const asList = computed(() =>
   Array.isArray(props.property.value) ? props.property.value : [props.property.value],
 )
+const kindItems: string[] = [...ALL_PROPERTY_KINDS]
 
 function commit(value: Identity | Identity[]) {
   if (props.property.kind === 'slug' && typeof value === 'string') {
@@ -29,8 +31,15 @@ function commit(value: Identity | Identity[]) {
 </script>
 
 <template>
+  <component
+    :is="kindEditor"
+    v-if="kindEditor"
+    :instance-id="instanceId"
+    :property="property"
+  />
+
   <v-text-field
-    v-if="valueKind === 'literal'"
+    v-else-if="valueKind === 'literal'"
     :model-value="asString"
     :label="property.kind"
     variant="outlined"

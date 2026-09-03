@@ -24,6 +24,7 @@ export type PropertyKindName =
   | 'slug'
   | 'name'
   | 'definition'
+  | 'description'
   | 'examples'
   | 'concept'
   | 'concepts'
