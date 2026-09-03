@@ -24,12 +24,14 @@ function label(id: string): string {
 <template>
   <div class="d-flex flex-column ga-4 fill-height">
     <nav aria-label="Parent concepts">
-      <div class="d-flex flex-wrap ga-2 align-center">
+      <div class="d-flex flex-wrap ga-3 align-center justify-center">
         <v-chip
           v-for="edge in parents"
           :key="edge.id"
           prepend-icon="mdi-arrow-up"
+          color="concept"
           variant="outlined"
+          size="large"
           link
           @click="emit('navigate', edge.from)"
         >
@@ -58,16 +60,18 @@ function label(id: string): string {
     </v-card>
 
     <nav aria-label="Attributes">
-      <div class="d-flex flex-wrap ga-2 align-center">
+      <div class="d-flex flex-wrap ga-3 align-center justify-center">
         <v-chip
           v-for="edge in attributes"
           :key="edge.id"
+          color="attribute"
           variant="outlined"
+          size="large"
           link
           @click="emit('navigate', edge.to)"
         >
           {{ label(edge.to) }}
-          <span v-if="edge.relation" class="text-medium-emphasis ms-1">
+          <span v-if="edge.relation" class="text-relation ms-1">
             · {{ edge.relation }}
           </span>
         </v-chip>

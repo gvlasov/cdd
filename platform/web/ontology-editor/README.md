@@ -71,3 +71,13 @@ import '@cdd/ontology-editor/style.css'
 ```vue
 <OntologyEditor v-model="ontology" root-id="concept" />
 ```
+
+The component uses three theme colors — `concept`, `attribute`, `relation`.
+Merge `ontologyTheme` into your Vuetify config so they resolve:
+
+```ts
+import { createVuetify } from 'vuetify'
+import { ontologyTheme } from '@cdd/ontology-editor'
+
+createVuetify({ theme: ontologyTheme })
+```

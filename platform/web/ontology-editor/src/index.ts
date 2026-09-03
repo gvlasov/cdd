@@ -8,3 +8,10 @@ export {
   attributesOf,
   parentsOf,
 } from '@/concepts/ontology/Ontology'
+export {
+  ontologyColors,
+  ontologyTheme,
+  ontologyLightTheme,
+  ontologyDarkTheme,
+} from '@/concepts/ontology/theme'
+export type { OntologyColor } from '@/concepts/ontology/theme'
