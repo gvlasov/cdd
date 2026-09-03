@@ -58,7 +58,7 @@ export function renameSlug(
   return rekeyForSlug({ root: ontology.root, instances }, instanceId)
 }
 
-const REF_KINDS: PropertyKindName[] = ['concept', 'concepts']
+const REF_KINDS: PropertyKindName[] = ['attributes', 'concept', 'concepts']
 
 function rekeyForSlug(ontology: Ontology, oldId: Identity): Ontology {
   const newId = derivedIdentity(ontology, oldId)

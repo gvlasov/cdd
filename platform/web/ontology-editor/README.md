@@ -9,9 +9,10 @@ CDD's directory layout or any storage backend.
 - A **concept is a collection of properties** — nothing else. Name, definition,
   examples, identity and slug are all just properties.
 - A **property** belongs to the concept as an instance: a `kind` and a `value`
-  it holds in a slot. An **attribute** is the slot — it belongs to a concept and
-  defines what property an instance of that concept may have. A concept's
-  `attributes` property lists the property kinds its instances may carry.
+  it holds in a slot. An **attribute** is the slot — itself a concept — that
+  defines what property an instance may have. A concept's `attributes` property
+  is the list of attribute-concept identities its instances may carry (Name,
+  Definition, Slug, …).
 - An **ontology** is itself a concept — its root instance. That instance is the
   root concept of itself; its `concepts` property is the list of concept
   identities the ontology contains.
@@ -49,13 +50,13 @@ picks a generic input:
 - `definition` / `description` → textarea (the kind renders its own editor)
 - other literals (`name`, `slug`) → outlined text field labelled with the kind
 - literal list (`examples`) → combobox with chips; type new entries
-- concept list (`concept`, `concepts`) → autocomplete over the ontology's concepts
-- kind list (`attributes`) → select over the known property kinds
+- concept list (`concept`, `concepts`, `attributes`) → autocomplete over the
+  ontology's concepts
 
 `identity` is read-only. Editing a `slug` recomputes the instance's identity
 (`derivedIdentity`), moves its `instances` entry, updates its `identity`
-property, and rewrites every `concept` / `concepts` reference that pointed at the
-old identity — the view follows the moved concept. Every edit emits a new
+property, and rewrites every `attributes` / `concept` / `concepts` reference
+that pointed at the old identity — the view follows the moved concept. Every edit emits a new
 `Ontology` via `update:modelValue`. Adding/removing properties is not in this
 pass.
 
@@ -66,9 +67,10 @@ instance drawn as its properties, in kind-position order (name as the title,
 definition below, and so on).
 
 `ConceptView` wraps it: **parent concepts** above (those that reference this one
-through a `concept` property), and — when the instance is a concept — its
-**attributes** below: the concepts it consists of as navigable chips, plus the
-property kinds it declares for its instances. Clicking any chip navigates.
+through an `attributes` / `concept` / `concepts` property), and — when the
+instance is a concept — its referenced concepts below as navigable chips (its
+attributes, `concept` parts, and an ontology's `concepts` list). Clicking any
+chip navigates.
 
 Same stack as the `problems` app: Vue 3 + Vite + Vuetify 4 + TypeScript.
 No backend.

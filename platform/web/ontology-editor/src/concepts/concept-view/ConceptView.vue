@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import type { Ontology } from '@/concepts/ontology/Ontology'
 import type { Identity } from '@/concepts/identity/Identity'
 import { conceptOf, parentIdentities } from '@/concepts/ontology/Ontology'
-import { conceptRefs, conceptAttributes } from '@/concepts/concepts/Concept'
+import { conceptRefs } from '@/concepts/concepts/Concept'
 import { useOntology } from '@/concepts/ontology/useOntology'
 import InstanceRenderer from '@/concepts/instances/InstanceRenderer.vue'
 
@@ -17,13 +17,9 @@ const { conceptLabel, navigate } = useOntology()
 const concept = computed(() => conceptOf(props.ontology, props.conceptId))
 const parents = computed(() => parentIdentities(props.ontology, props.conceptId))
 
-// The concepts this one consists of — drawn below the instance as navigable
-// chips. Present only when the instance is a concept with these references.
+// The concepts this one references — its attributes, `concept` parts, and (for
+// an ontology) its `concepts` list — drawn below the instance as navigable chips.
 const refs = computed(() => (concept.value ? conceptRefs(concept.value) : []))
-// The property kinds this concept declares for its instances.
-const declaredAttributes = computed(() =>
-  concept.value ? conceptAttributes(concept.value) : [],
-)
 </script>
 
 <template>
@@ -65,15 +61,6 @@ const declaredAttributes = computed(() =>
           @click="navigate(ref)"
         >
           {{ conceptLabel(ref) ?? ref }}
-        </v-chip>
-      </div>
-      <div
-        v-if="declaredAttributes.length"
-        class="d-flex flex-wrap ga-2 align-center justify-center mt-2"
-      >
-        <span class="text-overline text-medium-emphasis">instances may have:</span>
-        <v-chip v-for="a in declaredAttributes" :key="a" size="small" variant="tonal">
-          {{ a }}
         </v-chip>
       </div>
     </nav>

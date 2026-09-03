@@ -5,7 +5,7 @@ import type { Property } from '@/concepts/properties/Property'
 import { useOntology } from '@/concepts/ontology/useOntology'
 import { propertyKind } from '@/concepts/properties/kinds/property-kinds'
 import { setPropertyValue } from './editOntology'
-import { propertyValueKind, ALL_PROPERTY_KINDS } from './PropertyValueKind'
+import { propertyValueKind } from './PropertyValueKind'
 
 // Edits one property of the given instance. If the property kind ships its own
 // `edit` component, that is used; otherwise the value kind picks a generic input.
@@ -19,7 +19,6 @@ const asString = computed(() => (Array.isArray(props.property.value) ? '' : prop
 const asList = computed(() =>
   Array.isArray(props.property.value) ? props.property.value : [props.property.value],
 )
-const kindItems: string[] = [...ALL_PROPERTY_KINDS]
 
 function commit(value: Identity | Identity[]) {
   if (props.property.kind === 'slug' && typeof value === 'string') {
@@ -73,20 +72,6 @@ function commit(value: Identity | Identity[]) {
     chips
     closable-chips
     @update:model-value="commit($event)"
-  />
-
-  <v-select
-    v-else-if="valueKind === 'kind-list'"
-    :model-value="asList"
-    :items="kindItems"
-    :label="property.kind"
-    variant="outlined"
-    density="comfortable"
-    hide-details
-    multiple
-    chips
-    closable-chips
-    @update:model-value="commit(($event ?? []) as string[])"
   />
 
   <v-text-field

@@ -1,4 +1,3 @@
-import type { Property, PropertyKindName } from '@/concepts/properties/Property'
 import type { Identity } from '@/concepts/identity/Identity'
 import { firstOfKind, propertiesOfKind } from '@/concepts/properties/Property'
 import type { Instance } from '@/concepts/instances/Instance'
@@ -18,11 +17,12 @@ export function conceptLabelOf(concept: Concept): string | undefined {
 }
 
 /**
- * The concepts this concept relates to, by referenced identity: its `concept`
- * properties, plus — for an ontology — its `concepts` list.
+ * The concepts this concept relates to, by referenced identity: its `attributes`
+ * and `concept` properties, plus — for an ontology — its `concepts` list.
  */
 export function conceptRefs(concept: Concept): Identity[] {
   return [
+    ...propertiesOfKind(concept, 'attributes'),
     ...propertiesOfKind(concept, 'concept'),
     ...propertiesOfKind(concept, 'concepts'),
   ]
@@ -30,10 +30,12 @@ export function conceptRefs(concept: Concept): Identity[] {
     .flat()
 }
 
-/** The property kinds an instance of this concept may have. */
-export function conceptAttributes(concept: Concept): PropertyKindName[] {
+/**
+ * The attribute concepts this concept declares for its instances — the
+ * identities in its `attributes` property.
+ */
+export function conceptAttributes(concept: Concept): Identity[] {
   const property = firstOfKind(concept, 'attributes')
   if (!property) return []
-  const values = Array.isArray(property.value) ? property.value : [property.value]
-  return values as PropertyKindName[]
+  return Array.isArray(property.value) ? property.value : [property.value]
 }

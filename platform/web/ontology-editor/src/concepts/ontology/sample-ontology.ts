@@ -1,9 +1,10 @@
 import type { Ontology } from './Ontology'
 
 // The `cdd` instance is an ontology — the root concept of itself (slug `cdd`).
-// Its `concepts` property lists the concepts the ontology contains. Every
-// concept has a slug, so its identity (its key in `instances`) is the dotted
-// metaentity chain `<rootSlug>.<conceptSlug>`.
+// Its `concepts` property lists the concepts the ontology contains; its
+// `attributes` property lists the attribute concepts every concept may carry.
+// Every concept has a slug, so its identity (its key in `instances`) is the
+// dotted metaentity chain `<rootSlug>.<conceptSlug>`.
 export const sampleOntology: Ontology = {
   root: 'cdd',
   instances: {
@@ -14,7 +15,7 @@ export const sampleOntology: Ontology = {
       { kind: 'definition', value: 'The ontology being viewed — the root concept of itself.' },
       {
         kind: 'attributes',
-        value: ['identity', 'slug', 'name', 'definition', 'concepts'],
+        value: ['cdd.name', 'cdd.definition', 'cdd.slug'],
       },
       {
         kind: 'concepts',
@@ -37,10 +38,10 @@ export const sampleOntology: Ontology = {
         value:
           'A cohesion unit: the unifying principle of representations held together by meaning. A concept is a collection of properties, and its attributes declare what properties its instances may have.',
       },
-      { kind: 'concept', value: 'cdd.name' },
-      { kind: 'concept', value: 'cdd.definition' },
-      { kind: 'concept', value: 'cdd.attribute' },
-      { kind: 'concept', value: 'cdd.slug' },
+      {
+        kind: 'attributes',
+        value: ['cdd.name', 'cdd.definition', 'cdd.attribute', 'cdd.slug'],
+      },
     ],
     'cdd.attribute': [
       { kind: 'identity', value: 'cdd.attribute' },
@@ -51,7 +52,7 @@ export const sampleOntology: Ontology = {
         value:
           'Belongs to a concept. Defines what property an instance of that concept may have.',
       },
-      { kind: 'concept', value: 'cdd.name' },
+      { kind: 'attributes', value: ['cdd.name', 'cdd.definition'] },
     ],
     'cdd.property': [
       { kind: 'identity', value: 'cdd.property' },
