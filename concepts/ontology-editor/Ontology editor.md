@@ -1,7 +1,9 @@
 # Ontology editor
 
 An embeddable Vue 3 component for viewing and editing a generic concept graph
-(an ontology): typed nodes connected by typed, directed edges.
+(an ontology). It shows one concept at a time — its name and description — with
+navigation up to the concepts that have it as an attribute and down to its own
+attributes.
 
 The component is developed as a standalone Vite project under
 [`/platform/web/ontology-editor`](/platform/web/ontology-editor/README.md), on

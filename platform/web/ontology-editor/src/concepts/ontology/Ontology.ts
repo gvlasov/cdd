@@ -1,24 +1,28 @@
-// A generic concept graph: typed nodes connected by typed, directed edges.
+// A generic concept graph.
+//
+// Every node is a concept. The one relation the editor navigates is
+// "has attribute": a concept has other concepts as its attributes, and is in
+// turn an attribute of its parent concepts. An attribute edge points from the
+// owning concept to the attribute concept.
+//
 // Format-agnostic — not tied to CDD's directory layout or any storage backend.
 
 export interface OntologyNode {
   id: string
-  /** Display name of the concept. */
-  name: string
-  /** Free-form category, e.g. "concept", "stakeholder", "process". Optional. */
-  kind?: string
-  /** Markdown or plain-text description of the concept. */
+  /** Display name of the concept. Optional — a concept need not be named. */
+  name?: string
+  /** Markdown or plain-text description of the concept. Optional. */
   description?: string
 }
 
 export interface OntologyEdge {
   id: string
-  /** Source node id. */
+  /** The concept that has the attribute. */
   from: string
-  /** Target node id. */
+  /** The attribute concept. */
   to: string
-  /** Relation label, e.g. "reflects", "depends on", "is a". */
-  relation: string
+  /** Optional label for how `to` relates to `from`, e.g. "has", "is measured in". */
+  relation?: string
 }
 
 export interface Ontology {
@@ -32,6 +36,12 @@ export function nodeById(ontology: Ontology, id: string): OntologyNode | undefin
   return ontology.nodes.find((n) => n.id === id)
 }
 
-export function edgesOf(ontology: Ontology, nodeId: string): OntologyEdge[] {
-  return ontology.edges.filter((e) => e.from === nodeId || e.to === nodeId)
+/** Concepts that `conceptId` has as attributes. */
+export function attributesOf(ontology: Ontology, conceptId: string): OntologyEdge[] {
+  return ontology.edges.filter((e) => e.from === conceptId)
+}
+
+/** Concepts that have `conceptId` as one of their attributes. */
+export function parentsOf(ontology: Ontology, conceptId: string): OntologyEdge[] {
+  return ontology.edges.filter((e) => e.to === conceptId)
 }
