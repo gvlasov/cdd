@@ -45,6 +45,11 @@ CDD's directory layout or any storage backend.
   addressable store. Concept membership is the root instance's `concepts`
   property; concepts reference each other via `concept` properties.
 
+## Navigate
+
+The toolbar has a **concept search** — an autocomplete over every concept,
+filtered by name; picking one navigates to it.
+
 ## Edit
 
 Pass `editable` to show **New concept** and **Edit** buttons. **New concept**

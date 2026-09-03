@@ -5,6 +5,8 @@ import type { Identity } from '@/concepts/identity/Identity'
 import type { Slug } from '@/concepts/identity/Slug'
 import { isSlug } from '@/concepts/identity/Slug'
 import { provideOntology } from './useOntology'
+import { ontologyConcepts, conceptOf } from './Ontology'
+import { conceptLabelOf } from '@/concepts/concepts/Concept'
 import {
   renameSlug as renameSlugEdit,
   identityAfterSlug,
@@ -111,6 +113,19 @@ function runTransaction(id: TransactionId, input: unknown) {
   }
 }
 
+// Concept search — options are every concept, filtered by name in the dropdown.
+const conceptSearchItems = computed(() =>
+  ontologyConcepts(props.modelValue).map((id) => {
+    const c = conceptOf(props.modelValue, id)
+    return { value: id, title: (c && conceptLabelOf(c)) || id }
+  }),
+)
+const search = ref<Identity | null>(null)
+function onSearchSelect(id: Identity | null) {
+  if (id) navigate(id)
+  search.value = null
+}
+
 provideOntology({
   ontology: () => props.modelValue,
   reality: () => currentReality.value,
@@ -124,24 +139,42 @@ provideOntology({
 
 <template>
   <div class="ontology-editor d-flex flex-column ga-2">
-    <div v-if="editable" class="d-flex justify-end ga-2">
-      <v-btn
-        prepend-icon="mdi-plus"
-        variant="tonal"
-        size="small"
-        @click="creating = true"
-      >
-        New concept
-      </v-btn>
-      <v-btn
-        :prepend-icon="editing ? 'mdi-check' : 'mdi-pencil'"
-        :color="editing ? 'primary' : undefined"
-        variant="tonal"
-        size="small"
-        @click="editing = !editing"
-      >
-        {{ editing ? 'Done' : 'Edit' }}
-      </v-btn>
+    <div class="d-flex align-center ga-2">
+      <v-autocomplete
+        :model-value="search"
+        :items="conceptSearchItems"
+        placeholder="Search concepts…"
+        prepend-inner-icon="mdi-magnify"
+        variant="outlined"
+        density="compact"
+        hide-details
+        clearable
+        auto-select-first
+        menu-icon=""
+        class="flex-grow-1"
+        style="max-width: 320px"
+        @update:model-value="onSearchSelect"
+      />
+      <v-spacer />
+      <template v-if="editable">
+        <v-btn
+          prepend-icon="mdi-plus"
+          variant="tonal"
+          size="small"
+          @click="creating = true"
+        >
+          New concept
+        </v-btn>
+        <v-btn
+          :prepend-icon="editing ? 'mdi-check' : 'mdi-pencil'"
+          :color="editing ? 'primary' : undefined"
+          variant="tonal"
+          size="small"
+          @click="editing = !editing"
+        >
+          {{ editing ? 'Done' : 'Edit' }}
+        </v-btn>
+      </template>
     </div>
 
     <v-alert
