@@ -13,8 +13,15 @@ CDD's directory layout or any storage backend.
 - An **identity** is a string, unique within the ontology. It is the base case:
   an identity *is* its own literal content. `IdentityRepository` maps every
   identity to the instance it represents; it is built from the ontology at load.
+- A **slug** is a `[a-zA-Z0-9_-]+` word, unique within the ontology. The ontology,
+  a concept, and an instance can each carry one. When an entry and every entity
+  above it in the metaentity chain (instance → concept → ontology) are slugged,
+  the entry's identity is those slugs joined by `.` —
+  `<ontologySlug>.<conceptSlug>.<instanceSlug>`. The ontology is the root
+  concept of itself (`ontology.root` names its own entry).
 - Predefined attribute kinds and their draw positions on the concept widget:
-  `name` (0), `definition` (1), `identity` (2), `concept` (3), `examples` (5).
+  `name` (0), `definition` (1), `identity` / `slug` (2), `concept` (3),
+  `examples` (5).
   Each kind ships a component that draws one attribute of that kind. Attributes
   at the same position draw in renderer-defined order.
 - The ontology is **flat**: `{ concepts: { <identity>: Attribute[] } }`.
@@ -48,7 +55,7 @@ A `<OntologyEditor>` Vue component that other apps can embed.
 ```
 src/concepts/
   ontology/       Ontology aggregate, identity repo access, <OntologyEditor>, theme
-  identity/       Identity type, IdentityRepository
+  identity/       Identity & Slug types, IdentityRepository, slug-chain identity
   concepts/       Concept (= Attribute[]) helpers
   attributes/     Attribute, AttributeKind, and kinds/ (one renderer per kind)
   concept-view/   <ConceptView> — one concept and its parents

@@ -14,6 +14,10 @@ export function conceptName(concept: Concept): string | undefined {
   return firstOfKind(concept, 'name')?.value
 }
 
+export function conceptSlug(concept: Concept): Identity | undefined {
+  return firstOfKind(concept, 'slug')?.value
+}
+
 /** A short human label for a concept: its name, else its identity. */
 export function conceptLabelOf(concept: Concept): string | undefined {
   return conceptName(concept) ?? conceptIdentity(concept)

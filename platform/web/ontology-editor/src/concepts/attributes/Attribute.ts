@@ -17,7 +17,13 @@ export interface Attribute {
   value: Identity
 }
 
-export type AttributeKindName = 'identity' | 'name' | 'definition' | 'examples' | 'concept'
+export type AttributeKindName =
+  | 'identity'
+  | 'slug'
+  | 'name'
+  | 'definition'
+  | 'examples'
+  | 'concept'
 
 export function attributesOfKind(
   attributes: Attribute[],

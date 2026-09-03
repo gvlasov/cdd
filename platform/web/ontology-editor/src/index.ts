@@ -6,16 +6,22 @@ export type { Ontology } from '@/concepts/ontology/Ontology'
 export {
   emptyOntology,
   conceptOf,
+  rootConcept,
   parentIdentities,
   identityRepository,
+  derivedIdentity,
+  slugIdentityMismatches,
 } from '@/concepts/ontology/Ontology'
 
 export type { Identity } from '@/concepts/identity/Identity'
 export { IdentityRepository } from '@/concepts/identity/IdentityRepository'
+export type { Slug } from '@/concepts/identity/Slug'
+export { SLUG_PATTERN, isSlug, identityFromSlugChain } from '@/concepts/identity/Slug'
 
 export type { Concept } from '@/concepts/concepts/Concept'
 export {
   conceptIdentity,
+  conceptSlug,
   conceptName,
   conceptLabelOf,
   conceptRefs,
