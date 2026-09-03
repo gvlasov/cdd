@@ -11,7 +11,7 @@ import ExamplesProperty from './ExamplesProperty.vue'
 //  - `identity` is the instance's key, not something to show
 //  - `attributes` is a concept's schema for its instances; drawn below the
 //    instance by ConceptView, not inside it
-//  - `concept` references (what the concept consists of) are likewise drawn
+//  - `concept` references and the ontology's `concepts` list are likewise drawn
 //    below the instance as navigable chips, not inside it
 export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   name: { name: 'name', position: 0, render: NameProperty },
@@ -19,6 +19,7 @@ export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   identity: { name: 'identity', position: 2 },
   slug: { name: 'slug', position: 2, render: SlugProperty },
   concept: { name: 'concept', position: 3 },
+  concepts: { name: 'concepts', position: 3 },
   attributes: { name: 'attributes', position: 4 },
   examples: { name: 'examples', position: 5, render: ExamplesProperty },
 }

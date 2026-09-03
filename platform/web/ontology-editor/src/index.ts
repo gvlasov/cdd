@@ -8,6 +8,7 @@ export {
   emptyOntology,
   conceptOf,
   rootConcept,
+  ontologyConcepts,
   parentIdentities,
   identityRepository,
   derivedIdentity,

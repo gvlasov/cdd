@@ -1,22 +1,32 @@
 import type { Ontology } from './Ontology'
 
-// Flat and rhizomatic: concepts keyed by identity, each a list of properties.
-// The `cdd` entry is the root concept of itself (its slug is `cdd`). Every other concept has a
-// slug, so its key is the dotted metaentity chain `<rootSlug>.<conceptSlug>`.
-// The root's `attributes` property declares the property kinds its instances
-// (every concept below it) may have.
+// The `cdd` instance is an ontology — the root concept of itself (slug `cdd`).
+// Its `concepts` property lists the concepts the ontology contains. Every
+// concept has a slug, so its identity (its key in `instances`) is the dotted
+// metaentity chain `<rootSlug>.<conceptSlug>`.
 export const sampleOntology: Ontology = {
   root: 'cdd',
-  concepts: {
+  instances: {
     cdd: [
       { kind: 'identity', value: 'cdd' },
       { kind: 'slug', value: 'cdd' },
       { kind: 'name', value: 'CDD' },
       { kind: 'definition', value: 'The ontology being viewed — the root concept of itself.' },
-      { kind: 'attributes', value: ['identity', 'slug', 'name', 'definition', 'concept', 'examples'] },
-      { kind: 'concept', value: 'cdd.concept' },
-      { kind: 'concept', value: 'cdd.attribute' },
-      { kind: 'concept', value: 'cdd.property' },
+      {
+        kind: 'attributes',
+        value: ['identity', 'slug', 'name', 'definition', 'concepts'],
+      },
+      {
+        kind: 'concepts',
+        value: [
+          'cdd.concept',
+          'cdd.attribute',
+          'cdd.property',
+          'cdd.name',
+          'cdd.definition',
+          'cdd.slug',
+        ],
+      },
     ],
     'cdd.concept': [
       { kind: 'identity', value: 'cdd.concept' },

@@ -19,14 +19,16 @@ defineEmits<{
   (e: 'update:modelValue', value: Ontology): void
 }>()
 
-const firstId = computed(() => Object.keys(props.modelValue.concepts)[0] ?? '')
-const currentId = ref<Identity>(props.rootId ?? firstId.value)
+const firstId = computed(
+  () => props.rootId ?? props.modelValue.root ?? Object.keys(props.modelValue.instances)[0] ?? '',
+)
+const currentId = ref<Identity>(firstId.value)
 
 watch(
   () => [props.rootId, props.modelValue] as const,
   () => {
-    if (!(currentId.value in props.modelValue.concepts)) {
-      currentId.value = props.rootId ?? firstId.value
+    if (!(currentId.value in props.modelValue.instances)) {
+      currentId.value = firstId.value
     }
   },
 )

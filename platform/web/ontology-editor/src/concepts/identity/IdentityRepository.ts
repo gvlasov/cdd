@@ -1,22 +1,22 @@
 import type { Identity } from './Identity'
-import type { Concept } from '@/concepts/concepts/Concept'
+import type { Instance } from '@/concepts/instances/Instance'
 
 // Maps every identity string in an ontology to the instance it represents.
-// Built by scanning the ontology's concepts at load; every identity is unique
-// within the ontology, so the map is 1:1.
+// Built by scanning the ontology's instance store at load; every identity is
+// unique within the ontology, so the map is 1:1.
 export class IdentityRepository {
-  private readonly byIdentity: Map<Identity, Concept>
+  private readonly byIdentity: Map<Identity, Instance>
 
-  constructor(concepts: Record<Identity, Concept>) {
-    this.byIdentity = new Map(Object.entries(concepts))
+  constructor(instances: Record<Identity, Instance>) {
+    this.byIdentity = new Map(Object.entries(instances))
   }
 
   has(identity: Identity): boolean {
     return this.byIdentity.has(identity)
   }
 
-  /** The concept an identity represents, if the identity names a concept. */
-  concept(identity: Identity): Concept | undefined {
+  /** The instance an identity represents. */
+  instance(identity: Identity): Instance | undefined {
     return this.byIdentity.get(identity)
   }
 

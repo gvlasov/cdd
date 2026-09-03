@@ -1,43 +1,51 @@
 import type { Identity } from '@/concepts/identity/Identity'
 import type { Slug } from '@/concepts/identity/Slug'
 import { identityFromSlugChain } from '@/concepts/identity/Slug'
+import type { Instance } from '@/concepts/instances/Instance'
 import type { Concept } from '@/concepts/concepts/Concept'
 import { conceptRefs, conceptSlug } from '@/concepts/concepts/Concept'
+import { firstOfKind } from '@/concepts/properties/Property'
 import { IdentityRepository } from '@/concepts/identity/IdentityRepository'
 
-// An ontology is a flat, rhizomatic collection of concepts keyed by identity —
-// not a tree. Concepts reference each other by identity via `concept`
-// properties.
-//
-// The ontology is the root concept of itself: `root` names its own entry in
-// `concepts`, and every other concept's metaentity chain ends there.
+// An ontology is a concept — its root instance. That instance is the root
+// concept of itself; its `concepts` property is the list of concept identities
+// the ontology contains. `instances` is the flat store that makes every
+// instance addressable by identity for O(1) lookup.
 export interface Ontology {
-  concepts: Record<Identity, Concept>
   root: Identity
+  instances: Record<Identity, Instance>
 }
 
 export const emptyOntology = (root: Identity = 'ontology'): Ontology => ({
-  concepts: {},
   root,
+  instances: {},
 })
 
 export function identityRepository(ontology: Ontology): IdentityRepository {
-  return new IdentityRepository(ontology.concepts)
+  return new IdentityRepository(ontology.instances)
 }
 
-export function conceptOf(ontology: Ontology, identity: Identity): Concept | undefined {
-  return ontology.concepts[identity]
+export function conceptOf(ontology: Ontology, identity: Identity): Instance | undefined {
+  return ontology.instances[identity]
 }
 
-export function rootConcept(ontology: Ontology): Concept | undefined {
-  return ontology.concepts[ontology.root]
+export function rootConcept(ontology: Ontology): Instance | undefined {
+  return ontology.instances[ontology.root]
+}
+
+/** The concept identities the ontology contains — the root's `concepts` property. */
+export function ontologyConcepts(ontology: Ontology): Identity[] {
+  const root = rootConcept(ontology)
+  const property = root ? firstOfKind(root, 'concepts') : undefined
+  if (!property) return []
+  return Array.isArray(property.value) ? property.value : [property.value]
 }
 
 /** Identities of concepts that reference `identity` through a `concept` property. */
 export function parentIdentities(ontology: Ontology, identity: Identity): Identity[] {
   const parents: Identity[] = []
-  for (const [ownerId, concept] of Object.entries(ontology.concepts)) {
-    if (conceptRefs(concept).includes(identity)) parents.push(ownerId)
+  for (const [ownerId, concept] of Object.entries(ontology.instances)) {
+    if (conceptRefs(concept as Concept).includes(identity)) parents.push(ownerId)
   }
   return parents
 }
@@ -73,7 +81,7 @@ export function slugIdentityMismatches(
   ontology: Ontology,
 ): Array<{ key: Identity; derived: Identity }> {
   const out: Array<{ key: Identity; derived: Identity }> = []
-  for (const key of Object.keys(ontology.concepts)) {
+  for (const key of Object.keys(ontology.instances)) {
     const derived = derivedIdentity(ontology, key)
     if (derived && derived !== key) out.push({ key, derived })
   }

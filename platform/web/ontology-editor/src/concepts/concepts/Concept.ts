@@ -17,9 +17,15 @@ export function conceptLabelOf(concept: Concept): string | undefined {
   return conceptName(concept) ?? conceptIdentity(concept)
 }
 
-/** The concepts this concept consists of, by referenced identity. */
+/**
+ * The concepts this concept relates to, by referenced identity: its `concept`
+ * properties, plus — for an ontology — its `concepts` list.
+ */
 export function conceptRefs(concept: Concept): Identity[] {
-  return propertiesOfKind(concept, 'concept')
+  return [
+    ...propertiesOfKind(concept, 'concept'),
+    ...propertiesOfKind(concept, 'concepts'),
+  ]
     .map((p) => (Array.isArray(p.value) ? p.value : [p.value]))
     .flat()
 }

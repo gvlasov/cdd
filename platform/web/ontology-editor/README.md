@@ -12,6 +12,9 @@ CDD's directory layout or any storage backend.
   it holds in a slot. An **attribute** is the slot — it belongs to a concept and
   defines what property an instance of that concept may have. A concept's
   `attributes` property lists the property kinds its instances may carry.
+- An **ontology** is itself a concept — its root instance. That instance is the
+  root concept of itself; its `concepts` property is the list of concept
+  identities the ontology contains.
 - An **identity** is a string, unique within the ontology. It is the base case:
   an identity *is* its own literal content. `IdentityRepository` maps every
   identity to the instance it represents; it is built from the ontology at load.
@@ -24,15 +27,16 @@ CDD's directory layout or any storage backend.
   concept of itself (`ontology.root` names its own entry).
 - Predefined property kinds and their draw positions inside the instance
   renderer: `name` (0), `definition` (1), `slug` (2), `examples` (5). Properties
-  at the same position draw in renderer-defined order. `identity`, `concept` and
-  `attributes` have no in-instance renderer: `identity` is the key; `concept`
-  references and the declared `attributes` are drawn *below* the instance by
-  `ConceptView`.
+  at the same position draw in renderer-defined order. `identity`, `concept`,
+  `concepts` and `attributes` have no in-instance renderer: `identity` is the
+  key; `concept` / `concepts` references and the declared `attributes` are drawn
+  *below* the instance by `ConceptView`.
 - Title / slug rendering: the `name` renderer shows the title and, if the
   instance has a slug, the slug right beside it. The `slug` renderer draws the
   slug only when the instance has no name; otherwise it stays silent.
-- The ontology is **flat**: `{ root, concepts: { <identity>: Property[] } }`.
-  Concepts reference each other by identity via `concept` properties.
+- Storage is **flat**: `{ root, instances: { <identity>: Property[] } }` — the
+  addressable store. Concept membership is the root instance's `concepts`
+  property; concepts reference each other via `concept` properties.
 
 ## View
 
@@ -65,7 +69,7 @@ A `<OntologyEditor>` Vue component that other apps can embed.
 
 ```
 src/concepts/
-  ontology/       Ontology aggregate, identity repo access, <OntologyEditor>, theme
+  ontology/       Ontology (root + instance store), concept list, <OntologyEditor>, theme
   identity/       Identity & Slug types, IdentityRepository, slug-chain identity
   instances/      Instance (= Property[]) and <InstanceRenderer> — the central component
   concepts/       Concept helpers (a concept is an instance with `attributes`)

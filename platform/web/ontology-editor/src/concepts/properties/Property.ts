@@ -13,6 +13,7 @@ export interface Property {
    * The property's value.
    *  - `identity` / `slug` / `name` / `definition`: a literal string
    *  - `concept` / `examples`: the identity of the concept this property holds
+   *  - `concepts`: the identities of the concepts an ontology contains
    *  - `attributes`: the property kinds an instance of this concept may have
    */
   value: Identity | Identity[]
@@ -25,6 +26,7 @@ export type PropertyKindName =
   | 'definition'
   | 'examples'
   | 'concept'
+  | 'concepts'
   | 'attributes'
 
 export function propertiesOfKind(
