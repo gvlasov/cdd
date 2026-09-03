@@ -9,13 +9,16 @@ CDD's directory layout or any storage backend.
 - Everything is an **instance**: a collection of properties addressed by a
   unique identity. Every instance has a **type** — a concept — named by its
   `concept` property.
-- A **concept** is an instance (typed `cdd.concept`) that also carries an
-  `attributes` property. Every type is a concept; any concept can be a type.
+- A **concept** is an instance typed `cdd.concept`. Every type is a concept; any
+  concept can be a type. An instance's properties come from its type's
+  attributes — a concept's own name/slug/definition come from `cdd.concept`'s
+  attributes, not from re-declaring them.
 - A **property** is a `kind` and a `value` an instance holds in a slot.
-- An **attribute** defines one slot. It is an instance typed `cdd.attribute`
-  with `slug` (the property key), `name`, `type` (the concept its value is an
-  instance of), and `cardinality` (`0-1` | `1` | `0+` | `1+`). A concept's
-  `attributes` property lists attribute-instance identities.
+- An **attribute** defines one slot on instances of the concept that owns it. It
+  is an instance typed `cdd.attribute` with `slug` (the property key), `name`,
+  `type` (the concept its value is an instance of), and `cardinality`
+  (`0-1` | `1` | `0+` | `1+`). A concept's `attributes` property lists the
+  attribute-instance identities it declares (keyed `<ownerId>:<slug>`).
 - A **leaf** concept declares no attributes; its value edits as a plain field.
   A structured concept's value edits as its own nested attribute form.
 - An **ontology** is itself a concept — its root instance. That instance is the
@@ -158,7 +161,7 @@ src/concepts/
   ontology/       Ontology (root + instance store), concept list, <OntologyEditor>, theme
   identity/       Identity & Slug types, IdentityRepository, slug-chain identity
   instances/      Instance (= Property[]) and <InstanceRenderer> — the central component
-  concepts/       Concept helpers (a concept is an instance with `attributes`)
+  concepts/       Concept helpers (a concept is an instance typed `cdd.concept`)
   properties/     Property, PropertyKind, and kinds/ (one renderer per drawn kind)
   concept-links/  parse & render [Label](identity) links embedded in text
   attributes/     AttributeSpec (name/type/cardinality), <AttributeValueEditor>, value spawning

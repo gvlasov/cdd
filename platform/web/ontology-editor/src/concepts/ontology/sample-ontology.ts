@@ -37,13 +37,15 @@ function attr(
   return id
 }
 
-// A concept with name/slug/definition attributes plus any extras.
+// A concept: an instance of `cdd.concept`. It gets its own name/slug/definition
+// properties (from cdd.concept's attributes). `attrs` are the attributes IT
+// declares for ITS instances — most concepts declare none.
 function concept(
   id: Identity,
   slug: string,
   name: string,
   definition: string,
-  extras: Identity[] = [],
+  attrs: Identity[] = [],
 ) {
   instances[id] = [
     { kind: 'identity', value: id },
@@ -51,28 +53,11 @@ function concept(
     { kind: 'slug', value: slug },
     { kind: 'name', value: name },
     { kind: 'definition', value: definition },
-    {
-      kind: 'attributes',
-      value: [
-        attr(id, 'name', 'cdd.name', '1'),
-        attr(id, 'slug', 'cdd.slug', '1'),
-        attr(id, 'definition', 'cdd.definition', '0-1'),
-        ...extras,
-      ],
-    },
+    ...(attrs.length ? [{ kind: 'attributes' as const, value: attrs }] : []),
   ]
 }
 
-// A leaf concept — no attributes.
-function leaf(id: Identity, slug: string, name: string, definition: string) {
-  instances[id] = [
-    { kind: 'identity', value: id },
-    { kind: 'concept', value: 'cdd.concept' },
-    { kind: 'slug', value: slug },
-    { kind: 'name', value: name },
-    { kind: 'definition', value: definition },
-  ]
-}
+const leaf = concept // a concept that declares no attributes for its instances
 
 leaf('cdd.name', 'name', 'Name', 'A string that identifies a concept or a reflection.')
 leaf(
@@ -89,12 +74,19 @@ leaf(
   'How many values an attribute holds: `0-1`, `1`, `0+` or `1+`.',
 )
 
+// cdd.concept is the type of every concept — so it declares the name / slug /
+// definition attributes every concept-instance may hold, plus `attribute`.
 concept(
   'cdd.concept',
   'concept',
   'Concept',
   'A cohesion unit. A concept is a collection of [properties](.property); its [attributes](.attribute) declare what its instances may hold.',
-  [attr('cdd.concept', 'attribute', 'cdd.attribute', '0+')],
+  [
+    attr('cdd.concept', 'name', 'cdd.name', '1'),
+    attr('cdd.concept', 'slug', 'cdd.slug', '1'),
+    attr('cdd.concept', 'definition', 'cdd.definition', '0-1'),
+    attr('cdd.concept', 'attribute', 'cdd.attribute', '0+'),
+  ],
 )
 concept(
   'cdd.instance',
@@ -108,6 +100,8 @@ concept(
   'Attribute',
   'Belongs to a [concept](.concept). Defines one slot — name, `type` and `cardinality` — on that concept’s instances.',
   [
+    attr('cdd.attribute', 'name', 'cdd.name', '1'),
+    attr('cdd.attribute', 'slug', 'cdd.slug', '1'),
     attr('cdd.attribute', 'type', 'cdd.concept', '1'),
     attr('cdd.attribute', 'cardinality', 'cdd.cardinality', '1'),
   ],
@@ -119,21 +113,14 @@ concept(
   'Belongs to an [instance](.instance). A value the instance holds in a slot its [concept](.concept) defines via an [attribute](.attribute).',
 )
 
-// The ontology root.
+// The ontology root — an instance of cdd.concept, so it gets name/slug/
+// definition from cdd.concept's attributes; it declares none of its own.
 instances['cdd'] = [
   { kind: 'identity', value: 'cdd' },
   { kind: 'concept', value: 'cdd.concept' },
   { kind: 'slug', value: 'cdd' },
   { kind: 'name', value: 'CDD' },
   { kind: 'definition', value: 'The ontology being viewed — the root concept of itself.' },
-  {
-    kind: 'attributes',
-    value: [
-      attr('cdd', 'name', 'cdd.name', '1'),
-      attr('cdd', 'slug', 'cdd.slug', '1'),
-      attr('cdd', 'definition', 'cdd.definition', '0-1'),
-    ],
-  },
   {
     kind: 'concepts',
     value: [

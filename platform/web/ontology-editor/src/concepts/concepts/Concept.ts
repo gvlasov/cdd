@@ -1,15 +1,21 @@
 import type { Identity } from '@/concepts/identity/Identity'
 import { firstOfKind, propertiesOfKind } from '@/concepts/properties/Property'
 import type { Instance } from '@/concepts/instances/Instance'
-import { instanceName, instanceSlug, instanceIdentity } from '@/concepts/instances/Instance'
+import {
+  instanceName,
+  instanceSlug,
+  instanceIdentity,
+  instanceType,
+} from '@/concepts/instances/Instance'
 
-// A concept is an instance that also declares, via its `attributes` property,
-// what properties its own instances may have.
+// A concept is an instance typed `cdd.concept`. It may declare, via its
+// `attributes` property, what properties its own instances hold.
 export type Concept = Instance
 
-/** Whether an instance is a concept — i.e. it declares `attributes`. */
+/** Whether an instance is a concept — its type is `cdd.concept` (or it is that). */
 export function isConcept(instance: Instance): boolean {
-  return firstOfKind(instance, 'attributes') !== undefined
+  const t = instanceType(instance)
+  return t === 'cdd.concept' || instanceIdentity(instance) === 'cdd.concept'
 }
 
 export const conceptIdentity = instanceIdentity
