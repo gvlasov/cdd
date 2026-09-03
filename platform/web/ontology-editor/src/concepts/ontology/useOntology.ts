@@ -4,7 +4,7 @@ import type { Ontology } from './Ontology'
 import { conceptOf } from './Ontology'
 import { conceptLabelOf } from '@/concepts/concepts/Concept'
 
-// Lightweight context so attribute-kind renderers deep in the tree can resolve
+// Lightweight context so property-kind renderers deep in the tree can resolve
 // labels and navigate without prop drilling.
 export interface OntologyContext {
   ontology: () => Ontology

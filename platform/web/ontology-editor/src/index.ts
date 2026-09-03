@@ -25,11 +25,12 @@ export {
   conceptName,
   conceptLabelOf,
   conceptRefs,
+  conceptAttributes,
 } from '@/concepts/concepts/Concept'
 
-export type { Attribute, AttributeKindName } from '@/concepts/attributes/Attribute'
-export type { AttributeKind } from '@/concepts/attributes/AttributeKind'
-export { attributeKinds, attributeKind } from '@/concepts/attributes/kinds/attribute-kinds'
+export type { Property, PropertyKindName } from '@/concepts/properties/Property'
+export type { PropertyKind } from '@/concepts/properties/PropertyKind'
+export { propertyKinds, propertyKind } from '@/concepts/properties/kinds/property-kinds'
 
 export {
   ontologyColors,

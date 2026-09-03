@@ -6,10 +6,12 @@ CDD's directory layout or any storage backend.
 
 ## Model
 
-- A **concept is a collection of attributes** — nothing else. Name, definition,
-  examples and identity are all just attributes.
-- An **attribute** has a `kind` and a `value`. The value is another attribute
-  of the attribute, referenced (like everything) by **identity**.
+- A **concept is a collection of properties** — nothing else. Name, definition,
+  examples, identity and slug are all just properties.
+- A **property** belongs to the concept as an instance: a `kind` and a `value`
+  it holds in a slot. An **attribute** is the slot — it belongs to a concept and
+  defines what property an instance of that concept may have. A concept's
+  `attributes` property lists the property kinds its instances may carry.
 - An **identity** is a string, unique within the ontology. It is the base case:
   an identity *is* its own literal content. `IdentityRepository` maps every
   identity to the instance it represents; it is built from the ontology at load.
@@ -19,23 +21,23 @@ CDD's directory layout or any storage backend.
   the entry's identity is those slugs joined by `.` —
   `<ontologySlug>.<conceptSlug>.<instanceSlug>`. The ontology is the root
   concept of itself (`ontology.root` names its own entry).
-- Predefined attribute kinds and their draw positions on the concept widget:
-  `name` (0), `definition` (1), `slug` (2), `concept` (3), `examples` (5).
-  Each kind ships a component that draws one attribute of that kind; attributes
-  at the same position draw in renderer-defined order. `identity` (position 2)
-  has no renderer — it is the concept's key, not something shown.
+- Predefined property kinds and their draw positions on the concept widget:
+  `name` (0), `definition` (1), `slug` (2), `concept` (3), `attributes` (4),
+  `examples` (5). Each kind ships a component that draws one property of that
+  kind; properties at the same position draw in renderer-defined order.
+  `identity` (position 2) has no renderer — it is the concept's key, not shown.
 - Title / slug rendering: the `name` renderer shows the title and, if the
   concept has a slug, the slug right beside it. The `slug` renderer draws the
   slug only when the concept has no name; otherwise it stays silent.
-- The ontology is **flat**: `{ concepts: { <identity>: Attribute[] } }`.
-  Concepts reference each other by identity via `concept` attributes.
+- The ontology is **flat**: `{ root, concepts: { <identity>: Property[] } }`.
+  Concepts reference each other by identity via `concept` properties.
 
 ## View
 
-One concept fills the screen at a time. Its attributes are drawn in kind-position
+One concept fills the screen at a time. Its properties are drawn in kind-position
 order (name as the title, definition below, and so on). Buttons above it are the
 **parent concepts** — those that reference this one through a `concept`
-attribute. Clicking any button navigates to that concept.
+property. Clicking any button navigates to that concept.
 
 Same stack as the `problems` app: Vue 3 + Vite + Vuetify 4 + TypeScript.
 No backend.
@@ -47,9 +49,9 @@ A `<OntologyEditor>` Vue component that other apps can embed.
 ## Status — first cut (task t203)
 
 - [x] Vite + Vue + Vuetify + TS project that builds
-- [x] Attribute-based concept model with an identity repository
-- [x] Single-concept view: attributes drawn by kind position, parent navigation
-- [ ] In-place editing (add / change / remove attributes and concepts)
+- [x] Property-based concept model with an identity repository
+- [x] Single-concept view: properties drawn by kind position, parent navigation
+- [ ] In-place editing (add / change / remove properties and concepts)
 - [ ] Persistence adapters
 - [ ] `.d.ts` emission for the published bundle
 
@@ -59,8 +61,8 @@ A `<OntologyEditor>` Vue component that other apps can embed.
 src/concepts/
   ontology/       Ontology aggregate, identity repo access, <OntologyEditor>, theme
   identity/       Identity & Slug types, IdentityRepository, slug-chain identity
-  concepts/       Concept (= Attribute[]) helpers
-  attributes/     Attribute, AttributeKind, and kinds/ (one renderer per kind)
+  concepts/       Concept (= Property[]) helpers
+  properties/     Property, PropertyKind, and kinds/ (one renderer per kind)
   concept-view/   <ConceptView> — one concept and its parents
   app/            local demo app (not part of the published bundle)
 src/index.ts      public entry point for the embeddable component

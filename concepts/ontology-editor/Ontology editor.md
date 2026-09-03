@@ -2,10 +2,13 @@
 
 An embeddable Vue 3 component for viewing and editing an ontology — a flat,
 rhizomatic collection of concepts, where a concept is nothing but a collection
-of attributes (name, definition, examples, identity, and references to other
-concepts). Every instance is addressed by a unique identity string. It shows
-one concept at a time, its attributes drawn in kind-defined order, with
-navigation up to the concepts that reference it.
+of [properties](/concepts/properties/Property.md) (name, definition, examples,
+identity, slug, and references to other concepts). A concept's
+[attributes](/concepts/attributes/Attribute.md) declare what properties its
+instances may have. Every instance is addressed by a unique identity string,
+derivable from a chain of slugs. It shows one concept at a time, its properties
+drawn in kind-defined order, with navigation up to the concepts that reference
+it.
 
 The component is developed as a standalone Vite project under
 [`/platform/web/ontology-editor`](/platform/web/ontology-editor/README.md), on

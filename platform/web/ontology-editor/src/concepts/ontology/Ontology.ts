@@ -7,7 +7,7 @@ import { IdentityRepository } from '@/concepts/identity/IdentityRepository'
 
 // An ontology is a flat, rhizomatic collection of concepts keyed by identity —
 // not a tree. Concepts reference each other by identity via `concept`
-// attributes.
+// properties.
 //
 // The ontology is the root concept of itself: `root` names its own entry in
 // `concepts`, and every other concept's metaentity chain ends there.
@@ -33,7 +33,7 @@ export function rootConcept(ontology: Ontology): Concept | undefined {
   return ontology.concepts[ontology.root]
 }
 
-/** Identities of concepts that reference `identity` through a `concept` attribute. */
+/** Identities of concepts that reference `identity` through a `concept` property. */
 export function parentIdentities(ontology: Ontology, identity: Identity): Identity[] {
   const parents: Identity[] = []
   for (const [ownerId, concept] of Object.entries(ontology.concepts)) {

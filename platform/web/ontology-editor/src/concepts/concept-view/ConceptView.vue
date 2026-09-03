@@ -4,7 +4,7 @@ import type { Ontology } from '@/concepts/ontology/Ontology'
 import type { Identity } from '@/concepts/identity/Identity'
 import { conceptOf, parentIdentities } from '@/concepts/ontology/Ontology'
 import { useOntology } from '@/concepts/ontology/useOntology'
-import { attributeKind } from '@/concepts/attributes/kinds/attribute-kinds'
+import { propertyKind } from '@/concepts/properties/kinds/property-kinds'
 
 const props = defineProps<{
   ontology: Ontology
@@ -16,10 +16,10 @@ const { conceptLabel, navigate } = useOntology()
 const concept = computed(() => conceptOf(props.ontology, props.conceptId))
 const parents = computed(() => parentIdentities(props.ontology, props.conceptId))
 
-// Attributes drawn in kind-position order; equal positions keep source order.
+// Properties drawn in kind-position order; equal positions keep source order.
 const drawn = computed(() =>
   [...(concept.value ?? [])]
-    .map((attribute, i) => ({ attribute, i, kind: attributeKind(attribute.kind) }))
+    .map((property, i) => ({ property, i, kind: propertyKind(property.kind) }))
     .filter((x) => x.kind?.render)
     .sort((a, b) => a.kind.position - b.kind.position || a.i - b.i),
 )
@@ -53,7 +53,7 @@ const drawn = computed(() =>
           :is="entry.kind.render"
           v-for="entry in drawn"
           :key="entry.i"
-          :attribute="entry.attribute"
+          :property="entry.property"
           :concept="concept"
         />
       </v-card-text>
