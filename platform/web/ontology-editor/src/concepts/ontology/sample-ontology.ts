@@ -103,7 +103,7 @@ export const sampleOntology: Ontology = {
       {
         kind: 'definition',
         value:
-          'A [a-zA-Z0-9_-] word unique within the ontology; the metaentity chain of slugs joined by "." builds an identity.',
+          'A `[a-zA-Z0-9_-]` word, unique within the ontology. An [instance](.instance)’s identity is its metaentity chain of slugs joined by `.` — `<ontology>.<concept>.<instance>`.',
       },
     ],
     'cdd.definition': [
