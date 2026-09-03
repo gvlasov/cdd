@@ -20,10 +20,13 @@ CDD's directory layout or any storage backend.
   `<ontologySlug>.<conceptSlug>.<instanceSlug>`. The ontology is the root
   concept of itself (`ontology.root` names its own entry).
 - Predefined attribute kinds and their draw positions on the concept widget:
-  `name` (0), `definition` (1), `identity` / `slug` (2), `concept` (3),
-  `examples` (5).
-  Each kind ships a component that draws one attribute of that kind. Attributes
-  at the same position draw in renderer-defined order.
+  `name` (0), `definition` (1), `slug` (2), `concept` (3), `examples` (5).
+  Each kind ships a component that draws one attribute of that kind; attributes
+  at the same position draw in renderer-defined order. `identity` (position 2)
+  has no renderer — it is the concept's key, not something shown.
+- Title / slug rendering: the `name` renderer shows the title and, if the
+  concept has a slug, the slug right beside it. The `slug` renderer draws the
+  slug only when the concept has no name; otherwise it stays silent.
 - The ontology is **flat**: `{ concepts: { <identity>: Attribute[] } }`.
   Concepts reference each other by identity via `concept` attributes.
 

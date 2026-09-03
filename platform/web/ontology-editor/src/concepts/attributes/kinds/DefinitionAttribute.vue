@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { Attribute } from '@/concepts/attributes/Attribute'
+import type { Concept } from '@/concepts/concepts/Concept'
 
-defineProps<{ attribute: Attribute }>()
+defineProps<{ attribute: Attribute; concept: Concept }>()
 </script>
 
 <template>

@@ -8,6 +8,9 @@ export interface AttributeKind {
   name: AttributeKindName
   /** Vertical draw order on the concept widget; lower is higher up. */
   position: number
-  /** Component that renders one attribute of this kind. */
-  render: Component
+  /**
+   * Component that renders one attribute of this kind, given props
+   * `{ attribute, concept }`. Omitted for kinds that are not drawn.
+   */
+  render?: Component
 }

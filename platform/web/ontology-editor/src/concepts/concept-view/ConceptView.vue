@@ -20,7 +20,7 @@ const parents = computed(() => parentIdentities(props.ontology, props.conceptId)
 const drawn = computed(() =>
   [...(concept.value ?? [])]
     .map((attribute, i) => ({ attribute, i, kind: attributeKind(attribute.kind) }))
-    .filter((x) => x.kind)
+    .filter((x) => x.kind?.render)
     .sort((a, b) => a.kind.position - b.kind.position || a.i - b.i),
 )
 </script>
@@ -54,6 +54,7 @@ const drawn = computed(() =>
           v-for="entry in drawn"
           :key="entry.i"
           :attribute="entry.attribute"
+          :concept="concept"
         />
       </v-card-text>
       <v-card-text v-else class="text-medium-emphasis">
