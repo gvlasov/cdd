@@ -45,6 +45,8 @@ export type { Segment } from '@/concepts/concept-links/parseConceptLinks'
 export { default as ConceptEditor } from '@/concepts/editing/ConceptEditor.vue'
 export {
   setPropertyValue,
+  addProperty,
+  removeProperty,
   renameSlug,
   identityAfterSlug,
   createConcept,

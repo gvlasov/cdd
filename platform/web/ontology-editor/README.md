@@ -62,8 +62,11 @@ picks a generic input:
 (`derivedIdentity`), moves its `instances` entry, updates its `identity`
 property, and rewrites every `attributes` / `concept` / `concepts` reference
 that pointed at the old identity — the view follows the moved concept. Every edit emits a new
-`Ontology` via `update:modelValue`. Adding/removing properties is not in this
-pass.
+`Ontology` via `update:modelValue`.
+
+Each editor row has a remove button. Below them, a **+kind** button bar adds any
+property kind the concept doesn't have yet (`identity` excluded) — the new
+property appears as an empty editor.
 
 ## Concept links in text
 
@@ -132,7 +135,8 @@ A `<OntologyEditor>` Vue component that other apps can embed.
 - [x] Edit mode: change property values, slug rename re-keys the identity
 - [x] Create concepts (slug → identity, added to the ontology's concept list)
 - [x] Reality + concept transactions with executable `effect` (constructor etc.)
-- [ ] Editing: add / remove properties; delete concepts
+- [x] Add / remove properties in edit mode (+kind button bar, per-row remove)
+- [ ] Editing: delete concepts
 - [ ] Persistence adapters
 - [ ] `.d.ts` emission for the published bundle
 

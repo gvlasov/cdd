@@ -42,6 +42,43 @@ export function setPropertyValue(
   return { ...ontology, instances }
 }
 
+/** Add an empty property of `kind` to an instance if it doesn't already have one. */
+export function addProperty(
+  ontology: Ontology,
+  instanceId: Identity,
+  kind: PropertyKindName,
+): Ontology {
+  if (kind === 'identity') return ontology
+  const instances = cloneInstances(ontology)
+  const instance = instances[instanceId]
+  if (!instance || instance.some((p) => p.kind === kind)) return ontology
+
+  const listKinds: PropertyKindName[] = [
+    'examples',
+    'concept',
+    'concepts',
+    'attributes',
+    'transactions',
+    'params',
+  ]
+  instance.push({ kind, value: listKinds.includes(kind) ? [] : '' })
+  return { ...ontology, instances }
+}
+
+/** Remove a property of `kind` from an instance. Identity cannot be removed. */
+export function removeProperty(
+  ontology: Ontology,
+  instanceId: Identity,
+  kind: PropertyKindName,
+): Ontology {
+  if (kind === 'identity') return ontology
+  const instances = cloneInstances(ontology)
+  const instance = instances[instanceId]
+  if (!instance) return ontology
+  instances[instanceId] = instance.filter((p) => p.kind !== kind)
+  return { ...ontology, instances }
+}
+
 /** Rename an instance's slug: recompute its identity, move it, rewrite refs. */
 export function renameSlug(
   ontology: Ontology,
