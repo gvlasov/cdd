@@ -69,7 +69,12 @@ export function derivedIdentity(
   if (identity === ontology.root) return identityFromSlugChain([rootSlug])
 
   const concept = conceptOf(ontology, identity)
-  const slug = concept ? conceptSlug(concept) : undefined
+  if (!concept) return undefined
+  // Only top-level concepts (typed cdd.concept) are keyed by the rootSlug.slug
+  // chain. Attributes, transactions and value instances keep their stored keys.
+  const type = concept.find((p) => p.kind === 'concept')?.value
+  if (type !== 'cdd.concept') return undefined
+  const slug = conceptSlug(concept)
   if (!slug) return undefined
 
   const chain: Slug[] = [rootSlug, slug]

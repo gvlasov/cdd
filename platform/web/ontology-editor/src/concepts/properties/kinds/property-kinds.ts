@@ -37,6 +37,8 @@ export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   attributes: { name: 'attributes', position: 5 },
   transactions: { name: 'transactions', position: 5 },
   required: { name: 'required', position: 5 },
+  type: { name: 'type', position: 5 },
+  cardinality: { name: 'cardinality', position: 5 },
   params: { name: 'params', position: 6 },
   examples: { name: 'examples', position: 7, render: ExamplesProperty },
   effect: { name: 'effect', position: 8, render: EffectProperty, edit: EffectEdit },

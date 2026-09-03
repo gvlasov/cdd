@@ -35,6 +35,8 @@ export type PropertyKindName =
   | 'effect'
   | 'params'
   | 'required'
+  | 'type'
+  | 'cardinality'
 
 export function propertiesOfKind(
   properties: Property[],

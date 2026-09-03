@@ -1,94 +1,125 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import type { Identity } from '@/concepts/identity/Identity'
-import type { PropertyKindName, Property } from '@/concepts/properties/Property'
 import type { Ontology } from '@/concepts/ontology/Ontology'
-import { conceptOf } from '@/concepts/ontology/Ontology'
-import { addProperty, removeProperty } from './editOntology'
-import { typeAttributes } from './instanceForm'
+import { conceptOf, ontologyConcepts } from '@/concepts/ontology/Ontology'
+import { isSlug } from '@/concepts/identity/Slug'
+import { CARDINALITIES, type Cardinality } from '@/concepts/attributes/Attribute'
+import { createAttribute, newAttributeIdentity } from '@/concepts/attributes/editAttributes'
 import { useOntology } from '@/concepts/ontology/useOntology'
-import PropertyEditor from './PropertyEditor.vue'
+import InstanceForm from './InstanceForm.vue'
 
-// Edits one instance, driven by its type's attributes:
-//  - required attributes render as inputs from the start
-//  - optional attributes appear via a centered "+attribute" button bar
-//  - the instance's own extra properties (not in the type) are shown too, removable
+// The concept-editing surface: the instance's own form (driven by its type),
+// plus — since this instance is a concept — a "+attribute" flow to declare a
+// new attribute (name, type, cardinality) on it.
 const props = defineProps<{ ontology: Ontology; conceptId: Identity }>()
 
 const { apply, conceptLabel } = useOntology()
 
-const instance = computed(() => conceptOf(props.ontology, props.conceptId))
-const attrs = computed(() => (instance.value ? typeAttributes(props.ontology, instance.value) : []))
+const concept = computed(() => conceptOf(props.ontology, props.conceptId))
 
-const present = computed(() => new Set((instance.value ?? []).map((p) => p.kind)))
-
-// Rows to render: required type attributes (always) + any present property
-// except identity/concept. Ordered by the type's attribute order, extras last.
-const rows = computed(() => {
-  const order = attrs.value.map((a) => a.kind)
-  const kinds = new Set<PropertyKindName>()
-  for (const a of attrs.value) if (a.required || present.value.has(a.kind)) kinds.add(a.kind)
-  for (const p of instance.value ?? []) {
-    if (p.kind !== 'identity' && p.kind !== 'concept') kinds.add(p.kind)
-  }
-  return [...kinds].sort((a, b) => {
-    const ia = order.indexOf(a)
-    const ib = order.indexOf(b)
-    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib)
-  })
-})
-
-function propertyFor(kind: PropertyKindName): Property {
-  return (instance.value ?? []).find((p) => p.kind === kind) ?? { kind, value: '' }
-}
-
-// Optional type attributes not yet present.
-const addable = computed(() =>
-  attrs.value.filter((a) => !a.required && !present.value.has(a.kind)),
+const conceptItems = computed(() =>
+  ontologyConcepts(props.ontology).map((id) => ({ value: id, title: conceptLabel(id) ?? id })),
 )
 
-function add(kind: PropertyKindName) {
-  apply((o) => addProperty(o, props.conceptId, kind))
-}
-function remove(kind: PropertyKindName) {
-  apply((o) => removeProperty(o, props.conceptId, kind))
+const adding = ref(false)
+const form = reactive<{ name: string; slug: string; type: Identity | null; cardinality: Cardinality }>({
+  name: '',
+  slug: '',
+  type: null,
+  cardinality: '0-1',
+})
+
+const formError = computed(() => {
+  if (!form.slug.trim()) return ''
+  if (!isSlug(form.slug.trim())) return 'Slug must match [a-zA-Z0-9_-]'
+  if (!newAttributeIdentity(props.ontology, props.conceptId, form.slug.trim()))
+    return 'That attribute identity is taken'
+  return ''
+})
+
+function submit() {
+  const slug = form.slug.trim()
+  if (!slug || formError.value || !form.type) return
+  apply((o) =>
+    createAttribute(o, props.conceptId, {
+      name: form.name.trim() || slug,
+      slug,
+      type: form.type as Identity,
+      cardinality: form.cardinality,
+    }),
+  )
+  adding.value = false
+  form.name = ''
+  form.slug = ''
+  form.type = null
+  form.cardinality = '0-1'
 }
 </script>
 
 <template>
   <v-card variant="outlined" class="flex-grow-1 overflow-auto">
-    <v-card-text v-if="instance" class="d-flex flex-column ga-4">
-      <div v-for="kind in rows" :key="kind" class="d-flex ga-2 align-start">
-        <PropertyEditor
-          class="flex-grow-1"
-          :instance-id="conceptId"
-          :property="propertyFor(kind)"
-        />
-        <v-btn
-          icon="mdi-close"
-          variant="text"
-          size="small"
-          density="comfortable"
-          :aria-label="`remove ${kind}`"
-          @click="remove(kind)"
-        />
-      </div>
+    <v-card-text v-if="concept" class="d-flex flex-column ga-4">
+      <InstanceForm :concept-id="conceptId" />
 
-      <div v-if="addable.length" class="d-flex flex-wrap ga-2 pt-2 justify-center">
-        <v-btn
-          v-for="a in addable"
-          :key="a.attribute"
-          prepend-icon="mdi-plus"
-          variant="tonal"
-          size="small"
-          @click="add(a.kind)"
-        >
-          {{ conceptLabel(a.attribute) ?? a.kind }}
+      <div class="d-flex justify-center pt-2">
+        <v-btn prepend-icon="mdi-plus" variant="tonal" size="small" @click="adding = true">
+          attribute
         </v-btn>
       </div>
     </v-card-text>
     <v-card-text v-else class="text-medium-emphasis">
       Unknown concept: {{ conceptId }}
     </v-card-text>
+
+    <v-dialog v-model="adding" max-width="460">
+      <v-card>
+        <v-card-title>New attribute</v-card-title>
+        <v-card-text class="d-flex flex-column ga-3">
+          <v-text-field
+            v-model="form.name"
+            label="name"
+            variant="outlined"
+            density="comfortable"
+            hide-details
+          />
+          <v-text-field
+            v-model="form.slug"
+            label="slug (property key)"
+            :error-messages="formError"
+            variant="outlined"
+            density="comfortable"
+          />
+          <v-autocomplete
+            v-model="form.type"
+            :items="conceptItems"
+            label="type"
+            variant="outlined"
+            density="comfortable"
+            hide-details
+          />
+          <v-select
+            v-model="form.cardinality"
+            :items="CARDINALITIES"
+            label="cardinality"
+            variant="outlined"
+            density="comfortable"
+            hide-details
+          />
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn variant="text" @click="adding = false">Cancel</v-btn>
+          <v-btn
+            color="primary"
+            variant="tonal"
+            :disabled="!form.slug.trim() || !!formError || !form.type"
+            @click="submit"
+          >
+            Add
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>

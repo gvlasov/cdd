@@ -1,0 +1,82 @@
+import type { Identity } from '@/concepts/identity/Identity'
+import type { Instance } from '@/concepts/instances/Instance'
+import type { Ontology } from '@/concepts/ontology/Ontology'
+import { conceptOf } from '@/concepts/ontology/Ontology'
+import { firstOfKind } from '@/concepts/properties/Property'
+import { instanceName, instanceSlug } from '@/concepts/instances/Instance'
+import { conceptAttributes } from '@/concepts/concepts/Concept'
+
+// An attribute is an instance typed `cdd.attribute`. It defines one slot on
+// instances of the concept that owns it:
+//  - `name`        human label
+//  - `slug`        the property key on the owning concept's instances
+//  - `type`        the concept an attribute value is an instance of
+//  - `cardinality` how many values: '0-1' | '1' | '0+' | '1+'
+export type Cardinality = '0-1' | '1' | '0+' | '1+'
+
+export const CARDINALITIES: Cardinality[] = ['0-1', '1', '0+', '1+']
+
+export interface AttributeSpec {
+  /** The attribute instance's identity. */
+  attribute: Identity
+  name: string
+  /** The property key on owning-concept instances. */
+  slug: string
+  /** Concept identity the value is an instance of. */
+  type: Identity | undefined
+  cardinality: Cardinality
+}
+
+export function attributeCardinality(attribute: Instance): Cardinality {
+  const p = firstOfKind(attribute, 'cardinality')
+  const v = p ? (Array.isArray(p.value) ? p.value[0] : p.value) : undefined
+  return (CARDINALITIES as string[]).includes(v ?? '') ? (v as Cardinality) : '0-1'
+}
+
+export function attributeType(attribute: Instance): Identity | undefined {
+  const p = firstOfKind(attribute, 'type')
+  if (!p) return undefined
+  return Array.isArray(p.value) ? p.value[0] : p.value
+}
+
+export function isRequired(cardinality: Cardinality): boolean {
+  return cardinality === '1' || cardinality === '1+'
+}
+
+export function isList(cardinality: Cardinality): boolean {
+  return cardinality === '0+' || cardinality === '1+'
+}
+
+/** Resolve one attribute instance to a spec. */
+export function attributeSpec(
+  ontology: Ontology,
+  attributeId: Identity,
+): AttributeSpec | undefined {
+  const attribute = conceptOf(ontology, attributeId)
+  if (!attribute) return undefined
+  return {
+    attribute: attributeId,
+    name: instanceName(attribute) ?? attributeId,
+    slug: instanceSlug(attribute) ?? attributeId,
+    type: attributeType(attribute),
+    cardinality: attributeCardinality(attribute),
+  }
+}
+
+/** The attribute specs a concept declares, in order. */
+export function conceptAttributeSpecs(
+  ontology: Ontology,
+  concept: Instance,
+): AttributeSpec[] {
+  return conceptAttributes(concept)
+    .map((id) => attributeSpec(ontology, id))
+    .filter((s): s is AttributeSpec => s !== undefined)
+}
+
+/** A concept with no attributes of its own is a leaf — its value edits as a plain input. */
+export function isLeafConcept(ontology: Ontology, conceptId: Identity | undefined): boolean {
+  if (!conceptId) return true
+  const concept = conceptOf(ontology, conceptId)
+  if (!concept) return true
+  return conceptAttributes(concept).length === 0
+}

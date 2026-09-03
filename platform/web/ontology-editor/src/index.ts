@@ -62,8 +62,21 @@ export {
 } from '@/concepts/editing/editOntology'
 export type { PropertyValueKind } from '@/concepts/editing/PropertyValueKind'
 export { propertyValueKind } from '@/concepts/editing/PropertyValueKind'
-export { typeAttributes } from '@/concepts/editing/instanceForm'
-export type { FormAttribute } from '@/concepts/editing/instanceForm'
+export { default as InstanceForm } from '@/concepts/editing/InstanceForm.vue'
+
+export type { Cardinality, AttributeSpec } from '@/concepts/attributes/Attribute'
+export {
+  CARDINALITIES,
+  attributeCardinality,
+  attributeType,
+  isRequired,
+  isList,
+  attributeSpec,
+  conceptAttributeSpecs,
+  isLeafConcept,
+} from '@/concepts/attributes/Attribute'
+export { createAttribute, newAttributeIdentity } from '@/concepts/attributes/editAttributes'
+export { spawnValue, removeValue } from '@/concepts/attributes/spawnValue'
 
 export type { Reality } from '@/concepts/reality/Reality'
 export { emptyReality, realityInstance, instancesOfConcept } from '@/concepts/reality/Reality'

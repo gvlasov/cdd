@@ -21,6 +21,8 @@ export const propertyValueKind: Record<PropertyKindName, PropertyValueKind> = {
   effect: 'literal',
   params: 'literal-list',
   required: 'literal',
+  type: 'concept-list',
+  cardinality: 'literal',
 }
 
 export const ALL_PROPERTY_KINDS: PropertyKindName[] = [
@@ -37,4 +39,6 @@ export const ALL_PROPERTY_KINDS: PropertyKindName[] = [
   'effect',
   'params',
   'required',
+  'type',
+  'cardinality',
 ]

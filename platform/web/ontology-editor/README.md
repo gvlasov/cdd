@@ -11,11 +11,13 @@ CDD's directory layout or any storage backend.
   `concept` property.
 - A **concept** is an instance (typed `cdd.concept`) that also carries an
   `attributes` property. Every type is a concept; any concept can be a type.
-- A **property** is a `kind` and a `value` an instance holds in a slot. An
-  **attribute** is the slot — itself a concept — that defines what property an
-  instance of a type may have. A concept's `attributes` property is the list of
-  attribute-concept identities (Name, Definition, Slug, …). An attribute concept
-  with a truthy `required` property (and a non-list value kind) is mandatory.
+- A **property** is a `kind` and a `value` an instance holds in a slot.
+- An **attribute** defines one slot. It is an instance typed `cdd.attribute`
+  with `slug` (the property key), `name`, `type` (the concept its value is an
+  instance of), and `cardinality` (`0-1` | `1` | `0+` | `1+`). A concept's
+  `attributes` property lists attribute-instance identities.
+- A **leaf** concept declares no attributes; its value edits as a plain field.
+  A structured concept's value edits as its own nested attribute form.
 - An **ontology** is itself a concept — its root instance. That instance is the
   root concept of itself; its `concepts` property is the list of concept
   identities the ontology contains.
@@ -50,30 +52,25 @@ asks for a slug (validated, must be unique) and creates an instance typed
 `cdd.concept` (`identity` + `concept` + `slug`; identity is `<rootSlug>.<slug>`),
 appends it to the ontology root's `concepts` list, and opens it in edit mode.
 
-The edit form is driven by the instance's **type**: one row per attribute the
-type declares.
+The edit form (`InstanceForm`) is driven by the instance's **type**: one
+`AttributeValueEditor` per attribute the type declares (`conceptAttributeSpecs`).
+For each attribute:
 
-- **required** attributes (truthy `required`, non-list) render as inputs from
-  the start
-- **optional** attributes appear via a centered **+attribute** button bar
-- any extra property the instance already has is shown too; each row has a
-  remove button
+- **leaf `type`** → a plain text field on the property `slug`. Cardinality
+  `0+`/`1+` → a chips combobox.
+- **structured `type`** → a nested `InstanceForm` per value (a value instance
+  keyed under the owner). Cardinality `0-1`/`1` → one; `0+`/`1+` → a list with
+  add/remove. `1`/`1+` show a "required" hint when empty.
 
-A property kind can ship its own `edit` component (like its `render`);
-otherwise the value kind picks a generic input:
+Since a concept is being edited, a **+attribute** button opens a dialog for a
+new attribute: `name`, `slug` (property key, validated/unique), `type` (concept
+picker), `cardinality` (`0-1`/`1`/`0+`/`1+`) → `createAttribute` adds a
+`cdd.attribute` instance to the concept's `attributes` list.
 
-- `definition` / `description` → textarea
-- other literals (`name`, `slug`) → outlined text field
-- literal list (`examples`, `params`) → combobox with chips
-- concept list (`concepts`, `attributes`, `transactions`) → autocomplete over
-  the ontology's concepts
-- `effect` → monospace textarea
-
-`identity` and `concept` (the type) are not editable rows. Editing a `slug`
-recomputes the instance's identity (`derivedIdentity`), moves its `instances`
-entry, updates its `identity` property, and rewrites every
-`attributes` / `concepts` reference that pointed at the old identity — the view
-follows. Every edit emits a new `Ontology` via `update:modelValue`.
+Editing a `slug` recomputes a top-level concept's identity (`derivedIdentity`,
+which only re-keys `cdd.concept`-typed instances), moves its `instances` entry,
+and rewrites references. Every edit emits a new `Ontology` via
+`update:modelValue`.
 
 ## Concept links in text
 
@@ -142,8 +139,8 @@ A `<OntologyEditor>` Vue component that other apps can embed.
 - [x] Edit mode: change property values, slug rename re-keys the identity
 - [x] Create concepts (slug → identity, added to the ontology's concept list)
 - [x] Reality + concept transactions with executable `effect` (constructor etc.)
-- [x] Type-driven edit form: required attributes upfront, optional via +attribute
-- [ ] Editing: delete concepts
+- [x] Attributes with type + cardinality; +attribute dialog; nested value forms
+- [ ] Editing: delete concepts / attributes / values
 - [ ] Persistence adapters
 - [ ] `.d.ts` emission for the published bundle
 
@@ -157,7 +154,8 @@ src/concepts/
   concepts/       Concept helpers (a concept is an instance with `attributes`)
   properties/     Property, PropertyKind, and kinds/ (one renderer per drawn kind)
   concept-links/  parse & render [Label](identity) links embedded in text
-  editing/        edit-mode: value-kind classification, immutable edits (incl. createConcept), <ConceptEditor>
+  attributes/     AttributeSpec (name/type/cardinality), <AttributeValueEditor>, value spawning
+  editing/        immutable edits, <ConceptEditor> (+attribute dialog), <InstanceForm>
   reality/        Reality (instances of concepts), <RealityPanel>
   transactions/   Transaction model, runEffect, <TransactionBar>
   concept-view/   <ConceptView> — instance renderer + parents above + attributes below
