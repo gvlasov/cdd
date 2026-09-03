@@ -5,7 +5,7 @@ import type { Instance } from '@/concepts/instances/Instance'
 import { instanceSlug, instanceType, instanceIdentity } from '@/concepts/instances/Instance'
 import { conceptLabelOf, conceptSlug, conceptAttributes } from '@/concepts/concepts/Concept'
 import { conceptOf } from '@/concepts/ontology/Ontology'
-import { attributeType } from '@/concepts/attributes/Attribute'
+import { attributeType, attributeCardinality } from '@/concepts/attributes/Attribute'
 import { useOntology } from '@/concepts/ontology/useOntology'
 
 // `name` renders as the instance's title. For an attribute instance the title
@@ -40,6 +40,11 @@ const nameLink = computed(() => {
   if (type && conceptSlug(type) === slug.value) return typeId
   return undefined
 })
+
+// Shown as a superscript on the linked name (the type is not drawn separately then).
+const cardinalitySup = computed(() =>
+  nameLink.value ? attributeCardinality(props.instance) : undefined,
+)
 </script>
 
 <template>
@@ -54,7 +59,7 @@ const nameLink = computed(() => {
         class="link"
         href="#"
         @click.prevent="navigate(nameLink)"
-        >{{ property.value }}</a
+        >{{ property.value }}<sup v-if="cardinalitySup" class="ms-1">{{ cardinalitySup }}</sup></a
       ><template v-else>{{ property.value }}</template>
     </h1>
     <code v-if="slug" class="text-caption text-disabled">{{ slug }}</code>

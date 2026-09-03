@@ -207,8 +207,10 @@ import '@cdd/ontology-editor/style.css'
 The component uses theme colors — `concept` (indigo), `instance` (blue-grey),
 `attribute` (red), `relation` (purple). The instance card is tinted `attribute`
 for an attribute instance, `concept` when it declares `attributes`, else
-`instance`. An attribute instance's view shows its `type` (as a chip) and
-`cardinality`.
+`instance`. An attribute instance's title is `<owner> · <name>` (owner links to
+the concept); its `type` shows as a chip with the `cardinality` as a
+superscript. When the attribute's slug equals its type's slug, the name itself
+links to the type (carrying the cardinality sup) and no separate type row shows.
 Merge `ontologyTheme` into your Vuetify config so they resolve:
 
 ```ts
