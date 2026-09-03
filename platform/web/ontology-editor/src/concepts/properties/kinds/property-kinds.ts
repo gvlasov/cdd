@@ -5,6 +5,8 @@ import NameProperty from './NameProperty.vue'
 import DefinitionProperty from './DefinitionProperty.vue'
 import DefinitionEdit from './DefinitionEdit.vue'
 import ExamplesProperty from './ExamplesProperty.vue'
+import EffectProperty from './EffectProperty.vue'
+import EffectEdit from './EffectEdit.vue'
 
 // The predefined property kinds and their draw positions inside the instance
 // renderer. Equal positions draw in renderer-defined order. A kind with no
@@ -33,7 +35,10 @@ export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   concept: { name: 'concept', position: 4 },
   concepts: { name: 'concepts', position: 4 },
   attributes: { name: 'attributes', position: 5 },
-  examples: { name: 'examples', position: 6, render: ExamplesProperty },
+  transactions: { name: 'transactions', position: 5 },
+  params: { name: 'params', position: 6 },
+  examples: { name: 'examples', position: 7, render: ExamplesProperty },
+  effect: { name: 'effect', position: 8, render: EffectProperty, edit: EffectEdit },
 }
 
 export function propertyKind(name: PropertyKindName): PropertyKind {

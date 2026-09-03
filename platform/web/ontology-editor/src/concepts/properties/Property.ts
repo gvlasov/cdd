@@ -11,10 +11,12 @@ export interface Property {
   kind: PropertyKindName
   /**
    * The property's value.
-   *  - `identity` / `slug` / `name` / `definition`: a literal string
+   *  - `identity` / `slug` / `name` / `definition` / `effect`: a literal string
    *  - `concept` / `examples`: the identity of the concept this property holds
    *  - `concepts`: the identities of the concepts an ontology contains
-   *  - `attributes`: the property kinds an instance of this concept may have
+   *  - `attributes`: the attribute concepts an instance of this concept may have
+   *  - `transactions`: the transaction identities a concept exposes
+   *  - `params`: names of the inputs a transaction's effect expects
    */
   value: Identity | Identity[]
 }
@@ -29,6 +31,9 @@ export type PropertyKindName =
   | 'concept'
   | 'concepts'
   | 'attributes'
+  | 'transactions'
+  | 'effect'
+  | 'params'
 
 export function propertiesOfKind(
   properties: Property[],

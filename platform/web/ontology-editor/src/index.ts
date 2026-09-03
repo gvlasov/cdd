@@ -55,6 +55,21 @@ export {
 export type { PropertyValueKind } from '@/concepts/editing/PropertyValueKind'
 export { propertyValueKind } from '@/concepts/editing/PropertyValueKind'
 
+export type { Reality } from '@/concepts/reality/Reality'
+export { emptyReality, realityInstance, instancesOfConcept } from '@/concepts/reality/Reality'
+
+export type { TransactionId } from '@/concepts/transactions/Transaction'
+export {
+  transactionId,
+  conceptOfTransaction,
+  transactionName,
+  conceptTransactions,
+  transactionEffect,
+  transactionParams,
+} from '@/concepts/transactions/Transaction'
+export { runEffect } from '@/concepts/transactions/runEffect'
+export type { RealityApi } from '@/concepts/transactions/runEffect'
+
 export {
   ontologyColors,
   ontologyTheme,

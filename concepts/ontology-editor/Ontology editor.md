@@ -24,6 +24,14 @@ Pass `editable` for edit mode: change an instance's property values (slug
 renames re-key the identity and rewrite references) and create new concepts from
 a slug.
 
+An ontology carries a **reality** (`v-model:reality`) — the instances of its
+concepts. Concepts expose **[transactions](/concepts/transactions/Transaction.md)**
+(CDD write operations) via a `transactions` property; each is an instance keyed
+`<conceptId>:<name>` with an `effect` (JavaScript run against a `reality` API).
+The concept view shows a button per transaction that opens a params form and
+runs the effect — this is how instances are spawned into the reality (e.g. a
+constructor `cdd.concept:create`).
+
 ## Commands
 
 - `editor:up` — bring up the local environment: install deps if needed and start

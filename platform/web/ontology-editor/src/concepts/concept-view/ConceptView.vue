@@ -6,6 +6,8 @@ import { conceptOf, parentIdentities } from '@/concepts/ontology/Ontology'
 import { conceptRefs } from '@/concepts/concepts/Concept'
 import { useOntology } from '@/concepts/ontology/useOntology'
 import InstanceRenderer from '@/concepts/instances/InstanceRenderer.vue'
+import TransactionBar from '@/concepts/transactions/TransactionBar.vue'
+import RealityPanel from '@/concepts/reality/RealityPanel.vue'
 
 const props = defineProps<{
   ontology: Ontology
@@ -64,5 +66,8 @@ const refs = computed(() => (concept.value ? conceptRefs(concept.value) : []))
         </v-chip>
       </div>
     </nav>
+
+    <TransactionBar v-if="concept" :concept-id="conceptId" />
+    <RealityPanel v-if="concept" :concept-id="conceptId" />
   </div>
 </template>

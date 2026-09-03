@@ -11,12 +11,19 @@ import {
   createConcept as createConceptEdit,
   newConceptIdentity,
 } from '@/concepts/editing/editOntology'
+import type { Reality } from '@/concepts/reality/Reality'
+import { emptyReality } from '@/concepts/reality/Reality'
+import type { TransactionId } from '@/concepts/transactions/Transaction'
+import { transactionOf, transactionEffect } from '@/concepts/transactions/Transaction'
+import { runEffect } from '@/concepts/transactions/runEffect'
 import ConceptView from '@/concepts/concept-view/ConceptView.vue'
 import ConceptEditor from '@/concepts/editing/ConceptEditor.vue'
 
 const props = defineProps<{
   /** The ontology to display. */
   modelValue: Ontology
+  /** The reality — instances of the ontology's concepts. Optional; defaults empty. */
+  reality?: Reality
   /** Identity of the concept to show first. Defaults to the root. */
   rootId?: Identity
   /** Allow entering edit mode and creating concepts. */
@@ -25,7 +32,10 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: Ontology): void
+  (e: 'update:reality', value: Reality): void
 }>()
+
+const currentReality = computed(() => props.reality ?? emptyReality())
 
 const firstId = computed(
   () => props.rootId ?? props.modelValue.root ?? Object.keys(props.modelValue.instances)[0] ?? '',
@@ -83,12 +93,32 @@ function submitNewConcept() {
   newSlug.value = ''
 }
 
+const runError = ref('')
+
+function runTransaction(id: TransactionId, input: unknown) {
+  runError.value = ''
+  const transaction = transactionOf(props.modelValue, id)
+  const effect = transaction ? transactionEffect(transaction) : ''
+  if (!effect) {
+    runError.value = `Transaction ${id} has no effect`
+    return
+  }
+  try {
+    const { reality } = runEffect(effect, input, currentReality.value, props.modelValue)
+    emit('update:reality', reality)
+  } catch (e) {
+    runError.value = e instanceof Error ? e.message : String(e)
+  }
+}
+
 provideOntology({
   ontology: () => props.modelValue,
+  reality: () => currentReality.value,
   navigate,
   apply,
   renameSlug,
   createConcept,
+  runTransaction,
 })
 </script>
 
@@ -113,6 +143,16 @@ provideOntology({
         {{ editing ? 'Done' : 'Edit' }}
       </v-btn>
     </div>
+
+    <v-alert
+      v-if="runError"
+      type="error"
+      density="compact"
+      closable
+      @click:close="runError = ''"
+    >
+      {{ runError }}
+    </v-alert>
 
     <ConceptEditor v-if="editing" :ontology="modelValue" :concept-id="currentId" />
     <ConceptView v-else :ontology="modelValue" :concept-id="currentId" />

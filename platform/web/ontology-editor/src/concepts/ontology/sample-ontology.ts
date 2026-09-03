@@ -43,6 +43,21 @@ export const sampleOntology: Ontology = {
         kind: 'attributes',
         value: ['cdd.name', 'cdd.definition', 'cdd.attribute', 'cdd.slug'],
       },
+      { kind: 'transactions', value: ['cdd.concept:create'] },
+    ],
+    'cdd.concept:create': [
+      { kind: 'identity', value: 'cdd.concept:create' },
+      { kind: 'name', value: 'create' },
+      {
+        kind: 'definition',
+        value: "Constructor: spawn a new concept instance into the reality.",
+      },
+      { kind: 'params', value: ['name', 'definition'] },
+      {
+        kind: 'effect',
+        value:
+          "return reality.add('cdd.concept', { name: input.name, definition: input.definition })",
+      },
     ],
     'cdd.attribute': [
       { kind: 'identity', value: 'cdd.attribute' },

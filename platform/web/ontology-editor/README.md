@@ -81,6 +81,30 @@ so `.attribute` resolves to `<rootSlug>.attribute`. Known targets render as
 clickable links that navigate to the concept; unknown targets render in the
 error color and are inert.
 
+## Reality & transactions
+
+An ontology has a **reality** — the instances of its concepts — passed alongside
+it as `v-model:reality` (a `Reality = { instances }`, never merged into the
+ontology).
+
+Every concept can expose **transactions** (CDD write operations) through a
+`transactions` property listing transaction identities. A transaction is itself
+an instance keyed `<conceptId>:<name>` (e.g. `cdd.concept:create`, a
+constructor) with:
+
+- `name` — the transaction name
+- `params` — names of the inputs it expects (rendered as a form)
+- `effect` — JavaScript source, run as
+  `new Function('input', 'reality', 'ontology', effect)`
+
+The `reality` argument is an API: `add(conceptId, props)` (returns the new id),
+`get(id)`, `all(conceptId)`, `update(id, props)`, `remove(id)`. Mutations apply
+to a copy; the editor emits the result via `update:reality`.
+
+In the concept view, each transaction is a button; clicking it opens the params
+form and Run executes the effect. Instances of the concept currently in the
+reality are listed below.
+
 ## View
 
 The central component is the **instance renderer**: it fills the screen with one
@@ -107,6 +131,7 @@ A `<OntologyEditor>` Vue component that other apps can embed.
 - [x] Instance renderer + concept view (parents above, attributes below)
 - [x] Edit mode: change property values, slug rename re-keys the identity
 - [x] Create concepts (slug → identity, added to the ontology's concept list)
+- [x] Reality + concept transactions with executable `effect` (constructor etc.)
 - [ ] Editing: add / remove properties; delete concepts
 - [ ] Persistence adapters
 - [ ] `.d.ts` emission for the published bundle
@@ -122,6 +147,8 @@ src/concepts/
   properties/     Property, PropertyKind, and kinds/ (one renderer per drawn kind)
   concept-links/  parse & render [Label](identity) links embedded in text
   editing/        edit-mode: value-kind classification, immutable edits (incl. createConcept), <ConceptEditor>
+  reality/        Reality (instances of concepts), <RealityPanel>
+  transactions/   Transaction model, runEffect, <TransactionBar>
   concept-view/   <ConceptView> — instance renderer + parents above + attributes below
   app/            local demo app (not part of the published bundle)
 src/index.ts      public entry point for the embeddable component
