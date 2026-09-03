@@ -74,10 +74,12 @@ For each attribute:
   keyed under the owner). Cardinality `0-1`/`1` → one; `0+`/`1+` → a list with
   add/remove. `1`/`1+` show a "required" hint when empty.
 
-Since a concept is being edited, a **+attribute** button opens a dialog for a
-new attribute: `name`, `slug` (property key, validated/unique), `type` (concept
-picker), `cardinality` (`0-1`/`1`/`0+`/`1+`) → `createAttribute` adds a
-`cdd.attribute` instance to the concept's `attributes` list.
+Since a concept is being edited, a **define attribute** button opens a dialog
+for a new attribute: `name`, `slug` (property key, validated/unique), `type`
+(concept picker with a pinned **+ Create new concept** action — clicking it
+prompts for a slug and creates the concept inline), `cardinality`
+(`0-1`/`1`/`0+`/`1+`) → `createAttribute` adds a `cdd.attribute` instance to the
+concept's `attributes` list.
 
 Editing a `slug` recomputes a top-level concept's identity (`derivedIdentity`,
 which only re-keys `cdd.concept`-typed instances), moves its `instances` entry,
