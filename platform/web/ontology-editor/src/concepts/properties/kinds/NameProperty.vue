@@ -48,7 +48,7 @@ const cardinalitySup = computed(() =>
 </script>
 
 <template>
-  <div class="d-flex align-baseline ga-2 justify-center flex-wrap">
+  <div class="d-flex align-baseline ga-2 justify-start flex-wrap w-100">
     <h1 class="text-h3">
       <template v-if="isAttribute && owner"
         ><a class="link" href="#" @click.prevent="navigate(owner.id)">{{
