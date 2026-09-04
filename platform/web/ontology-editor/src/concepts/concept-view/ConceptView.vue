@@ -4,6 +4,7 @@ import type { Ontology } from '@/concepts/ontology/Ontology'
 import type { Identity } from '@/concepts/identity/Identity'
 import { conceptOf, parentIdentities } from '@/concepts/ontology/Ontology'
 import { conceptRefs } from '@/concepts/concepts/Concept'
+import { attributeTypeParents } from '@/concepts/attributes/Attribute'
 import { useOntology } from '@/concepts/ontology/useOntology'
 import Instance from '@/concepts/instances/Instance.vue'
 import TransactionBar from '@/concepts/transactions/TransactionBar.vue'
@@ -17,7 +18,15 @@ const props = defineProps<{
 const { conceptLabel, navigate } = useOntology()
 
 const concept = computed(() => conceptOf(props.ontology, props.conceptId))
-const parents = computed(() => parentIdentities(props.ontology, props.conceptId))
+// Parents: concepts that reference this one directly (attributes/concepts
+// lists), plus concepts whose declared attributes are typed by this one — a
+// concept with an attribute of type Attribute makes Concept a parent of
+// Attribute, for example.
+const parents = computed(() => {
+  const direct = parentIdentities(props.ontology, props.conceptId)
+  const viaAttributeType = attributeTypeParents(props.ontology, props.conceptId)
+  return [...new Set([...direct, ...viaAttributeType])]
+})
 
 // Attribute chips below the instance: the attributes it declares itself (as a
 // concept) and — for an ontology — its `concepts` list. Not the type's

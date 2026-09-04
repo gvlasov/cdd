@@ -80,3 +80,20 @@ export function isLeafConcept(ontology: Ontology, conceptId: Identity | undefine
   if (!concept) return true
   return conceptAttributes(concept).length === 0
 }
+
+/**
+ * Identities of concepts that reference `identity` as the `type` of one of
+ * their declared attributes — e.g. Concept is a parent of Attribute, because
+ * Concept's `attributes` attribute is typed Attribute. This is a separate
+ * relation from `parentIdentities` (which only follows a concept's own
+ * `attributes`/`concepts` properties): it looks one level deeper, through each
+ * declared attribute's `type`, to find what concept it makes instances of.
+ */
+export function attributeTypeParents(ontology: Ontology, identity: Identity): Identity[] {
+  const parents: Identity[] = []
+  for (const [ownerId, instance] of Object.entries(ontology.instances)) {
+    const specs = conceptAttributeSpecs(ontology, instance)
+    if (specs.some((spec) => spec.type === identity)) parents.push(ownerId)
+  }
+  return parents
+}

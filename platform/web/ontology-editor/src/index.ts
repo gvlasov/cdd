@@ -76,6 +76,7 @@ export {
   attributeSpec,
   conceptAttributeSpecs,
   isLeafConcept,
+  attributeTypeParents,
 } from '@/concepts/attributes/Attribute'
 export { createAttribute, newAttributeIdentity } from '@/concepts/attributes/editAttributes'
 export { spawnValue, removeValue } from '@/concepts/attributes/spawnValue'
