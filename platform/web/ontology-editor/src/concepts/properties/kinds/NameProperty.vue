@@ -5,14 +5,16 @@ import type { Instance } from '@/concepts/instances/Instance'
 import { instanceType, instanceIdentity } from '@/concepts/instances/Instance'
 import { conceptLabelOf, conceptAttributes } from '@/concepts/concepts/Concept'
 import { conceptOf } from '@/concepts/ontology/Ontology'
+import { attributeType, attributeCardinality } from '@/concepts/attributes/Attribute'
 import { useOntology } from '@/concepts/ontology/useOntology'
 
 // `name` renders as the instance's title. For an attribute instance the title
-// is "<owner concept> · <attribute name>", the owner being a navigable link.
-// The attribute's type and cardinality render separately — see TypeProperty.
+// is "<owner concept> · <attribute name>", the owner being a navigable link —
+// followed on the same line by the attribute's type (also a link) and its
+// cardinality as a superscript. `type` itself does not render separately.
 const props = defineProps<{ property: Property; instance: Instance }>()
 
-const { ontology, navigate } = useOntology()
+const { ontology, navigate, conceptLabel } = useOntology()
 
 const isAttribute = computed(() => instanceType(props.instance) === 'cdd.attribute')
 
@@ -27,22 +29,39 @@ const owner = computed(() => {
   }
   return undefined
 })
+
+const typeId = computed(() => (isAttribute.value ? attributeType(props.instance) : undefined))
+const cardinality = computed(() => attributeCardinality(props.instance))
 </script>
 
 <template>
-  <h1 class="text-h3">
+  <h1 class="text-h3 title">
     <template v-if="isAttribute && owner"
       ><a class="link" href="#" @click.prevent="navigate(owner.id)">{{
         owner.label
       }}</a><span class="text-medium-emphasis">&nbsp;·&nbsp;</span></template
-    >{{ property.value }}
+    >{{ property.value
+    }}<template v-if="typeId"
+      ><span class="text-medium-emphasis">:&nbsp;</span
+      ><a class="link type-link" href="#" @click.prevent="navigate(typeId)">{{
+        conceptLabel(typeId) ?? typeId
+      }}</a
+      ><sup class="text-medium-emphasis">{{ cardinality }}</sup></template
+    >
   </h1>
 </template>
 
 <style scoped>
+.title {
+  white-space: nowrap;
+}
 .link {
   color: rgb(var(--v-theme-concept));
   text-decoration: none;
   border-bottom: 2px solid currentColor;
+}
+.type-link {
+  font-size: 1rem;
+  border-bottom-width: 1px;
 }
 </style>

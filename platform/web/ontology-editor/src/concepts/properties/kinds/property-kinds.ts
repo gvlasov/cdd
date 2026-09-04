@@ -6,7 +6,6 @@ import DefinitionEdit from './DefinitionEdit.vue'
 import ExamplesProperty from './ExamplesProperty.vue'
 import EffectProperty from './EffectProperty.vue'
 import EffectEdit from './EffectEdit.vue'
-import TypeProperty from './TypeProperty.vue'
 import InstanceProperty from './InstanceProperty.vue'
 import TransactionsProperty from './TransactionsProperty.vue'
 import ConceptsProperty from './ConceptsProperty.vue'
@@ -29,6 +28,8 @@ import CanonicalNameProperty from './CanonicalNameProperty.vue'
 //    that attribute applies to — AttributeValueEditor reads them directly
 //    to render and evaluate the derived value instead
 //  - `slug` is not drawn — it is addressing, not something to show
+//  - `type` and `cardinality` are drawn inline with the name for an attribute
+//    instance — see NameProperty — not on their own line
 export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   name: { name: 'name', position: 0, render: NameProperty },
   slug: { name: 'slug', position: 1 },
@@ -50,9 +51,7 @@ export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   attributes: { name: 'attributes', position: 5 },
   transactions: { name: 'transactions', position: 7, render: TransactionsProperty },
   required: { name: 'required', position: 5 },
-  // `type` renders with the cardinality as a superscript; `cardinality` alone
-  // is not drawn.
-  type: { name: 'type', position: 5, render: TypeProperty },
+  type: { name: 'type', position: 5 },
   cardinality: { name: 'cardinality', position: 5 },
   params: { name: 'params', position: 6 },
   examples: { name: 'examples', position: 7, render: ExamplesProperty },
