@@ -89,7 +89,7 @@ leaf(
   'cdd.ontology',
   'ontology',
   'Ontology',
-  'A flat, rhizomatic collection of [concepts](.concept). An ontology is not itself a concept — it is an instance of Ontology, like `cdd`.',
+  'A flat, rhizomatic collection of [concepts](.concept).',
 )
 
 // `definition` is an attribute of Concept — only concepts get one. `slug` is
