@@ -11,6 +11,7 @@ Directly relates to CDD:
 - Time is a substance, quantified in seconds, attribute of a reality
 - Reality is a substance, quantified in the number of concepts and their reflections that take part in the reality, or in time spent running that reality, attribute of a subject
 - "Help" as a noun, quantified in characters or items or the amount of functionality covered, attribute of a project command shell
+- [Cohesion](/concepts/substances/Cohesion.md) is a substance, quantified qualitatively (how tightly related things stay together), attribute of a cohesion unit
 
 General examples from life:
 

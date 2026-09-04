@@ -1,4 +1,4 @@
-Cohesion is the principle that things related by meaning should stay together.
+Cohesion is a [substance](/concepts/substances/Substances.md): the principle — and degree — to which things related by meaning stay together. It is quantified qualitatively (good/poor cohesion, or how tightly a unit's reflections belong together) and is an attribute of a cohesion unit — an expression, function, concept, process, stakeholder, tool, or project.
 
 Cohesion is the most important principle of organizing a codebase. Code should be grouped by what it is about, not by incidental technical shape. If two things participate in the same meaning, they should be close to each other. If two things express different meanings, they should be separated even if a framework, file type, or habit suggests putting them together.
 

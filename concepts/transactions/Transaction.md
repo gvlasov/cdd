@@ -12,7 +12,7 @@ A transaction is what changes the state of a [concept](/concepts/concepts/Concep
 
 **Structure:**
 
-A transaction's path spans application layers — from a concept's frontend repository mutation method to the database and back. It is a [cohesion](/concepts/cohesion/Cohesion.md) unit below the concept: it must contain the whole vertical slice across layers the data's path passes through, not a fragment of it.
+A transaction's path spans application layers — from a concept's frontend repository mutation method to the database and back. It is a [cohesion](/concepts/substances/Cohesion.md) unit below the concept: it must contain the whole vertical slice across layers the data's path passes through, not a fragment of it.
 
 A transaction encapsulates:
 
