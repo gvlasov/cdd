@@ -15,9 +15,9 @@ const cardinality = computed(() => attributeCardinality(props.instance))
 </script>
 
 <template>
-  <div class="text-caption text-medium-emphasis d-flex align-center">
-    <a class="link" href="#" @click.prevent="navigate(target)">{{ conceptLabel(target) ?? target }}</a>
-    <sup>{{ cardinality }}</sup>
+  <div class="text-caption text-medium-emphasis">
+    <a class="link" href="#" @click.prevent="navigate(target)">{{ conceptLabel(target) ?? target }}</a
+    ><sup>{{ cardinality }}</sup>
   </div>
 </template>
 

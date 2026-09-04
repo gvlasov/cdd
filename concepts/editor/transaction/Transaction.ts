@@ -41,6 +41,10 @@ export default [
     { kind: 'name', value: 'canonical name' },
     { kind: 'type', value: 'cdd.name' },
     { kind: 'cardinality', value: '1' },
+    {
+      kind: 'description',
+      value: 'the parent concept\'s slug and the transaction\'s own slug, joined by `:` — e.g. `logs:view`.',
+    },
     { kind: 'computed', value: 'true' },
     {
       kind: 'function',
