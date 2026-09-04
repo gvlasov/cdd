@@ -4,23 +4,31 @@ import type { Property } from '@/concepts/properties/Property'
 import type { Instance } from '@/concepts/instances/Instance'
 import { useOntology } from '@/concepts/ontology/useOntology'
 
-// `examples` value identity references a concept whose own properties are the
-// individual examples. Fall back to showing the raw value if it is a literal.
+// `examples` value identities reference instances of the concept — each one
+// resolved to a label, falling back to the raw identity for anything unknown.
 const props = defineProps<{ property: Property; instance: Instance }>()
-const { conceptLabel } = useOntology()
+const { conceptLabel, navigate } = useOntology()
 
-const items = computed(() => {
-  const referenced = String(props.property.value)
-  const label = conceptLabel(referenced)
-  return label ? [label] : [referenced]
-})
+const identities = computed(() =>
+  Array.isArray(props.property.value) ? props.property.value : [props.property.value],
+)
 </script>
 
 <template>
   <div class="text-center">
     <div class="text-overline text-medium-emphasis">examples</div>
-    <ul class="d-inline-flex flex-column ga-1 text-body-2" style="list-style: none; padding: 0">
-      <li v-for="item in items" :key="item">{{ item }}</li>
-    </ul>
+    <div class="d-flex flex-wrap ga-2 justify-center">
+      <v-chip
+        v-for="id in identities"
+        :key="id"
+        color="concept"
+        variant="outlined"
+        size="small"
+        link
+        @click="navigate(id)"
+      >
+        {{ conceptLabel(id) ?? id }}
+      </v-chip>
+    </div>
   </div>
 </template>
