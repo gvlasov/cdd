@@ -162,7 +162,7 @@ A `<OntologyEditor>` Vue component that other apps can embed.
 src/concepts/
   ontology/       Ontology (root + instance store), concept list, <OntologyEditor>, theme
   identity/       Identity & Slug types, IdentityRepository, slug-chain identity
-  instances/      Instance (= Property[]) and <InstanceRenderer> — the central component
+  instances/      Instance (= Property[]) and <Instance.vue> — the central component
   concepts/       Concept helpers (a concept is an instance typed `cdd.concept`)
   properties/     Property, PropertyKind, and kinds/ (one renderer per drawn kind)
   concept-links/  parse & render [Label](identity) links embedded in text

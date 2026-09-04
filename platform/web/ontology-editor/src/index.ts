@@ -1,7 +1,7 @@
 // Public entry point for the embeddable component.
 export { default as OntologyEditor } from '@/concepts/ontology/OntologyEditor.vue'
 export { default as ConceptView } from '@/concepts/concept-view/ConceptView.vue'
-export { default as InstanceRenderer } from '@/concepts/instances/InstanceRenderer.vue'
+export { default as InstanceView } from '@/concepts/instances/Instance.vue'
 
 export type { Ontology } from '@/concepts/ontology/Ontology'
 export {

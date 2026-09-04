@@ -22,6 +22,9 @@ const props = withDefaults(
 const { ontology, apply, conceptLabel } = useOntology()
 
 const owner = computed(() => conceptOf(ontology(), props.ownerId))
+// The `attributes` slot is managed only through "define attribute" — editing
+// it here would let you point it at arbitrary Attribute instances.
+const readonly = computed(() => props.spec.slug === 'attributes')
 const leaf = computed(() => isLeafConcept(ontology(), props.spec.type))
 const reference = computed(() => props.spec.type === 'cdd.concept')
 const list = computed(() => isList(props.spec.cardinality))
@@ -94,8 +97,25 @@ function submitNew() {
 
 <template>
   <div class="d-flex flex-column ga-2">
+    <!-- attributes is managed via "define attribute", not edited directly -->
+    <template v-if="readonly">
+      <div class="text-caption text-medium-emphasis mb-1">{{ spec.name }}</div>
+      <div class="d-flex flex-wrap ga-2">
+        <v-chip
+          v-for="id in valueIds"
+          :key="id"
+          color="attribute"
+          variant="outlined"
+          size="small"
+        >
+          {{ conceptLabel(id) ?? id }}
+        </v-chip>
+        <span v-if="!valueIds.length" class="text-caption text-medium-emphasis">none yet</span>
+      </div>
+    </template>
+
     <!-- leaf: single field (list of fields when 0+/1+) -->
-    <template v-if="leaf">
+    <template v-else-if="leaf">
       <div v-if="cardinalityValued">
         <div class="text-caption text-medium-emphasis mb-1">{{ spec.name }}</div>
         <v-btn-toggle
@@ -160,6 +180,7 @@ function submitNew() {
         v-else
         :model-value="list ? valueIds : literalValue"
         :items="conceptItems"
+        :label="spec.name"
         :multiple="list"
         :chips="list"
         :closable-chips="list"

@@ -5,7 +5,7 @@ import type { Identity } from '@/concepts/identity/Identity'
 import { conceptOf, parentIdentities } from '@/concepts/ontology/Ontology'
 import { conceptRefs } from '@/concepts/concepts/Concept'
 import { useOntology } from '@/concepts/ontology/useOntology'
-import InstanceRenderer from '@/concepts/instances/InstanceRenderer.vue'
+import Instance from '@/concepts/instances/Instance.vue'
 import TransactionBar from '@/concepts/transactions/TransactionBar.vue'
 import RealityPanel from '@/concepts/reality/RealityPanel.vue'
 
@@ -47,7 +47,7 @@ const refs = computed(() => (concept.value ? conceptRefs(concept.value) : []))
       </div>
     </nav>
 
-    <InstanceRenderer v-if="concept" :instance="concept" />
+    <Instance v-if="concept" :instance="concept" />
     <v-card v-else variant="outlined" class="flex-grow-1 d-flex align-center">
       <v-card-text class="text-medium-emphasis">Unknown concept: {{ conceptId }}</v-card-text>
     </v-card>
