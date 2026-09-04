@@ -2,7 +2,8 @@
 // declared here too (identity derivation is concept-specific); `name` is
 // declared on Instance instead, since any instance may have one. `examples`
 // (0+, typed cdd.concept) lists other concept instances as examples of this
-// one. Also carries a constructor transaction, cdd.concept:create.
+// one — here, Attribute, Instance and Property. Also carries a constructor
+// transaction, cdd.concept:create.
 export default [
   [
     { kind: 'identity', value: 'cdd.concept' },
@@ -25,6 +26,7 @@ export default [
       ],
     },
     { kind: 'transactions', value: ['cdd.concept:create'] },
+    { kind: 'examples', value: ['cdd.attribute', 'cdd.instance', 'cdd.property'] },
   ],
   [
     { kind: 'identity', value: 'cdd.concept:slug' },
