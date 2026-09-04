@@ -42,8 +42,12 @@ export default [
     { kind: 'type', value: 'cdd.name' },
     { kind: 'cardinality', value: '1' },
     {
-      kind: 'description',
-      value: 'the parent concept\'s slug and the transaction\'s own slug, joined by `:` — e.g. `logs:view`.',
+      kind: 'examples',
+      value: [
+        'cdd.transaction:canonicalName:examples:usersCreate',
+        'cdd.transaction:canonicalName:examples:ordersSetDestination',
+        'cdd.transaction:canonicalName:examples:packagesMark',
+      ],
     },
     { kind: 'computed', value: 'true' },
     {
@@ -51,5 +55,20 @@ export default [
       value:
         "const parentId = (instance.find((p) => p.kind === 'parentConcept') || {}).value; const parent = parentId ? ontology.instances[parentId] : undefined; const parentSlug = parent ? (parent.find((p) => p.kind === 'slug') || {}).value : undefined; const slug = (instance.find((p) => p.kind === 'slug') || {}).value; return parentSlug && slug ? `${parentSlug}:${slug}` : ''",
     },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.transaction:canonicalName:examples:usersCreate' },
+    { kind: 'concept', value: 'cdd.example' },
+    { kind: 'description', value: 'users:create' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.transaction:canonicalName:examples:ordersSetDestination' },
+    { kind: 'concept', value: 'cdd.example' },
+    { kind: 'description', value: 'orders:set-destination' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.transaction:canonicalName:examples:packagesMark' },
+    { kind: 'concept', value: 'cdd.example' },
+    { kind: 'description', value: 'packages:mark' },
   ],
 ]

@@ -5,9 +5,10 @@ import { firstOfKind } from '@/concepts/properties/Property'
 import type { Instance } from '@/concepts/instances/Instance'
 import { useOntology } from '@/concepts/ontology/useOntology'
 
-// `examples` value identities reference Example instances — each one pairs a
-// linked `instance` (a concept, shown as a link) with a `description` of it in
-// this context.
+// `examples` value identities reference Example instances — each one pairs an
+// optional linked `instance` (a concept, shown as a link) with a
+// `description`. An example with no linked instance is plain text: just its
+// description, rendered without a link.
 const props = defineProps<{ property: Property; instance: Instance }>()
 const { ontology, conceptLabel, navigate } = useOntology()
 
@@ -23,11 +24,11 @@ const examples = computed(() => {
     const example = ontology().instances[id]
     const linked = example ? firstOfKind(example, 'instance') : undefined
     const description = example ? firstOfKind(example, 'description') : undefined
-    const target = linked ? literal(linked.value) : id
+    const target = linked ? literal(linked.value) : undefined
     return {
       key: id,
       target,
-      label: conceptLabel(target) ?? target,
+      label: target ? (conceptLabel(target) ?? target) : undefined,
       description: description ? literal(description.value) : undefined,
     }
   })
@@ -39,8 +40,10 @@ const examples = computed(() => {
     <h3 class="text-left mb-1">Examples</h3>
     <ul class="examples-list">
       <li v-for="ex in examples" :key="ex.key">
-        <a href="#" class="link" @click.prevent="navigate(ex.target)">{{ ex.label }}</a
-        ><template v-if="ex.description">&nbsp;&mdash;&nbsp;{{ ex.description }}</template>
+        <template v-if="ex.target"
+          ><a href="#" class="link" @click.prevent="navigate(ex.target)">{{ ex.label }}</a
+          ><template v-if="ex.description">&nbsp;&mdash;&nbsp;{{ ex.description }}</template></template
+        ><code v-else class="text-caption">{{ ex.description }}</code>
       </li>
     </ul>
   </div>

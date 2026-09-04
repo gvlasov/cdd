@@ -1,7 +1,8 @@
-// An example pairs an `instance` (a link to the concept it exemplifies) with a
-// `description` of that instance's relevance in this context. Declared as an
-// owned, structured attribute wherever a concept lists examples of itself —
-// see cdd.concept:examples.
+// An example pairs an optional `instance` (a link to the concept it
+// exemplifies) with a `description` — free text, either standing alone (a
+// plain-text example, e.g. `logs:view`) or elaborating on the linked
+// instance. Declared as an owned, structured attribute wherever a concept
+// lists examples of itself — see cdd.concept:examples.
 export default [
   [
     { kind: 'identity', value: 'cdd.example' },
@@ -10,7 +11,8 @@ export default [
     { kind: 'name', value: 'Example' },
     {
       kind: 'definition',
-      value: 'a link to an [instance](.instance) paired with a description of it in context.',
+      value:
+        'an optional link to an [instance](.instance), paired with a `description` — free text standing alone or elaborating on the linked instance.',
     },
     { kind: 'attributes', value: ['cdd.example:instance', 'cdd.example:description'] },
   ],
@@ -20,7 +22,7 @@ export default [
     { kind: 'slug', value: 'instance' },
     { kind: 'name', value: 'instance' },
     { kind: 'type', value: 'cdd.concept' },
-    { kind: 'cardinality', value: '1' },
+    { kind: 'cardinality', value: '0-1' },
   ],
   [
     { kind: 'identity', value: 'cdd.example:description' },
