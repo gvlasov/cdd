@@ -43,7 +43,7 @@ const examples = computed(() => {
         <template v-if="ex.target"
           ><a href="#" class="link" @click.prevent="navigate(ex.target)">{{ ex.label }}</a
           ><template v-if="ex.description">&nbsp;&mdash;&nbsp;{{ ex.description }}</template></template
-        ><code v-else class="text-caption">{{ ex.description }}</code>
+        ><code v-else class="inline-code">{{ ex.description }}</code>
       </li>
     </ul>
   </div>
@@ -62,5 +62,12 @@ const examples = computed(() => {
   color: rgb(var(--v-theme-concept));
   text-decoration: none;
   border-bottom: 2px solid currentColor;
+}
+.inline-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: rgb(var(--v-theme-on-surface) / 0.08);
 }
 </style>
