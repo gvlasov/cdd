@@ -1,6 +1,5 @@
 import type { PropertyKind } from '@/concepts/properties/PropertyKind'
 import type { PropertyKindName } from '@/concepts/properties/Property'
-import SlugProperty from './SlugProperty.vue'
 import NameProperty from './NameProperty.vue'
 import DefinitionProperty from './DefinitionProperty.vue'
 import DefinitionEdit from './DefinitionEdit.vue'
@@ -29,9 +28,10 @@ import CanonicalNameProperty from './CanonicalNameProperty.vue'
 //    derivation (see cdd.attribute); they are not drawn on the instances
 //    that attribute applies to — AttributeValueEditor reads them directly
 //    to render and evaluate the derived value instead
+//  - `slug` is not drawn — it is addressing, not something to show
 export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   name: { name: 'name', position: 0, render: NameProperty },
-  slug: { name: 'slug', position: 1, render: SlugProperty },
+  slug: { name: 'slug', position: 1 },
   definition: {
     name: 'definition',
     position: 2,

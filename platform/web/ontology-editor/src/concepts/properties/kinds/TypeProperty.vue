@@ -2,36 +2,29 @@
 import { computed } from 'vue'
 import type { Property } from '@/concepts/properties/Property'
 import type { Instance } from '@/concepts/instances/Instance'
-import { instanceSlug } from '@/concepts/instances/Instance'
-import { conceptSlug } from '@/concepts/concepts/Concept'
-import { conceptOf } from '@/concepts/ontology/Ontology'
 import { attributeCardinality } from '@/concepts/attributes/Attribute'
 import { useOntology } from '@/concepts/ontology/useOntology'
 
-// `type` references the concept an attribute's value is an instance of, with
-// the attribute's cardinality as a superscript on it. Hidden when the
-// attribute's slug matches its type's slug — the title's name part already
-// links to the type then (and carries the cardinality sup).
+// `type` references the concept an attribute's value is an instance of,
+// shown as a plain link with the attribute's cardinality as a superscript.
 const props = defineProps<{ property: Property; instance: Instance }>()
-const { conceptLabel, navigate, ontology } = useOntology()
+const { conceptLabel, navigate } = useOntology()
 
 const target = computed(() => String(props.property.value))
 const cardinality = computed(() => attributeCardinality(props.instance))
-const redundant = computed(() => {
-  const type = conceptOf(ontology(), target.value)
-  return !!type && conceptSlug(type) === instanceSlug(props.instance)
-})
 </script>
 
 <template>
-  <div
-    v-if="!redundant"
-    class="text-caption text-medium-emphasis d-flex align-center ga-1"
-  >
-    <span>type</span>
-    <v-chip color="concept" variant="outlined" size="small" link @click="navigate(target)">
-      {{ conceptLabel(target) ?? target }}
-    </v-chip>
+  <div class="text-caption text-medium-emphasis d-flex align-center">
+    <a class="link" href="#" @click.prevent="navigate(target)">{{ conceptLabel(target) ?? target }}</a>
     <sup>{{ cardinality }}</sup>
   </div>
 </template>
+
+<style scoped>
+.link {
+  color: rgb(var(--v-theme-concept));
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+}
+</style>
