@@ -14,6 +14,8 @@ export {
   derivedIdentity,
   slugIdentityMismatches,
 } from '@/concepts/ontology/Ontology'
+export type { OntologyModule } from '@/concepts/ontology/loadOntology'
+export { loadOntology } from '@/concepts/ontology/loadOntology'
 
 export type { Identity } from '@/concepts/identity/Identity'
 export { IdentityRepository } from '@/concepts/identity/IdentityRepository'

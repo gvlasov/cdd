@@ -1,0 +1,71 @@
+// `definition` is an attribute of Concept — only concepts get one. `slug` is
+// declared here too (identity derivation is concept-specific); `name` is
+// declared on Instance instead, since any instance may have one. Also carries
+// a constructor transaction, cdd.concept:create.
+export default [
+  [
+    { kind: 'identity', value: 'cdd.concept' },
+    { kind: 'concept', value: 'cdd.concept' },
+    { kind: 'slug', value: 'concept' },
+    { kind: 'name', value: 'Concept' },
+    {
+      kind: 'definition',
+      value:
+        'A cohesion unit. A concept is a collection of [properties](.property); its [attributes](.attribute) declare what its instances may hold.',
+    },
+    {
+      kind: 'attributes',
+      value: [
+        'cdd.concept:slug',
+        'cdd.concept:definition',
+        'cdd.concept:attributes',
+        'cdd.concept:transactions',
+      ],
+    },
+    { kind: 'transactions', value: ['cdd.concept:create'] },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.concept:slug' },
+    { kind: 'concept', value: 'cdd.attribute' },
+    { kind: 'slug', value: 'slug' },
+    { kind: 'name', value: 'slug' },
+    { kind: 'type', value: 'cdd.slug' },
+    { kind: 'cardinality', value: '1' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.concept:definition' },
+    { kind: 'concept', value: 'cdd.attribute' },
+    { kind: 'slug', value: 'definition' },
+    { kind: 'name', value: 'definition' },
+    { kind: 'type', value: 'cdd.definition' },
+    { kind: 'cardinality', value: '0-1' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.concept:attributes' },
+    { kind: 'concept', value: 'cdd.attribute' },
+    { kind: 'slug', value: 'attributes' },
+    { kind: 'name', value: 'attributes' },
+    { kind: 'type', value: 'cdd.attribute' },
+    { kind: 'cardinality', value: '0+' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.concept:transactions' },
+    { kind: 'concept', value: 'cdd.attribute' },
+    { kind: 'slug', value: 'transactions' },
+    { kind: 'name', value: 'transactions' },
+    { kind: 'type', value: 'cdd.transaction' },
+    { kind: 'cardinality', value: '0+' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.concept:create' },
+    { kind: 'concept', value: 'cdd.transaction' },
+    { kind: 'name', value: 'create' },
+    { kind: 'definition', value: 'Constructor: spawn a new concept instance into the reality.' },
+    { kind: 'params', value: ['name', 'definition'] },
+    {
+      kind: 'effect',
+      value:
+        "return reality.add('cdd.concept', { name: input.name, definition: input.definition })",
+    },
+  ],
+]

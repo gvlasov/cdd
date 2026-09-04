@@ -175,6 +175,57 @@ src/concepts/
 src/index.ts      public entry point for the embeddable component
 ```
 
+## Storing an ontology in a CDD project
+
+An ontology can be authored as plain `.ts` files in a project's `concepts/`
+tree instead of one hand-written literal, and assembled into an `Ontology`
+object at build time.
+
+**File contract**: one file per concept (CDD's usual `concepts/<slug>/<Name>.ts`
+layout), default-exporting an `OntologyModule` — a flat array of instances (the
+concept itself, plus any it owns: its attribute instances, transactions, ...).
+Each instance carries its own `identity` property, which becomes its key.
+
+```ts
+// concepts/editor/concept/Concept.ts
+export default [
+  [
+    { kind: 'identity', value: 'cdd.concept' },
+    { kind: 'concept', value: 'cdd.concept' },
+    { kind: 'slug', value: 'concept' },
+    { kind: 'name', value: 'Concept' },
+    { kind: 'attributes', value: ['cdd.concept:slug'] },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.concept:slug' },
+    { kind: 'concept', value: 'cdd.attribute' },
+    { kind: 'slug', value: 'slug' },
+    { kind: 'name', value: 'slug' },
+    { kind: 'type', value: 'cdd.slug' },
+    { kind: 'cardinality', value: '1' },
+  ],
+]
+```
+
+The consuming app glob-imports the directory and hands the result to
+`loadOntology`:
+
+```ts
+import { loadOntology, type OntologyModule } from '@cdd/ontology-editor'
+
+const modules = import.meta.glob<{ default: OntologyModule }>(
+  './concepts/editor/**/*.ts',
+  { eager: true },
+)
+const ontology = loadOntology(modules, 'cdd') // 'cdd' = the root instance's identity
+```
+
+`import.meta.glob` is Vite's; the pattern must be relative to the importing
+file. If `concepts/` sits outside the Vite project root, add it to
+`server.fs.allow` so the dev server can read it (see this project's own
+`vite.config.ts` and `src/concepts/app/DemoApp.vue`, which loads this repo's
+own ontology from `/concepts/editor` this way).
+
 ## Develop
 
 From anywhere in the repo:

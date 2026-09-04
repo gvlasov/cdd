@@ -18,6 +18,14 @@ export default defineConfig(({ mode }) => {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
+    server: {
+      // The demo app loads this repo's ontology data from ../../../concepts/editor
+      // (outside this package's own root), so the dev server must be allowed
+      // to read it.
+      fs: {
+        allow: [fileURLToPath(new URL('../../..', import.meta.url))],
+      },
+    },
     build: lib
       ? {
           lib: {
