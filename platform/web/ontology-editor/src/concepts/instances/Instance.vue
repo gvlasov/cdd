@@ -31,14 +31,16 @@ const drawn = computed(() =>
     variant="tonal"
     class="flex-grow-1 d-flex align-center overflow-auto"
   >
-    <v-card-text class="d-flex flex-column ga-4 align-center">
-      <component
-        :is="entry.kind.render"
-        v-for="entry in drawn"
-        :key="entry.i"
-        :property="entry.property"
-        :instance="instance"
-      />
+    <v-card-text class="d-flex justify-center">
+      <div class="d-flex flex-column ga-4" style="max-width: 60ch; width: 100%">
+        <component
+          :is="entry.kind.render"
+          v-for="entry in drawn"
+          :key="entry.i"
+          :property="entry.property"
+          :instance="instance"
+        />
+      </div>
     </v-card-text>
   </v-card>
 </template>

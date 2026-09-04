@@ -12,7 +12,7 @@ const text = computed(() =>
 </script>
 
 <template>
-  <p class="text-body-1 text-medium-emphasis text-left mx-auto" style="max-width: 60ch">
+  <p class="text-body-1 text-medium-emphasis text-left">
     <ConceptText :text="text" />
   </p>
 </template>
