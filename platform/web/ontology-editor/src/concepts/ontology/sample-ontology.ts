@@ -5,12 +5,14 @@ import type { Cardinality } from '@/concepts/attributes/Attribute'
 
 // Every entry is an instance; its `concept` property names its type.
 //
-//  - Leaf concepts (`cdd.name`, `cdd.slug`, `cdd.definition`, `cdd.cardinality`)
-//    declare no attributes — their values edit as plain fields.
+//  - Leaf concepts (`cdd.name`, `cdd.slug`, `cdd.definition`) declare no
+//    attributes — their values edit as plain fields.
 //  - An attribute is an instance typed `cdd.attribute` with `slug` (the property
 //    key), `type` (the value concept) and `cardinality` (0-1 | 1 | 0+ | 1+).
 //    Each attribute belongs to exactly one concept — its identity is
-//    `<ownerId>.<slug>`.
+//    `<ownerId>.<slug>`. `cardinality` is not itself a concept — it's a
+//    built-in attribute of `cdd.attribute`, recognized by the literal type id
+//    `cdd.cardinality`, and edits as a 0-1/1/0+/1+ toggle.
 //  - A concept's `attributes` property lists its own attribute-instance ids.
 //  - The `cdd` instance is an ontology — the root concept of itself.
 
@@ -67,12 +69,6 @@ leaf(
   'A `[a-zA-Z0-9_-]` word, unique within the ontology. An [instance](.instance)’s identity is its metaentity chain of slugs joined by `.` — `<ontology>.<concept>.<instance>`.',
 )
 leaf('cdd.definition', 'definition', 'Definition', 'The text that says what a concept is.')
-leaf(
-  'cdd.cardinality',
-  'cardinality',
-  'Cardinality',
-  'How many values an attribute holds: `0-1`, `1`, `0+` or `1+`.',
-)
 
 leaf(
   'cdd.transaction',
@@ -154,7 +150,6 @@ instances['cdd'] = [
       'cdd.name',
       'cdd.definition',
       'cdd.slug',
-      'cdd.cardinality',
       'cdd.transaction',
     ],
   },
