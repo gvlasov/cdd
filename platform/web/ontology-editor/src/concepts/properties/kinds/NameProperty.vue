@@ -63,7 +63,9 @@ const cardinalitySup = computed(() =>
       ><template v-else>{{ property.value }}</template
       ><sup v-if="cardinalitySup" class="text-medium-emphasis">{{ cardinalitySup }}</sup>
     </h1>
-    <code v-if="slug" class="text-caption text-disabled">{{ slug }}</code>
+    <code v-if="slug" class="text-caption text-disabled"
+      ><span class="text-medium-emphasis">&nbsp;&middot;&nbsp;</span>{{ slug }}</code
+    >
   </div>
 </template>
 
