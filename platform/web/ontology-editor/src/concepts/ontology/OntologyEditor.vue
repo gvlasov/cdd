@@ -230,7 +230,6 @@ provideOntology({
 
     <v-dialog v-model="creating" max-width="420">
       <v-card>
-        <v-card-title>New concept</v-card-title>
         <v-card-text>
           <v-text-field
             v-model="newSlug"
