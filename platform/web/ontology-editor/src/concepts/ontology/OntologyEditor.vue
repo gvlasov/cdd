@@ -234,6 +234,7 @@ provideOntology({
           <v-text-field
             v-model="newSlug"
             label="slug"
+            placeholder="my-new-concept"
             :error-messages="newConceptError"
             variant="outlined"
             autofocus
