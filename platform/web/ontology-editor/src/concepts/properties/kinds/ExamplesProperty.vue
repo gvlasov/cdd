@@ -1,34 +1,60 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { Property } from '@/concepts/properties/Property'
+import { firstOfKind } from '@/concepts/properties/Property'
 import type { Instance } from '@/concepts/instances/Instance'
 import { useOntology } from '@/concepts/ontology/useOntology'
 
-// `examples` value identities reference instances of the concept — each one
-// resolved to a label, falling back to the raw identity for anything unknown.
+// `examples` value identities reference Example instances — each one pairs a
+// linked `instance` (a concept, shown as a link) with a `description` of it in
+// this context.
 const props = defineProps<{ property: Property; instance: Instance }>()
-const { conceptLabel, navigate } = useOntology()
+const { ontology, conceptLabel, navigate } = useOntology()
 
-const identities = computed(() =>
-  Array.isArray(props.property.value) ? props.property.value : [props.property.value],
-)
+function literal(value: Property['value']): string {
+  return Array.isArray(value) ? (value[0] ?? '') : value
+}
+
+const examples = computed(() => {
+  const ids = Array.isArray(props.property.value)
+    ? props.property.value
+    : [props.property.value]
+  return ids.map((id) => {
+    const example = ontology().instances[id]
+    const linked = example ? firstOfKind(example, 'instance') : undefined
+    const description = example ? firstOfKind(example, 'description') : undefined
+    const target = linked ? literal(linked.value) : id
+    return {
+      key: id,
+      target,
+      label: conceptLabel(target) ?? target,
+      description: description ? literal(description.value) : undefined,
+    }
+  })
+})
 </script>
 
 <template>
-  <div class="text-center">
-    <div class="text-overline text-medium-emphasis">examples</div>
-    <div class="d-flex flex-wrap ga-2 justify-center">
-      <v-chip
-        v-for="id in identities"
-        :key="id"
-        color="concept"
-        variant="outlined"
-        size="small"
-        link
-        @click="navigate(id)"
-      >
-        {{ conceptLabel(id) ?? id }}
-      </v-chip>
-    </div>
+  <div>
+    <h3 class="text-left mb-1">Examples</h3>
+    <ul class="examples-list">
+      <li v-for="ex in examples" :key="ex.key">
+        <a href="#" class="link" @click.prevent="navigate(ex.target)">{{ ex.label }}</a
+        ><template v-if="ex.description">&nbsp;&mdash;&nbsp;{{ ex.description }}</template>
+      </li>
+    </ul>
   </div>
 </template>
+
+<style scoped>
+.examples-list {
+  list-style: disc;
+  padding-left: 1.25em;
+  margin: 0;
+}
+.link {
+  color: rgb(var(--v-theme-concept));
+  text-decoration: none;
+  border-bottom: 2px solid currentColor;
+}
+</style>

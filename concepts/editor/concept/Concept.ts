@@ -1,9 +1,9 @@
 // `definition` is an attribute of Concept — only concepts get one. `slug` is
 // declared here too (identity derivation is concept-specific); `name` is
 // declared on Instance instead, since any instance may have one. `examples`
-// (0+, typed cdd.concept) lists other concept instances as examples of this
-// one — here, Attribute, Instance and Property. Also carries a constructor
-// transaction, cdd.concept:create.
+// (0+, typed cdd.example) owns a list of Example instances — each pairs a
+// linked concept instance with a description of it in this context. Also
+// carries a constructor transaction, cdd.concept:create.
 export default [
   [
     { kind: 'identity', value: 'cdd.concept' },
@@ -26,7 +26,37 @@ export default [
       ],
     },
     { kind: 'transactions', value: ['cdd.concept:create'] },
-    { kind: 'examples', value: ['cdd.attribute', 'cdd.instance', 'cdd.property'] },
+    {
+      kind: 'examples',
+      value: ['cdd.concept:examples:attribute', 'cdd.concept:examples:instance', 'cdd.concept:examples:property'],
+    },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.concept:examples:attribute' },
+    { kind: 'concept', value: 'cdd.example' },
+    { kind: 'instance', value: 'cdd.attribute' },
+    {
+      kind: 'description',
+      value: 'a concept whose instances are themselves the attributes another concept declares.',
+    },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.concept:examples:instance' },
+    { kind: 'concept', value: 'cdd.example' },
+    { kind: 'instance', value: 'cdd.instance' },
+    {
+      kind: 'description',
+      value: 'the most general concept in the ontology — every other concept is a kind of instance.',
+    },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.concept:examples:property' },
+    { kind: 'concept', value: 'cdd.example' },
+    { kind: 'instance', value: 'cdd.property' },
+    {
+      kind: 'description',
+      value: 'a concept that, unusually, declares no attributes of its own for this ontology.',
+    },
   ],
   [
     { kind: 'identity', value: 'cdd.concept:slug' },
@@ -65,7 +95,7 @@ export default [
     { kind: 'concept', value: 'cdd.attribute' },
     { kind: 'slug', value: 'examples' },
     { kind: 'name', value: 'examples' },
-    { kind: 'type', value: 'cdd.concept' },
+    { kind: 'type', value: 'cdd.example' },
     { kind: 'cardinality', value: '0+' },
   ],
   [

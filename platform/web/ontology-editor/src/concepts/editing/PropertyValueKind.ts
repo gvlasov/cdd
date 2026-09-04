@@ -23,6 +23,7 @@ export const propertyValueKind: Record<PropertyKindName, PropertyValueKind> = {
   required: 'literal',
   type: 'concept-list',
   cardinality: 'literal',
+  instance: 'concept-list',
 }
 
 export const ALL_PROPERTY_KINDS: PropertyKindName[] = [
@@ -41,4 +42,5 @@ export const ALL_PROPERTY_KINDS: PropertyKindName[] = [
   'required',
   'type',
   'cardinality',
+  'instance',
 ]

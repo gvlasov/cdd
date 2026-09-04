@@ -17,6 +17,7 @@ export interface Property {
    *  - `attributes`: the attribute concepts an instance of this concept may have
    *  - `transactions`: the transaction identities a concept exposes
    *  - `params`: names of the inputs a transaction's effect expects
+   *  - `instance`: the identity an Example links to
    */
   value: Identity | Identity[]
 }
@@ -37,6 +38,7 @@ export type PropertyKindName =
   | 'required'
   | 'type'
   | 'cardinality'
+  | 'instance'
 
 export function propertiesOfKind(
   properties: Property[],
