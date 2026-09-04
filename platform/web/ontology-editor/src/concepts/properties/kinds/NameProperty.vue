@@ -46,7 +46,7 @@ const cardinality = computed(() => attributeCardinality(props.instance))
       ><a class="link type-link" href="#" @click.prevent="navigate(typeId)">{{
         conceptLabel(typeId) ?? typeId
       }}</a
-      ><sup class="text-medium-emphasis">{{ cardinality }}</sup></template
+      ><sup class="text-medium-emphasis cardinality">{{ cardinality }}</sup></template
     >
   </h1>
 </template>
@@ -63,5 +63,8 @@ const cardinality = computed(() => attributeCardinality(props.instance))
 .type-link {
   font-size: 1rem;
   border-bottom-width: 1px;
+}
+.cardinality {
+  font-size: 0.75rem;
 }
 </style>
