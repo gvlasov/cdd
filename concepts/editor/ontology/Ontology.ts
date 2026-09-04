@@ -20,5 +20,6 @@ export default [
     { kind: 'name', value: 'concepts' },
     { kind: 'type', value: 'cdd.concept' },
     { kind: 'cardinality', value: '0+' },
+    { kind: 'description', value: 'all concepts of an ontology.' },
   ],
 ]

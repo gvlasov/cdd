@@ -19,6 +19,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
+      port: 5174,
       // The demo app loads this repo's ontology data from ../../../concepts/editor
       // (outside this package's own root), so the dev server must be allowed
       // to read it.

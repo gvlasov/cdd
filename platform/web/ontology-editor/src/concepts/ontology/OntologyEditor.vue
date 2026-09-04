@@ -7,6 +7,7 @@ import { isSlug } from '@/concepts/identity/Slug'
 import { provideOntology } from './useOntology'
 import { ontologyConcepts, conceptOf } from './Ontology'
 import { conceptLabelOf } from '@/concepts/concepts/Concept'
+import { soleOwningAttribute } from '@/concepts/attributes/Attribute'
 import {
   renameSlug as renameSlugEdit,
   identityAfterSlug,
@@ -78,10 +79,14 @@ function pushHash(identity: Identity) {
   const next = `#${encodeURIComponent(identity)}`
   if (window.location.hash !== next) window.history.pushState({ ontologyConcept: identity }, '', next)
 }
+function resolveTarget(identity: Identity): Identity {
+  return soleOwningAttribute(props.modelValue, identity) ?? identity
+}
+
 function onPopState() {
   const id = hashIdentity()
   if (id && id in props.modelValue.instances) {
-    currentId.value = id
+    currentId.value = resolveTarget(id)
     editing.value = false
   }
 }
@@ -89,7 +94,7 @@ function onPopState() {
 onMounted(() => {
   if (!props.history) return
   const id = hashIdentity()
-  if (id && id in props.modelValue.instances) currentId.value = id
+  if (id && id in props.modelValue.instances) currentId.value = resolveTarget(id)
   else pushHash(currentId.value)
   window.addEventListener('popstate', onPopState)
 })
@@ -98,10 +103,11 @@ onBeforeUnmount(() => {
 })
 
 function navigate(identity: Identity) {
-  if (identity === currentId.value) return
-  currentId.value = identity
+  const target = resolveTarget(identity)
+  if (target === currentId.value) return
+  currentId.value = target
   editing.value = false
-  if (props.history) pushHash(identity)
+  if (props.history) pushHash(target)
 }
 
 function apply(mutate: (ontology: Ontology) => Ontology) {

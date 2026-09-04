@@ -23,7 +23,6 @@ export default [
         'cdd.attribute:computed',
         'cdd.attribute:function',
         'cdd.attribute:description',
-        'cdd.attribute:examples',
       ],
     },
   ],
@@ -82,13 +81,5 @@ export default [
     { kind: 'name', value: 'description' },
     { kind: 'type', value: 'cdd.definition' },
     { kind: 'cardinality', value: '0-1' },
-  ],
-  [
-    { kind: 'identity', value: 'cdd.attribute:examples' },
-    { kind: 'concept', value: 'cdd.attribute' },
-    { kind: 'slug', value: 'examples' },
-    { kind: 'name', value: 'examples' },
-    { kind: 'type', value: 'cdd.example' },
-    { kind: 'cardinality', value: '0+' },
   ],
 ]

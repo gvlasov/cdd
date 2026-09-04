@@ -60,6 +60,8 @@ export function addProperty(
     'attributes',
     'transactions',
     'params',
+    'layers',
+    'concerns',
   ]
   instance.push({ kind, value: listKinds.includes(kind) ? [] : '' })
   return { ...ontology, instances }

@@ -17,6 +17,8 @@ export interface Property {
    *  - `attributes`: the attribute concepts an instance of this concept may have
    *  - `transactions`: the transaction identities a concept exposes
    *  - `params`: names of the inputs a transaction's effect expects
+   *  - `layers`: the ordered path data traces through a transaction
+   *  - `concerns`: the concerns a transaction encapsulates, unordered
    *  - `instance`: the identity an Example links to
    *  - `parentConcept`: the concept a transaction is about (e.g. `cdd.concept`
    *    for `cdd.concept:create`) — distinct from `concept`, which names the
@@ -45,6 +47,8 @@ export type PropertyKindName =
   | 'transactions'
   | 'effect'
   | 'params'
+  | 'layers'
+  | 'concerns'
   | 'required'
   | 'type'
   | 'cardinality'

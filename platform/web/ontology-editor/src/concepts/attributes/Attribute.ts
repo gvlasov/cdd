@@ -1,7 +1,7 @@
 import type { Identity } from '@/concepts/identity/Identity'
 import type { Instance } from '@/concepts/instances/Instance'
 import type { Ontology } from '@/concepts/ontology/Ontology'
-import { conceptOf } from '@/concepts/ontology/Ontology'
+import { conceptOf, ontologyConcepts } from '@/concepts/ontology/Ontology'
 import { firstOfKind } from '@/concepts/properties/Property'
 import { instanceName, instanceSlug } from '@/concepts/instances/Instance'
 import { conceptAttributes } from '@/concepts/concepts/Concept'
@@ -135,4 +135,28 @@ export function attributeTypeParents(ontology: Ontology, identity: Identity): Id
     if (specs.some((spec) => spec.type === identity)) parents.push(ownerId)
   }
   return parents
+}
+
+/** Identities of every attribute instance across the ontology typed `identity`. */
+export function attributesTypedBy(ontology: Ontology, identity: Identity): Identity[] {
+  const attributes: Identity[] = []
+  for (const [ownerId, instance] of Object.entries(ontology.instances)) {
+    if (attributeType(instance) === identity) attributes.push(ownerId)
+  }
+  return attributes
+}
+
+/**
+ * A concept that exists purely to shape one attribute's value: it is the
+ * `type` of exactly one attribute across the whole ontology, and it is not a
+ * first-class concept in its own right (not listed in the ontology root's
+ * `concepts`). Such a concept has no page of its own — it merges into that
+ * one attribute's page instead. Returns the attribute's identity, or
+ * undefined if `identity` doesn't qualify.
+ */
+export function soleOwningAttribute(ontology: Ontology, identity: Identity): Identity | undefined {
+  if (ontologyConcepts(ontology).includes(identity)) return undefined
+  const typedAttributes = attributesTypedBy(ontology, identity)
+  if (typedAttributes.length !== 1) return undefined
+  return typedAttributes[0]
 }

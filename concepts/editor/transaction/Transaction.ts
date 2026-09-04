@@ -15,8 +15,62 @@ export default [
     },
     {
       kind: 'attributes',
-      value: ['cdd.transaction:slug', 'cdd.transaction:parentConcept', 'cdd.transaction:canonicalName'],
+      value: [
+        'cdd.transaction:slug',
+        'cdd.transaction:parentConcept',
+        'cdd.transaction:canonicalName',
+        'cdd.transaction:params',
+      ],
     },
+    {
+      kind: 'examples',
+      value: [
+        'cdd.transaction:examples:usersCreate',
+        'cdd.transaction:examples:ordersSetDestination',
+        'cdd.transaction:examples:packagesMark',
+      ],
+    },
+    {
+      kind: 'layers',
+      value: [
+        'user intent',
+        'frontend code',
+        'transport layer request',
+        'route',
+        'controller',
+        'validation',
+        'mutation',
+        'persistence',
+        'response',
+        'UI display',
+      ],
+    },
+    {
+      kind: 'concerns',
+      value: [
+        'input constraints',
+        'rate limiting',
+        'transport',
+        'database queries',
+        'caching',
+        'state manipulation',
+      ],
+    },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.transaction:examples:usersCreate' },
+    { kind: 'concept', value: 'cdd.example' },
+    { kind: 'description', value: 'users:create — registers a new user account.' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.transaction:examples:ordersSetDestination' },
+    { kind: 'concept', value: 'cdd.example' },
+    { kind: 'description', value: 'orders:set-destination — changes where a placed order ships to.' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.transaction:examples:packagesMark' },
+    { kind: 'concept', value: 'cdd.example' },
+    { kind: 'description', value: 'packages:mark — flags a package with a status, e.g. lost or delivered.' },
   ],
   [
     { kind: 'identity', value: 'cdd.transaction:slug' },
@@ -41,14 +95,6 @@ export default [
     { kind: 'name', value: 'canonical name' },
     { kind: 'type', value: 'cdd.string' },
     { kind: 'cardinality', value: '1' },
-    {
-      kind: 'examples',
-      value: [
-        'cdd.transaction:canonicalName:examples:usersCreate',
-        'cdd.transaction:canonicalName:examples:ordersSetDestination',
-        'cdd.transaction:canonicalName:examples:packagesMark',
-      ],
-    },
     { kind: 'computed', value: 'true' },
     {
       kind: 'function',
@@ -57,18 +103,12 @@ export default [
     },
   ],
   [
-    { kind: 'identity', value: 'cdd.transaction:canonicalName:examples:usersCreate' },
-    { kind: 'concept', value: 'cdd.example' },
-    { kind: 'description', value: 'users:create' },
-  ],
-  [
-    { kind: 'identity', value: 'cdd.transaction:canonicalName:examples:ordersSetDestination' },
-    { kind: 'concept', value: 'cdd.example' },
-    { kind: 'description', value: 'orders:set-destination' },
-  ],
-  [
-    { kind: 'identity', value: 'cdd.transaction:canonicalName:examples:packagesMark' },
-    { kind: 'concept', value: 'cdd.example' },
-    { kind: 'description', value: 'packages:mark' },
+    { kind: 'identity', value: 'cdd.transaction:params' },
+    { kind: 'concept', value: 'cdd.attribute' },
+    { kind: 'slug', value: 'params' },
+    { kind: 'name', value: 'params' },
+    { kind: 'type', value: 'cdd.string' },
+    { kind: 'cardinality', value: '0+' },
+    { kind: 'description', value: 'names of the inputs the transaction’s effect expects.' },
   ],
 ]

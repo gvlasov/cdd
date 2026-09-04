@@ -5,7 +5,11 @@ import type { Instance } from '@/concepts/instances/Instance'
 import { instanceType, instanceIdentity } from '@/concepts/instances/Instance'
 import { conceptLabelOf, conceptAttributes } from '@/concepts/concepts/Concept'
 import { conceptOf } from '@/concepts/ontology/Ontology'
-import { attributeType, attributeCardinality } from '@/concepts/attributes/Attribute'
+import {
+  attributeType,
+  attributeCardinality,
+  soleOwningAttribute,
+} from '@/concepts/attributes/Attribute'
 import { useOntology } from '@/concepts/ontology/useOntology'
 
 // `name` renders as the instance's title. For an attribute instance the title
@@ -30,7 +34,17 @@ const owner = computed(() => {
   return undefined
 })
 
-const typeId = computed(() => (isAttribute.value ? attributeType(props.instance) : undefined))
+// Skip the type link when the type exists purely to shape this one attribute
+// — the attribute's own page already stands in for it, so naming it again as
+// a type would be redundant.
+const typeId = computed(() => {
+  if (!isAttribute.value) return undefined
+  const type = attributeType(props.instance)
+  if (!type) return undefined
+  const myId = instanceIdentity(props.instance)
+  if (myId && soleOwningAttribute(ontology(), type) === myId) return undefined
+  return type
+})
 const cardinality = computed(() => attributeCardinality(props.instance))
 </script>
 

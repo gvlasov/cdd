@@ -5,7 +5,8 @@ import { isConcept } from '@/concepts/concepts/Concept'
 import { instanceType } from './Instance'
 import { propertyKind } from '@/concepts/properties/kinds/property-kinds'
 import { conceptOf } from '@/concepts/ontology/Ontology'
-import { conceptAttributeSpecs } from '@/concepts/attributes/Attribute'
+import { conceptAttributeSpecs, attributeType, soleOwningAttribute } from '@/concepts/attributes/Attribute'
+import { instanceIdentity } from './Instance'
 import { useOntology } from '@/concepts/ontology/useOntology'
 
 // The central component: renders one instance as its properties, in
@@ -14,6 +15,21 @@ import { useOntology } from '@/concepts/ontology/useOntology'
 const props = defineProps<{ instance: Instance }>()
 
 const { ontology } = useOntology()
+
+// When this attribute is the sole reason its type-concept exists (see
+// `soleOwningAttribute`), that concept has no page of its own — its content
+// properties (definition, examples, transactions, ...) are drawn here too,
+// alongside the attribute's own, so the merged page carries both. Identity,
+// naming, and schema properties are skipped: the attribute's own name/type
+// stand in for them, and `attributes` is drawn below by ConceptView.
+const MERGED_CONCEPT_SKIP = new Set(['identity', 'concept', 'slug', 'name', 'attributes'])
+const mergedConceptProperties = computed(() => {
+  const type = attributeType(props.instance)
+  const myId = instanceIdentity(props.instance)
+  if (!type || !myId || soleOwningAttribute(ontology(), type) !== myId) return []
+  const concept = conceptOf(ontology(), type) ?? []
+  return concept.filter((property) => !MERGED_CONCEPT_SKIP.has(property.kind))
+})
 
 // Ground color: `attribute` for an attribute instance, `concept` when it
 // declares attributes, else `instance`.
@@ -35,7 +51,7 @@ const computedEntries = computed(() => {
 })
 
 const drawn = computed(() =>
-  [...props.instance, ...computedEntries.value]
+  [...props.instance, ...computedEntries.value, ...mergedConceptProperties.value]
     .map((property, i) => ({ property, i, kind: propertyKind(property.kind) }))
     .filter((x) => x.kind?.render && x.property.kind !== 'attributes')
     .sort((a, b) => a.kind.position - b.kind.position || a.i - b.i),

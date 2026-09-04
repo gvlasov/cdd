@@ -11,6 +11,7 @@ import TransactionsProperty from './TransactionsProperty.vue'
 import ConceptsProperty from './ConceptsProperty.vue'
 import ParentConceptProperty from './ParentConceptProperty.vue'
 import CanonicalNameProperty from './CanonicalNameProperty.vue'
+import StringListProperty from './StringListProperty.vue'
 
 // The predefined property kinds and their draw positions inside the instance
 // renderer. Equal positions draw in renderer-defined order. A kind with no
@@ -54,6 +55,8 @@ export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   type: { name: 'type', position: 5 },
   cardinality: { name: 'cardinality', position: 5 },
   params: { name: 'params', position: 6 },
+  layers: { name: 'layers', position: 7, render: StringListProperty },
+  concerns: { name: 'concerns', position: 7, render: StringListProperty },
   examples: { name: 'examples', position: 7, render: ExamplesProperty },
   instance: { name: 'instance', position: 3, render: InstanceProperty },
   effect: { name: 'effect', position: 8, render: EffectProperty, edit: EffectEdit },

@@ -4,7 +4,7 @@ import type { Ontology } from '@/concepts/ontology/Ontology'
 import type { Identity } from '@/concepts/identity/Identity'
 import { conceptOf, parentIdentities } from '@/concepts/ontology/Ontology'
 import { conceptRefs } from '@/concepts/concepts/Concept'
-import { attributeTypeParents } from '@/concepts/attributes/Attribute'
+import { attributeTypeParents, attributeType, soleOwningAttribute } from '@/concepts/attributes/Attribute'
 import { useOntology } from '@/concepts/ontology/useOntology'
 import Instance from '@/concepts/instances/Instance.vue'
 import TransactionBar from '@/concepts/transactions/TransactionBar.vue'
@@ -28,10 +28,25 @@ const parents = computed(() => {
   return [...new Set([...direct, ...viaAttributeType])]
 })
 
+// The concept this attribute's type merges into this page — a type that
+// exists solely to shape this attribute has no page of its own (see
+// `soleOwningAttribute`), so its own declared attributes are shown here too.
+const mergedConcept = computed(() => {
+  if (!concept.value) return undefined
+  const type = attributeType(concept.value)
+  if (!type) return undefined
+  if (soleOwningAttribute(props.ontology, type) !== props.conceptId) return undefined
+  return conceptOf(props.ontology, type)
+})
+
 // Attribute chips below the instance: the attributes it declares itself (as a
-// concept) and — for an ontology — its `concepts` list. Not the type's
-// attributes — those belong on the type's own page.
-const refs = computed(() => (concept.value ? conceptRefs(concept.value) : []))
+// concept), its merged type's attributes, if any, and — for an ontology —
+// its `concepts` list. Not the type's attributes in general — only a merged
+// type's, since those belong to this page now.
+const refs = computed(() => [
+  ...(concept.value ? conceptRefs(concept.value) : []),
+  ...(mergedConcept.value ? conceptRefs(mergedConcept.value) : []),
+])
 </script>
 
 <template>
