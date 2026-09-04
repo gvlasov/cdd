@@ -7,10 +7,11 @@ import { conceptRefs, conceptSlug } from '@/concepts/concepts/Concept'
 import { firstOfKind } from '@/concepts/properties/Property'
 import { IdentityRepository } from '@/concepts/identity/IdentityRepository'
 
-// An ontology is a concept — its root instance. That instance is the root
-// concept of itself; its `concepts` property is the list of concept identities
-// the ontology contains. `instances` is the flat store that makes every
-// instance addressable by identity for O(1) lookup.
+// An ontology has a root instance — not itself a concept, just an instance of
+// whatever concept models an ontology (e.g. an `Ontology` concept). Its
+// `concepts` property is the list of concept identities the ontology contains.
+// `instances` is the flat store that makes every instance addressable by
+// identity for O(1) lookup.
 export interface Ontology {
   root: Identity
   instances: Record<Identity, Instance>
@@ -29,6 +30,7 @@ export function conceptOf(ontology: Ontology, identity: Identity): Instance | un
   return ontology.instances[identity]
 }
 
+/** The ontology's root instance — not necessarily a concept itself. */
 export function rootConcept(ontology: Ontology): Instance | undefined {
   return ontology.instances[ontology.root]
 }
@@ -55,8 +57,9 @@ export function parentIdentities(ontology: Ontology, identity: Identity): Identi
  * (root first). Returns undefined when the chain is not fully slugged, in which
  * case the entry's identity is whatever key it is stored under.
  *
- * Chain today: a concept's metaentity is the ontology root, so the chain is
- * `[rootSlug, conceptSlug]`; the root's own chain is `[rootSlug]`.
+ * Chain today: a top-level concept's metaentity is the ontology root, so the
+ * chain is `[rootSlug, conceptSlug]`; the root's own chain is `[rootSlug]`
+ * regardless of what concept the root is an instance of.
  */
 export function derivedIdentity(
   ontology: Ontology,

@@ -1,19 +1,20 @@
-// The ontology root — an instance of cdd.concept, so it gets name/slug/
-// definition from cdd.concept's attributes; it declares none of its own.
+// The ontology root — an instance of the Ontology concept (cdd.ontology), not
+// a concept itself. Its `concepts` property lists the concepts it contains.
 // Glob-loaded by platform/web/ontology-editor's demo app; see that project's
 // README for the file contract (one array of instances, each with its own
 // `identity` property, exported as default).
 export default [
   [
     { kind: 'identity', value: 'cdd' },
-    { kind: 'concept', value: 'cdd.concept' },
+    { kind: 'concept', value: 'cdd.ontology' },
     { kind: 'slug', value: 'cdd' },
     { kind: 'name', value: 'CDD' },
-    { kind: 'definition', value: 'The ontology being viewed — the root concept of itself.' },
+    { kind: 'definition', value: 'The ontology being viewed.' },
     {
       kind: 'concepts',
       value: [
         'cdd.concept',
+        'cdd.ontology',
         'cdd.instance',
         'cdd.attribute',
         'cdd.property',

@@ -21,8 +21,9 @@ CDD's directory layout or any storage backend.
   attribute-instance identities it declares (keyed `<ownerId>:<slug>`).
 - A **leaf** concept declares no attributes; its value edits as a plain field.
   A structured concept's value edits as its own nested attribute form.
-- An **ontology** is itself a concept — its root instance. That instance is the
-  root concept of itself; its `concepts` property is the list of concept
+- An **ontology** has a root instance, but that instance is not itself a
+  concept — it's an instance of whatever concept models an ontology (e.g. an
+  `Ontology` concept). Its `concepts` property is the list of concept
   identities the ontology contains.
 - An **identity** is a string, unique within the ontology. It is the base case:
   an identity *is* its own literal content. `IdentityRepository` maps every

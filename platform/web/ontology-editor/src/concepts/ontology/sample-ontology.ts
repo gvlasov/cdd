@@ -22,7 +22,8 @@ import type { Cardinality } from '@/concepts/attributes/Attribute'
 //    declared on Instance (any instance may have one). There's no attribute
 //    inheritance yet, so this only governs each concept's own edit form — the
 //    `name`/`definition` properties still render wherever they're set.
-//  - The `cdd` instance is an ontology — the root concept of itself.
+//  - The `cdd` instance is the ontology root — an instance of the leaf concept
+//    Ontology, not a concept itself.
 
 const instances: Record<Identity, Instance> = {}
 
@@ -84,6 +85,12 @@ leaf(
   'Transaction',
   'A write operation on a [concept](.concept) — how its instances come to be and change. Identified `<conceptId>:<name>`.',
 )
+leaf(
+  'cdd.ontology',
+  'ontology',
+  'Ontology',
+  'A flat, rhizomatic collection of [concepts](.concept). An ontology is not itself a concept — it is an instance of Ontology, like `cdd`.',
+)
 
 // `definition` is an attribute of Concept — only concepts get one. `slug` is
 // declared here too (identity derivation is concept-specific); `name` is
@@ -142,18 +149,19 @@ concept(
   'Belongs to an [instance](.instance). A value the instance holds in a slot its [concept](.concept) defines via an [attribute](.attribute).',
 )
 
-// The ontology root — an instance of cdd.concept, so it gets name/slug/
-// definition from cdd.concept's attributes; it declares none of its own.
+// The ontology root — an instance of the leaf concept Ontology, not a concept
+// itself: CDD is an ontology, not a concept.
 instances['cdd'] = [
   { kind: 'identity', value: 'cdd' },
-  { kind: 'concept', value: 'cdd.concept' },
+  { kind: 'concept', value: 'cdd.ontology' },
   { kind: 'slug', value: 'cdd' },
   { kind: 'name', value: 'CDD' },
-  { kind: 'definition', value: 'The ontology being viewed — the root concept of itself.' },
+  { kind: 'definition', value: 'The ontology being viewed.' },
   {
     kind: 'concepts',
     value: [
       'cdd.concept',
+      'cdd.ontology',
       'cdd.instance',
       'cdd.attribute',
       'cdd.property',
