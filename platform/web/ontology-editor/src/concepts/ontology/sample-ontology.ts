@@ -14,6 +14,10 @@ import type { Cardinality } from '@/concepts/attributes/Attribute'
 //    built-in attribute of `cdd.attribute`, recognized by the literal type id
 //    `cdd.cardinality`, and edits as a 0-1/1/0+/1+ toggle.
 //  - A concept's `attributes` property lists its own attribute-instance ids.
+//  - `definition` is declared on Concept (only concepts have one); `name` is
+//    declared on Instance (any instance may have one). There's no attribute
+//    inheritance yet, so this only governs each concept's own edit form — the
+//    `name`/`definition` properties still render wherever they're set.
 //  - The `cdd` instance is an ontology — the root concept of itself.
 
 const instances: Record<Identity, Instance> = {}
@@ -77,16 +81,15 @@ leaf(
   'A write operation on a [concept](.concept) — how its instances come to be and change. Identified `<conceptId>:<name>`.',
 )
 
-// cdd.concept is the type of every concept — it declares the name / slug /
-// definition attributes every concept-instance may hold, plus `attributes` and
-// `transactions`.
+// `definition` is an attribute of Concept — only concepts get one. `slug` is
+// declared here too (identity derivation is concept-specific); `name` is
+// declared on Instance instead, since any instance may have one.
 concept(
   'cdd.concept',
   'concept',
   'Concept',
   'A cohesion unit. A concept is a collection of [properties](.property); its [attributes](.attribute) declare what its instances may hold.',
   [
-    attr('cdd.concept', 'name', 'cdd.name', '1'),
     attr('cdd.concept', 'slug', 'cdd.slug', '1'),
     attr('cdd.concept', 'definition', 'cdd.definition', '0-1'),
     attr('cdd.concept', 'attributes', 'cdd.attribute', '0+'),
@@ -107,11 +110,14 @@ instances['cdd.concept:create'] = [
       "return reality.add('cdd.concept', { name: input.name, definition: input.definition })",
   },
 ]
+// `name` is an attribute of Instance — any instance may have one, concepts
+// included (concepts are instances too, just typed cdd.concept).
 concept(
   'cdd.instance',
   'instance',
   'Instance',
   'Anything the ontology holds: a collection of [properties](.property) addressed by a unique identity, typed by its `concept` property. A [concept](.concept) is an instance that also declares [attributes](.attribute).',
+  [attr('cdd.instance', 'name', 'cdd.name', '1')],
 )
 concept(
   'cdd.attribute',
