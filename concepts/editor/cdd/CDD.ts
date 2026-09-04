@@ -21,6 +21,7 @@ export default [
         'cdd.name',
         'cdd.definition',
         'cdd.slug',
+        'cdd.string',
         'cdd.transaction',
       ],
     },

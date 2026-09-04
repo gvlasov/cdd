@@ -39,7 +39,7 @@ export default [
     { kind: 'concept', value: 'cdd.attribute' },
     { kind: 'slug', value: 'canonicalName' },
     { kind: 'name', value: 'canonical name' },
-    { kind: 'type', value: 'cdd.name' },
+    { kind: 'type', value: 'cdd.string' },
     { kind: 'cardinality', value: '1' },
     {
       kind: 'examples',
