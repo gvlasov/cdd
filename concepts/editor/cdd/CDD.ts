@@ -9,7 +9,7 @@ export default [
     { kind: 'concept', value: 'cdd.ontology' },
     { kind: 'slug', value: 'cdd' },
     { kind: 'name', value: 'CDD' },
-    { kind: 'definition', value: 'The ontology being viewed.' },
+    { kind: 'definition', value: 'the ontology being viewed.' },
     {
       kind: 'concepts',
       value: [

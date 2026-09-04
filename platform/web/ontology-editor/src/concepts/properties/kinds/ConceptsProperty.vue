@@ -49,6 +49,9 @@ const concepts = computed(() => {
   padding-left: 1.25em;
   margin: 0;
 }
+.concepts-list li + li {
+  margin-top: 0.75em;
+}
 .link {
   color: rgb(var(--v-theme-concept));
   text-decoration: none;

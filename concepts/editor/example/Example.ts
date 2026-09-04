@@ -10,7 +10,7 @@ export default [
     { kind: 'name', value: 'Example' },
     {
       kind: 'definition',
-      value: 'A link to an [instance](.instance) paired with a description of it in context.',
+      value: 'a link to an [instance](.instance) paired with a description of it in context.',
     },
     { kind: 'attributes', value: ['cdd.example:instance', 'cdd.example:description'] },
   ],

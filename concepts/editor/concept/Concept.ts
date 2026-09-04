@@ -13,7 +13,7 @@ export default [
     {
       kind: 'definition',
       value:
-        'A cohesion unit. A concept is a collection of [properties](.property); its [attributes](.attribute) declare what its instances may hold.',
+        'a cohesion unit. a concept is a collection of [properties](.property); its [attributes](.attribute) declare what its instances may hold.',
     },
     {
       kind: 'attributes',
@@ -102,7 +102,7 @@ export default [
     { kind: 'identity', value: 'cdd.concept:create' },
     { kind: 'concept', value: 'cdd.transaction' },
     { kind: 'name', value: 'create' },
-    { kind: 'definition', value: 'Constructor: spawn a new concept instance into the reality.' },
+    { kind: 'definition', value: 'constructor: spawn a new concept instance into the reality.' },
     { kind: 'params', value: ['name', 'definition'] },
     {
       kind: 'effect',

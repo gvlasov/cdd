@@ -5,6 +5,6 @@ export default [
     { kind: 'concept', value: 'cdd.concept' },
     { kind: 'slug', value: 'definition' },
     { kind: 'name', value: 'Definition' },
-    { kind: 'definition', value: 'The text that says what a concept is.' },
+    { kind: 'definition', value: 'the text that says what a concept is.' },
   ],
 ]

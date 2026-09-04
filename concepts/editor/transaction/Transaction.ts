@@ -8,7 +8,7 @@ export default [
     {
       kind: 'definition',
       value:
-        'A write operation on a [concept](.concept) — how its instances come to be and change. Identified `<conceptId>:<name>`.',
+        'a write operation on a [concept](.concept) — how its instances come to be and change. identified `<conceptId>:<name>`.',
     },
   ],
 ]

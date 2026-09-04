@@ -70,26 +70,26 @@ function concept(
 
 const leaf = concept // a concept that declares no attributes for its instances
 
-leaf('cdd.name', 'name', 'Name', 'A string that identifies a concept or a reflection.')
+leaf('cdd.name', 'name', 'Name', 'a string that identifies a concept or a reflection.')
 leaf(
   'cdd.slug',
   'slug',
   'Slug',
-  'A `[a-zA-Z0-9_-]` word, unique within the ontology. An [instance](.instance)’s identity is its metaentity chain of slugs joined by `.` — `<ontology>.<concept>.<instance>`.',
+  'a `[a-zA-Z0-9_-]` word, unique within the ontology. an [instance](.instance)’s identity is its metaentity chain of slugs joined by `.` — `<ontology>.<concept>.<instance>`.',
 )
-leaf('cdd.definition', 'definition', 'Definition', 'The text that says what a concept is.')
+leaf('cdd.definition', 'definition', 'Definition', 'the text that says what a concept is.')
 
 leaf(
   'cdd.transaction',
   'transaction',
   'Transaction',
-  'A write operation on a [concept](.concept) — how its instances come to be and change. Identified `<conceptId>:<name>`.',
+  'a write operation on a [concept](.concept) — how its instances come to be and change. identified `<conceptId>:<name>`.',
 )
 leaf(
   'cdd.ontology',
   'ontology',
   'Ontology',
-  'A flat, rhizomatic collection of [concepts](.concept).',
+  'a flat, rhizomatic collection of [concepts](.concept).',
 )
 
 // `definition` is an attribute of Concept — only concepts get one. `slug` is
@@ -99,7 +99,7 @@ concept(
   'cdd.concept',
   'concept',
   'Concept',
-  'A cohesion unit. A concept is a collection of [properties](.property); its [attributes](.attribute) declare what its instances may hold.',
+  'a cohesion unit. a concept is a collection of [properties](.property); its [attributes](.attribute) declare what its instances may hold.',
   [
     attr('cdd.concept', 'slug', 'cdd.slug', '1'),
     attr('cdd.concept', 'definition', 'cdd.definition', '0-1'),
@@ -113,7 +113,7 @@ instances['cdd.concept:create'] = [
   { kind: 'identity', value: 'cdd.concept:create' },
   { kind: 'concept', value: 'cdd.transaction' },
   { kind: 'name', value: 'create' },
-  { kind: 'definition', value: 'Constructor: spawn a new concept instance into the reality.' },
+  { kind: 'definition', value: 'constructor: spawn a new concept instance into the reality.' },
   { kind: 'params', value: ['name', 'definition'] },
   {
     kind: 'effect',
@@ -127,14 +127,14 @@ concept(
   'cdd.instance',
   'instance',
   'Instance',
-  'Anything the ontology holds: a collection of [properties](.property) addressed by a unique identity, typed by its `concept` property. A [concept](.concept) is an instance that also declares [attributes](.attribute).',
+  'anything the ontology holds: a collection of [properties](.property) addressed by a unique identity, typed by its `concept` property. a [concept](.concept) is an instance that also declares [attributes](.attribute).',
   [attr('cdd.instance', 'name', 'cdd.name', '1')],
 )
 concept(
   'cdd.attribute',
   'attribute',
   'Attribute',
-  'Belongs to a [concept](.concept). Defines one slot — name, `type` and `cardinality` — on that concept’s instances.',
+  'belongs to a [concept](.concept). defines one slot — name, `type` and `cardinality` — on that concept’s instances.',
   [
     attr('cdd.attribute', 'name', 'cdd.name', '1'),
     attr('cdd.attribute', 'slug', 'cdd.slug', '1'),
@@ -146,7 +146,7 @@ concept(
   'cdd.property',
   'property',
   'Property',
-  'Belongs to an [instance](.instance). A value the instance holds in a slot its [concept](.concept) defines via an [attribute](.attribute).',
+  'belongs to an [instance](.instance). a value the instance holds in a slot its [concept](.concept) defines via an [attribute](.attribute).',
 )
 
 // The ontology root — an instance of the leaf concept Ontology, not a concept
@@ -156,7 +156,7 @@ instances['cdd'] = [
   { kind: 'concept', value: 'cdd.ontology' },
   { kind: 'slug', value: 'cdd' },
   { kind: 'name', value: 'CDD' },
-  { kind: 'definition', value: 'The ontology being viewed.' },
+  { kind: 'definition', value: 'the ontology being viewed.' },
   {
     kind: 'concepts',
     value: [

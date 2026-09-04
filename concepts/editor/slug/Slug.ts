@@ -8,7 +8,7 @@ export default [
     {
       kind: 'definition',
       value:
-        'A `[a-zA-Z0-9_-]` word, unique within the ontology. An [instance](.instance)’s identity is its metaentity chain of slugs joined by `.` — `<ontology>.<concept>.<instance>`.',
+        'a `[a-zA-Z0-9_-]` word, unique within the ontology. an [instance](.instance)’s identity is its metaentity chain of slugs joined by `.` — `<ontology>.<concept>.<instance>`.',
     },
   ],
 ]

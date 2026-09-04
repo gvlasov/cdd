@@ -7,7 +7,7 @@ export default [
     {
       kind: 'definition',
       value:
-        'Belongs to an [instance](.instance). A value the instance holds in a slot its [concept](.concept) defines via an [attribute](.attribute).',
+        'belongs to an [instance](.instance). a value the instance holds in a slot its [concept](.concept) defines via an [attribute](.attribute).',
     },
   ],
 ]

@@ -9,7 +9,7 @@ export default [
     { kind: 'name', value: 'Ontology' },
     {
       kind: 'definition',
-      value: 'A flat, rhizomatic collection of [concepts](.concept).',
+      value: 'a flat, rhizomatic collection of [concepts](.concept).',
     },
     { kind: 'attributes', value: ['cdd.ontology:concepts'] },
   ],

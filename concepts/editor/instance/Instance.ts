@@ -9,7 +9,7 @@ export default [
     {
       kind: 'definition',
       value:
-        'Anything the ontology holds: a collection of [properties](.property) addressed by a unique identity, typed by its `concept` property. A [concept](.concept) is an instance that also declares [attributes](.attribute).',
+        'anything the ontology holds: a collection of [properties](.property) addressed by a unique identity, typed by its `concept` property. a [concept](.concept) is an instance that also declares [attributes](.attribute).',
     },
     { kind: 'attributes', value: ['cdd.instance:name'] },
   ],

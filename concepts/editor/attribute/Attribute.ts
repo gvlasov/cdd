@@ -7,7 +7,7 @@ export default [
     {
       kind: 'definition',
       value:
-        'Belongs to a [concept](.concept). Defines one slot — name, `type` and `cardinality` — on that concept’s instances.',
+        'belongs to a [concept](.concept). defines one slot — name, `type` and `cardinality` — on that concept’s instances.',
     },
     {
       kind: 'attributes',
