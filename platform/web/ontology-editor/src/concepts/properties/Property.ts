@@ -18,6 +18,16 @@ export interface Property {
    *  - `transactions`: the transaction identities a concept exposes
    *  - `params`: names of the inputs a transaction's effect expects
    *  - `instance`: the identity an Example links to
+   *  - `parentConcept`: the concept a transaction is about (e.g. `cdd.concept`
+   *    for `cdd.concept:create`) — distinct from `concept`, which names the
+   *    instance's own type (always `cdd.transaction` for a transaction)
+   *  - `canonicalName`: `<parentConcept slug>:<transaction slug>`, e.g.
+   *    `users:set-username` — a computed attribute, never stored
+   *  - `computed`: marks an attribute's value as derived — `'true'` when the
+   *    owning concept's instances get this value from `function` rather than
+   *    storing it
+   *  - `function`: JS source for a computed attribute's derivation, run as
+   *    `new Function('instance', 'ontology', function)`
    */
   value: Identity | Identity[]
 }
@@ -39,6 +49,10 @@ export type PropertyKindName =
   | 'type'
   | 'cardinality'
   | 'instance'
+  | 'parentConcept'
+  | 'canonicalName'
+  | 'computed'
+  | 'function'
 
 export function propertiesOfKind(
   properties: Property[],

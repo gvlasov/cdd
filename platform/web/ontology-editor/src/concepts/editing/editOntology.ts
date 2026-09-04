@@ -91,8 +91,8 @@ export function renameSlug(
   if (!instance) return ontology
 
   const i = instance.findIndex((p) => p.kind === 'slug')
-  if (i === -1) return ontology
-  instance[i] = { kind: 'slug', value: newSlug }
+  if (i === -1) instance.push({ kind: 'slug', value: newSlug })
+  else instance[i] = { kind: 'slug', value: newSlug }
 
   return rekeyForSlug({ root: ontology.root, instances }, instanceId)
 }

@@ -24,6 +24,10 @@ export const propertyValueKind: Record<PropertyKindName, PropertyValueKind> = {
   type: 'concept-list',
   cardinality: 'literal',
   instance: 'concept-list',
+  parentConcept: 'concept-list',
+  canonicalName: 'readonly',
+  computed: 'literal',
+  function: 'literal',
 }
 
 export const ALL_PROPERTY_KINDS: PropertyKindName[] = [
@@ -43,4 +47,8 @@ export const ALL_PROPERTY_KINDS: PropertyKindName[] = [
   'type',
   'cardinality',
   'instance',
+  'parentConcept',
+  'canonicalName',
+  'computed',
+  'function',
 ]

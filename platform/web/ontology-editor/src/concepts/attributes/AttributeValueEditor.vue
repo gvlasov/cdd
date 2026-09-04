@@ -6,7 +6,14 @@ import { isSlug } from '@/concepts/identity/Slug'
 import { useOntology } from '@/concepts/ontology/useOntology'
 import { setPropertyValue, createConcept, newConceptIdentity } from '@/concepts/editing/editOntology'
 import { spawnValue, removeValue } from './spawnValue'
-import { isLeafConcept, isList, isRequired, CARDINALITIES, type AttributeSpec } from './Attribute'
+import {
+  isLeafConcept,
+  isList,
+  isRequired,
+  CARDINALITIES,
+  computeAttributeValue,
+  type AttributeSpec,
+} from './Attribute'
 import InstanceForm from '@/concepts/editing/InstanceForm.vue'
 
 // Edits one attribute's value(s) on an owner instance.
@@ -25,6 +32,10 @@ const owner = computed(() => conceptOf(ontology(), props.ownerId))
 // The `attributes` slot is managed only through "define attribute" — editing
 // it here would let you point it at arbitrary Attribute instances.
 const readonly = computed(() => props.spec.slug === 'attributes')
+const computedValue = computed(() => {
+  if (!props.spec.computed || !props.spec.function || !owner.value) return undefined
+  return computeAttributeValue(props.spec.function, owner.value, ontology())
+})
 const leaf = computed(() => isLeafConcept(ontology(), props.spec.type))
 const reference = computed(() => props.spec.type === 'cdd.concept')
 const list = computed(() => isList(props.spec.cardinality))
@@ -97,8 +108,14 @@ function submitNew() {
 
 <template>
   <div class="d-flex flex-column ga-2">
+    <!-- computed: value is derived from the instance, never stored or edited -->
+    <template v-if="spec.computed">
+      <div class="text-caption text-medium-emphasis mb-1">{{ spec.name }}</div>
+      <code class="text-caption">{{ computedValue }}</code>
+    </template>
+
     <!-- attributes is managed via "define attribute", not edited directly -->
-    <template v-if="readonly">
+    <template v-else-if="readonly">
       <div class="text-caption text-medium-emphasis mb-1">{{ spec.name }}</div>
       <div class="d-flex flex-wrap ga-2">
         <v-chip

@@ -1,4 +1,7 @@
-// A leaf concept — declares no attributes.
+// `parentConcept` (1) is the concept the transaction is about, e.g. `cdd.users`
+// for `users:set-username` — distinct from `concept`, which names the
+// instance's own type (always `cdd.transaction`). `canonicalName` is computed:
+// `<parentConcept slug>:<transaction slug>`, e.g. `logs:view`.
 export default [
   [
     { kind: 'identity', value: 'cdd.transaction' },
@@ -9,6 +12,40 @@ export default [
       kind: 'definition',
       value:
         'a write operation on a [concept](.concept) — how its instances come to be and change. identified `<conceptId>:<name>`.',
+    },
+    {
+      kind: 'attributes',
+      value: ['cdd.transaction:slug', 'cdd.transaction:parentConcept', 'cdd.transaction:canonicalName'],
+    },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.transaction:slug' },
+    { kind: 'concept', value: 'cdd.attribute' },
+    { kind: 'slug', value: 'slug' },
+    { kind: 'name', value: 'slug' },
+    { kind: 'type', value: 'cdd.slug' },
+    { kind: 'cardinality', value: '1' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.transaction:parentConcept' },
+    { kind: 'concept', value: 'cdd.attribute' },
+    { kind: 'slug', value: 'parentConcept' },
+    { kind: 'name', value: 'parent concept' },
+    { kind: 'type', value: 'cdd.concept' },
+    { kind: 'cardinality', value: '1' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.transaction:canonicalName' },
+    { kind: 'concept', value: 'cdd.attribute' },
+    { kind: 'slug', value: 'canonicalName' },
+    { kind: 'name', value: 'canonical name' },
+    { kind: 'type', value: 'cdd.name' },
+    { kind: 'cardinality', value: '1' },
+    { kind: 'computed', value: 'true' },
+    {
+      kind: 'function',
+      value:
+        "const parentId = (instance.find((p) => p.kind === 'parentConcept') || {}).value; const parent = parentId ? ontology.instances[parentId] : undefined; const parentSlug = parent ? (parent.find((p) => p.kind === 'slug') || {}).value : undefined; const slug = (instance.find((p) => p.kind === 'slug') || {}).value; return parentSlug && slug ? `${parentSlug}:${slug}` : ''",
     },
   ],
 ]

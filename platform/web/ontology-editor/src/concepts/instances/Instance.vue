@@ -4,11 +4,16 @@ import type { Instance } from './Instance'
 import { isConcept } from '@/concepts/concepts/Concept'
 import { instanceType } from './Instance'
 import { propertyKind } from '@/concepts/properties/kinds/property-kinds'
+import { conceptOf } from '@/concepts/ontology/Ontology'
+import { conceptAttributeSpecs } from '@/concepts/attributes/Attribute'
+import { useOntology } from '@/concepts/ontology/useOntology'
 
 // The central component: renders one instance as its properties, in
 // kind-position order. Equal positions keep source order. A concept's
 // `attributes` are NOT drawn here — they belong below the instance, not inside.
 const props = defineProps<{ instance: Instance }>()
+
+const { ontology } = useOntology()
 
 // Ground color: `attribute` for an attribute instance, `concept` when it
 // declares attributes, else `instance`.
@@ -17,8 +22,20 @@ const tone = computed(() => {
   return isConcept(props.instance) ? 'concept' : 'instance'
 })
 
+// Computed attributes (see cdd.attribute's `computed`/`function`) are never
+// stored on the instance, so they don't appear among its own properties —
+// synthesize a property entry per computed attribute the type declares.
+const computedEntries = computed(() => {
+  const typeId = instanceType(props.instance)
+  const type = typeId ? conceptOf(ontology(), typeId) : undefined
+  if (!type) return []
+  return conceptAttributeSpecs(ontology(), type)
+    .filter((spec) => spec.computed)
+    .map((spec) => ({ kind: spec.slug as never, value: '' }))
+})
+
 const drawn = computed(() =>
-  [...props.instance]
+  [...props.instance, ...computedEntries.value]
     .map((property, i) => ({ property, i, kind: propertyKind(property.kind) }))
     .filter((x) => x.kind?.render && x.property.kind !== 'attributes')
     .sort((a, b) => a.kind.position - b.kind.position || a.i - b.i),

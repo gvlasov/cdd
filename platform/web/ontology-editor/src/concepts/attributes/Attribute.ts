@@ -25,6 +25,10 @@ export interface AttributeSpec {
   /** Concept identity the value is an instance of. */
   type: Identity | undefined
   cardinality: Cardinality
+  /** Whether this attribute's value is derived, not stored — see `computeAttributeValue`. */
+  computed: boolean
+  /** JS source deriving the value, when `computed` is true. */
+  function: string | undefined
 }
 
 export function attributeCardinality(attribute: Instance): Cardinality {
@@ -47,6 +51,39 @@ export function isList(cardinality: Cardinality): boolean {
   return cardinality === '0+' || cardinality === '1+'
 }
 
+function literal(property: { value: Identity | Identity[] } | undefined): string | undefined {
+  if (!property) return undefined
+  return Array.isArray(property.value) ? property.value[0] : property.value
+}
+
+export function attributeComputed(attribute: Instance): boolean {
+  return literal(firstOfKind(attribute, 'computed')) === 'true'
+}
+
+export function attributeFunction(attribute: Instance): string | undefined {
+  const p = firstOfKind(attribute, 'function')
+  if (!p) return undefined
+  return Array.isArray(p.value) ? p.value.join('\n') : p.value
+}
+
+/**
+ * Derive a computed attribute's value for `instance`. `fn` is a JS function
+ * body with `instance` (the owner) and `ontology` in scope, mirroring
+ * `runEffect`'s transaction-effect evaluation but read-only.
+ */
+export function computeAttributeValue(
+  fn: string,
+  instance: Instance,
+  ontology: Ontology,
+): string {
+  // eslint-disable-next-line @typescript-eslint/no-implied-eval
+  const compute = new Function('instance', 'ontology', fn) as (
+    instance: Instance,
+    ontology: Ontology,
+  ) => unknown
+  return String(compute(instance, ontology) ?? '')
+}
+
 /** Resolve one attribute instance to a spec. */
 export function attributeSpec(
   ontology: Ontology,
@@ -60,6 +97,8 @@ export function attributeSpec(
     slug: instanceSlug(attribute) ?? attributeId,
     type: attributeType(attribute),
     cardinality: attributeCardinality(attribute),
+    computed: attributeComputed(attribute),
+    function: attributeFunction(attribute),
   }
 }
 

@@ -11,6 +11,8 @@ import TypeProperty from './TypeProperty.vue'
 import InstanceProperty from './InstanceProperty.vue'
 import TransactionsProperty from './TransactionsProperty.vue'
 import ConceptsProperty from './ConceptsProperty.vue'
+import ParentConceptProperty from './ParentConceptProperty.vue'
+import CanonicalNameProperty from './CanonicalNameProperty.vue'
 
 // The predefined property kinds and their draw positions inside the instance
 // renderer. Equal positions draw in renderer-defined order. A kind with no
@@ -23,6 +25,10 @@ import ConceptsProperty from './ConceptsProperty.vue'
 //  - `transactions` and `concepts` are drawn inside the instance (like
 //    `examples`); running a transaction is a separate action, handled by
 //    TransactionBar below the instance
+//  - `computed` and `function` describe a computed attribute's own
+//    derivation (see cdd.attribute); they are not drawn on the instances
+//    that attribute applies to — AttributeValueEditor reads them directly
+//    to render and evaluate the derived value instead
 export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   name: { name: 'name', position: 0, render: NameProperty },
   slug: { name: 'slug', position: 1, render: SlugProperty },
@@ -52,6 +58,10 @@ export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   examples: { name: 'examples', position: 7, render: ExamplesProperty },
   instance: { name: 'instance', position: 3, render: InstanceProperty },
   effect: { name: 'effect', position: 8, render: EffectProperty, edit: EffectEdit },
+  parentConcept: { name: 'parentConcept', position: 4, render: ParentConceptProperty },
+  canonicalName: { name: 'canonicalName', position: 1, render: CanonicalNameProperty },
+  computed: { name: 'computed', position: 5 },
+  function: { name: 'function', position: 8 },
 }
 
 export function propertyKind(name: PropertyKindName): PropertyKind {
