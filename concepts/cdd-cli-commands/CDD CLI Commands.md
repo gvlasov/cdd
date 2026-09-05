@@ -30,6 +30,8 @@ CDD keeps these commands together so the entrypoint can discover, print, and dis
 - `problems:create` creates a problem plan
 - `plans:finish` finishes an active plan
 - `projects` lists or resolves projects from the projects directory
+- `project:displayName` prints the current project's display name from `/project/name`
+- `project:slug` prints the current project's slug, derived from its display name
 - `self-help` lists the `cdd` commands
 - `self-upgrade` self-upgrades CDD support from `CDD_SOURCE_PATH`
 - `transactions:list` lists all transactions by scanning for `transactions` directories

@@ -8,7 +8,7 @@ A project has
 - a name and 
 - a directory structure, ideally a [concept-driven](/concepts/directory-structures/Concept-driven directory structure.md) one
 
-CDD suggests storing project-only material such as the project description, icon, and other identity assets in `/project`.
+CDD suggests storing project-only material such as the project description, icon, and other identity assets in `/project`. The project's display name is stored in `/project/name`; `cdd project:displayName` and `cdd project:slug` read and derive from it.
 
 CDD suggests storing all projects in `$CDD_PROJECTS_DIRECTORY` which is `~/Projects` by default. `cdd` utility has `cdd projects` familiy of commands to operate on projects on current development machine.
 
