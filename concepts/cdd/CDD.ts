@@ -23,6 +23,7 @@ export default [
         'cdd.slug',
         'cdd.string',
         'cdd.transaction',
+        'cdd.reflection',
       ],
     },
   ],
