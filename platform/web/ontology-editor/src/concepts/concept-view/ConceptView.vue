@@ -65,9 +65,7 @@ const refs = computed(() => [
         >
           {{ conceptLabel(pid) ?? pid }}
         </v-chip>
-        <span v-if="!parents.length" class="text-medium-emphasis text-caption">
-          no parent concepts
-        </span>
+        <span v-if="!parents.length" class="text-medium-emphasis text-caption">&nbsp;</span>
       </div>
     </nav>
 
