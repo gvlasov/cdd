@@ -5,11 +5,12 @@
 // `identity` property, exported as default).
 //
 // `cdd.project` is a separate, CDD-specific singleton concept (see
-// concepts/singletons/Singleton.md) — its one instance, also identified
-// `cdd.project`, is CDD the methodology/project itself, distinct from the
-// ontology-viewer root above. `inspirations` lists the outside ideas CDD's
-// own design borrows from (see README.md's "Inspiration" section, which this
-// mirrors).
+// concepts/singletons/Singleton.md), distinct from the ontology-viewer root
+// above: it IS its own one instance — a singleton concept's instance and its
+// concept are the same entry, not two separate identities — so its
+// `inspirations` property (the outside ideas CDD's own design borrows from;
+// see README.md's "Inspiration" section, which this mirrors) is set directly
+// on the `cdd.project` entry below and renders on that same page.
 export default [
   [
     { kind: 'identity', value: 'cdd' },
@@ -45,19 +46,6 @@ export default [
       value: 'the {concept,cohesion,cli,convenience}-driven design methodology and its reference project — a singleton: the one instance is CDD itself.',
     },
     { kind: 'attributes', value: ['cdd.project:inspirations'] },
-  ],
-  [
-    { kind: 'identity', value: 'cdd.project:inspirations' },
-    { kind: 'concept', value: 'cdd.attribute' },
-    { kind: 'slug', value: 'inspirations' },
-    { kind: 'name', value: 'inspirations' },
-    { kind: 'type', value: 'cdd.example' },
-    { kind: 'cardinality', value: '0+' },
-    { kind: 'description', value: 'outside ideas CDD’s own design borrows from.' },
-  ],
-  [
-    { kind: 'identity', value: 'cdd.project:instance' },
-    { kind: 'concept', value: 'cdd.project' },
     {
       kind: 'inspirations',
       value: [
@@ -72,6 +60,15 @@ export default [
         'cdd.project:inspirations:rest',
       ],
     },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.project:inspirations' },
+    { kind: 'concept', value: 'cdd.attribute' },
+    { kind: 'slug', value: 'inspirations' },
+    { kind: 'name', value: 'inspirations' },
+    { kind: 'type', value: 'cdd.example' },
+    { kind: 'cardinality', value: '0+' },
+    { kind: 'description', value: 'outside ideas CDD’s own design borrows from.' },
   ],
   [
     { kind: 'identity', value: 'cdd.project:inspirations:screamingArchitecture' },

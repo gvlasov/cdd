@@ -84,10 +84,10 @@ const drawn = computed(() =>
   <v-card
     :color="tone"
     variant="tonal"
-    class="flex-grow-1 d-flex align-center overflow-auto"
+    class="flex-grow-1 d-flex overflow-auto"
   >
     <v-card-text class="d-flex justify-center content">
-      <div class="d-flex flex-column ga-4" style="max-width: 60ch; width: 100%">
+      <div class="d-flex flex-column ga-4 my-auto" style="max-width: 60ch; width: 100%">
         <component
           :is="entry.kind.render"
           v-for="entry in drawn"
