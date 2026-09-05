@@ -38,7 +38,8 @@ function known(target: string): boolean {
         seg.label
       }}</span>
       <a v-else-if="seg.kind === 'external-link'" class="external-link" :href="seg.href"
-        >{{ seg.label }}<v-icon icon="mdi-open-in-new" size="14" class="external-link-icon"
+        ><span class="external-link-label">{{ seg.label }}</span
+        ><v-icon icon="mdi-open-in-new" size="10" class="external-link-icon"
       /></a>
       <code v-else-if="seg.kind === 'code'" class="inline-code">{{ seg.text }}</code>
       <template v-else>{{ seg.text }}</template>
@@ -60,12 +61,15 @@ function known(target: string): boolean {
 .external-link {
   color: inherit;
   text-decoration: none;
+  cursor: pointer;
+}
+.external-link-label {
   border-bottom: 1px solid currentColor;
 }
 .external-link-icon {
   vertical-align: super;
   margin-left: 0.15em;
-  opacity: 0.75;
+  opacity: 0.6;
 }
 .inline-code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
