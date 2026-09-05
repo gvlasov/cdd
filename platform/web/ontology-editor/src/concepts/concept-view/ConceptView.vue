@@ -50,7 +50,7 @@ const refs = computed(() => [
 </script>
 
 <template>
-  <div class="d-flex flex-column ga-4 fill-height">
+  <div class="d-flex flex-column ga-4 concept-view">
     <nav aria-label="Parent concepts">
       <div class="d-flex flex-wrap ga-3 align-center justify-center">
         <v-chip
@@ -96,3 +96,9 @@ const refs = computed(() => [
     <RealityPanel v-if="concept" :concept-id="conceptId" />
   </div>
 </template>
+
+<style scoped>
+.concept-view {
+  min-height: 0;
+}
+</style>

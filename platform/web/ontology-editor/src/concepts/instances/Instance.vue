@@ -84,7 +84,7 @@ const drawn = computed(() =>
   <v-card
     :color="tone"
     variant="tonal"
-    class="flex-grow-1 d-flex overflow-auto"
+    class="flex-grow-1 d-flex overflow-auto instance-card"
   >
     <v-card-text class="d-flex justify-center content">
       <div class="d-flex flex-column ga-4 my-auto" style="max-width: 60ch; width: 100%">
@@ -101,6 +101,9 @@ const drawn = computed(() =>
 </template>
 
 <style scoped>
+.instance-card {
+  min-height: 0;
+}
 .content {
   color: rgb(var(--v-theme-on-surface));
 }

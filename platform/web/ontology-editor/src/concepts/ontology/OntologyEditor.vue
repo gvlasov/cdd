@@ -231,8 +231,8 @@ provideOntology({
       {{ runError }}
     </v-alert>
 
-    <ConceptEditor v-if="editing" :ontology="modelValue" :concept-id="currentId" />
-    <ConceptView v-else :ontology="modelValue" :concept-id="currentId" />
+    <ConceptEditor v-if="editing" class="flex-grow-1" :ontology="modelValue" :concept-id="currentId" />
+    <ConceptView v-else class="flex-grow-1" :ontology="modelValue" :concept-id="currentId" />
 
     <v-dialog v-model="creating" max-width="420">
       <v-card>
