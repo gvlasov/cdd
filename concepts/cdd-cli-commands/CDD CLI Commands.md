@@ -35,6 +35,7 @@ CDD keeps these commands together so the entrypoint can discover, print, and dis
 - `self-help` lists the `cdd` commands
 - `self-upgrade` self-upgrades CDD support from `CDD_SOURCE_PATH`
 - `transactions:list` lists all transactions by scanning for `transactions` directories
+- `llms:use codex|claude` selects the LLM command in the current project's generated tmuxinator configuration
 
 ## Notes
 

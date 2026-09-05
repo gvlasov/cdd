@@ -58,7 +58,6 @@ fi
 require_command xterm
 require_command tmux
 require_command tmuxinator
-require_command claude
 
 state_dir="$project_root/platform/tmuxinator/local"
 mkdir -p "$state_dir"
@@ -69,13 +68,32 @@ session_name="cdd-claude-${project_name}-${project_id}"
 config_path="$state_dir/terminal-tmuxinator-claude.yml"
 quoted_project_root="$(printf '%s' "$project_root" | yaml_single_quote)"
 
+selected_llm="claude"
+if [ -f "$config_path" ] && grep -Eq '^[[:space:]]*-[[:space:]]+codex([[:space:]]|$)' "$config_path"; then
+  selected_llm="codex"
+fi
+
+case "$selected_llm" in
+  codex)
+    claude_comment="#"
+    codex_comment=""
+    ;;
+  claude)
+    claude_comment=""
+    codex_comment="#"
+    ;;
+esac
+
+require_command "$selected_llm"
+
 {
   printf 'name: %s\n' "$session_name"
   printf 'root: %s\n' "$quoted_project_root"
   printf 'windows:\n'
   printf '  - claude:\n'
   printf '      panes:\n'
-  printf '        - claude --resume\n'
+  printf '        %s- claude --resume\n' "$claude_comment"
+  printf '        %s- codex --approve-for-me resume\n' "$codex_comment"
 } > "$config_path"
 
 exec xterm \

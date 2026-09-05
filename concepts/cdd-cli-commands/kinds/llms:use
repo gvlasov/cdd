@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# Select the LLM launched by the current project's tmuxinator config
+set -euo pipefail
+
+if [ "$#" -ne 1 ]; then
+  printf 'usage: cdd llms:use <codex|claude>\n' >&2
+  exit 2
+fi
+
+case "$1" in
+  codex|claude) selected_llm="$1" ;;
+  *)
+    printf 'cdd llms:use: unsupported LLM: %s (expected codex or claude)\n' "$1" >&2
+    exit 2
+    ;;
+esac
+
+find_project_root() {
+  local dir
+  dir="$(pwd)"
+
+  while [ "$dir" != "/" ]; do
+    if [ -d "$dir/commands" ]; then
+      printf '%s\n' "$dir"
+      return 0
+    fi
+    dir="$(dirname "$dir")"
+  done
+
+  return 1
+}
+
+project_root="$(find_project_root || true)"
+if [ -z "$project_root" ]; then
+  printf 'cdd llms:use: run this from inside a CDD project with ./commands\n' >&2
+  exit 1
+fi
+
+config_path="$project_root/platform/tmuxinator/local/terminal-tmuxinator-claude.yml"
+if [ ! -f "$config_path" ]; then
+  printf 'cdd llms:use: tmuxinator config does not exist: %s\n' "$config_path" >&2
+  exit 1
+fi
+
+for llm in codex claude; do
+  if ! grep -Eq "^[[:space:]]*#?[[:space:]]*-[[:space:]]+$llm([[:space:]]|$)" "$config_path"; then
+    printf 'cdd llms:use: tmuxinator config has no %s pane command: %s\n' "$llm" "$config_path" >&2
+    exit 1
+  fi
+done
+
+case "$selected_llm" in
+  codex)
+    inactive_llm="claude"
+    ;;
+  claude)
+    inactive_llm="codex"
+    ;;
+esac
+
+sed -Ei \
+  -e "/^[[:space:]]*#?[[:space:]]*-[[:space:]]+$selected_llm([[:space:]]|$)/ s/^([[:space:]]*)#?[[:space:]]*(-[[:space:]]+)/\\1\\2/" \
+  -e "/^[[:space:]]*#?[[:space:]]*-[[:space:]]+$inactive_llm([[:space:]]|$)/ s/^([[:space:]]*)#?[[:space:]]*(-[[:space:]]+)/\\1#\\2/" \
+  "$config_path"
+
+printf 'Using %s in %s\n' "$selected_llm" "$config_path"

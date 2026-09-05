@@ -75,10 +75,11 @@ quoted_project_root="$(printf '%s' "$project_root" | yaml_single_quote)"
   printf 'windows:\n'
   printf '  - codex:\n'
   printf '      panes:\n'
-  printf '        - codex\n'
+  printf '        - codex --approve-for-me\n'
 } > "$config_path"
 
 exec xterm \
+  -xrm '*VT100*translations: #override Ctrl <Key>V: insert-selection(CLIPBOARD)' \
   -class "$window_class" \
   -T "Codex - $project_name" \
   -e bash -lc '

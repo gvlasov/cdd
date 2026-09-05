@@ -24,11 +24,12 @@ CDD is a complete implementation of the idea of a [screaming architecture](https
 
 CDD also borrows from
 
-- [Ontology](https://en.wikipedia.org/wiki/Ontology) as a philosophical study of being
+- [Ontology](https://en.wikipedia.org/wiki/Ontology) as the philosophical study of being
 - [Set theory](https://en.wikipedia.org/wiki/Set_theory) - concepts are classes, their instances comprise a volume, and a project's modeled reality is that volume's real subset
+- [OOP](https://en.wikipedia.org/wiki/Object-oriented_programming) - only the best parts
 - Wikipedia-style article organization - everything about a single concept lives in a single place
 - [Obsidian](https://obsidian.md)
-- Feature-sliced architecture (pushing it to its logical end)
+- [Feature-sliced design](https://feature-sliced.design/) (pushing it to its logical end)
 - Domain-Driven Design, where problem domain concepts are first-class citizens. Organizes the whole codebase using ubiquitous language, makes heavy use of the Repository pattern.
 - REST's convention of organizing an API around nouns (resources) rather than actions - CDD generalizes this noun-first instinct from the network boundary to the whole repository
 
