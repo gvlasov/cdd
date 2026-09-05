@@ -14,6 +14,8 @@ export interface Property {
    *  - `identity` / `slug` / `name` / `definition` / `effect`: a literal string
    *  - `concept` / `examples`: the identity of the concept this property holds
    *  - `concepts`: the identities of the concepts an ontology contains
+   *  - `inspirations`: the identities of the (plain-text) Example instances
+   *    an ontology's own design borrows from
    *  - `attributes`: the attribute concepts an instance of this concept may have
    *  - `transactions`: the transaction identities a concept exposes
    *  - `params`: names of the inputs a transaction's effect expects
@@ -43,6 +45,7 @@ export type PropertyKindName =
   | 'examples'
   | 'concept'
   | 'concepts'
+  | 'inspirations'
   | 'attributes'
   | 'transactions'
   | 'effect'

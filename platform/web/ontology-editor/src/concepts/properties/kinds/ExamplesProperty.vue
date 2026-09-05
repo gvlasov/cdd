@@ -12,6 +12,8 @@ import { useOntology } from '@/concepts/ontology/useOntology'
 const props = defineProps<{ property: Property; instance: Instance }>()
 const { ontology, conceptLabel, navigate } = useOntology()
 
+const title = computed(() => props.property.kind[0].toUpperCase() + props.property.kind.slice(1))
+
 function literal(value: Property['value']): string {
   return Array.isArray(value) ? (value[0] ?? '') : value
 }
@@ -37,7 +39,7 @@ const examples = computed(() => {
 
 <template>
   <div>
-    <h3 class="text-left mb-1">Examples</h3>
+    <h3 class="text-left mb-1">{{ title }}</h3>
     <ul class="examples-list">
       <li v-for="ex in examples" :key="ex.key">
         <template v-if="ex.target"
