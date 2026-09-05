@@ -1,7 +1,9 @@
 // A reflection is how a concept exists in a project: any file — code, view,
 // test, doc, asset — that represents the concept. `parentConcept` (1) links to
-// the concept it reflects; placement follows that link, not the runtime
-// mechanism. See concepts/reflections/Reflection.md for the full writeup.
+// the concept it reflects, displayed as "concept" since the concept's own
+// `concept` property already means something else (its type); placement
+// follows that link, not the runtime mechanism. See
+// concepts/reflections/Reflection.md for the full writeup.
 export default [
   [
     { kind: 'identity', value: 'cdd.reflection' },
@@ -42,7 +44,7 @@ export default [
     { kind: 'identity', value: 'cdd.reflection:parentConcept' },
     { kind: 'concept', value: 'cdd.attribute' },
     { kind: 'slug', value: 'parentConcept' },
-    { kind: 'name', value: 'parent concept' },
+    { kind: 'name', value: 'concept' },
     { kind: 'type', value: 'cdd.concept' },
     { kind: 'cardinality', value: '1' },
     { kind: 'description', value: 'the concept this reflection represents.' },
