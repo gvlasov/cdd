@@ -1,6 +1,19 @@
 # Transaction
 
-The path data traces through a write operation: from a request, through validation, through mutation, into persistence and back — scoped so the whole path appears atomic from the outside
+The path data traces through a write operation: 
+
+- user intent
+- frontend code
+- transport layer request
+- route
+- controller
+- validation
+- mutation
+- persistence 
+- response
+- UI display
+
+so the whole path appears atomic from the outside
 
 A transaction is what changes the state of a [concept](/concepts/concepts/Concept.md)'s [real volume](/concepts/classes/RealVolume.md). A concept itself has no state — it has a name, attributes, and kinds. Its real volume, the set of its actual instances in the modeled reality, is what has state. Because that real volume is often mutable, a concept usually has one or more transactions: create, update, delete, and any domain-specific state change.
 
@@ -22,6 +35,10 @@ A transaction encapsulates:
 - database queries (or, for a saga, calls to the services/steps involved) - how the change is carried out and, if it fails partway, undone
 - caching - how caches are invalidated or updated as a result
 - state manipulation - the actual mutation of the concept's real volume
+
+**Idempotency:**
+
+A transaction is idempotent when running it more than once with the same input has the same effect on the concept's real volume as running it once. This matters because a transaction's transport (retries after a timeout, at-least-once queue delivery, a user double-clicking submit) can trigger the same request more than once — an idempotent transaction makes that safe. Update and delete are naturally idempotent when they set state to a target value or remove a specific instance; create is not idempotent by default and needs a deduplication key (e.g. an idempotency key or a natural unique constraint) to become one.
 
 ## Boundary
 
