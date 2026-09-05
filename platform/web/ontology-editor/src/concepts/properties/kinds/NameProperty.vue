@@ -53,7 +53,7 @@ const cardinality = computed(() => attributeCardinality(props.instance))
     <template v-if="isAttribute && owner"
       ><a class="link" href="#" @click.prevent="navigate(owner.id)">{{
         owner.label
-      }}</a><span class="text-medium-emphasis">&nbsp;·&nbsp;</span></template
+      }}</a><span class="text-medium-emphasis">.</span></template
     >{{ property.value
     }}<template v-if="typeId"
       ><span class="text-medium-emphasis">:&nbsp;</span
