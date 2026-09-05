@@ -84,10 +84,10 @@ const drawn = computed(() =>
   <v-card
     :color="tone"
     variant="tonal"
-    class="flex-grow-1 d-flex overflow-auto instance-card"
+    class="flex-grow-1 d-flex instance-card"
   >
-    <v-card-text class="d-flex justify-center content">
-      <div class="d-flex flex-column ga-4 my-auto" style="max-width: 60ch; width: 100%">
+    <v-card-text class="d-flex justify-center content scroll-region">
+      <div class="d-flex flex-column ga-4" style="max-width: 60ch; width: 100%">
         <component
           :is="entry.kind.render"
           v-for="entry in drawn"
@@ -106,5 +106,9 @@ const drawn = computed(() =>
 }
 .content {
   color: rgb(var(--v-theme-on-surface));
+}
+.scroll-region {
+  min-height: 0;
+  overflow-y: auto;
 }
 </style>
