@@ -4,22 +4,16 @@ import type { Ontology } from '@/concepts/ontology/Ontology'
 import type { Reality } from '@/concepts/reality/Reality'
 import type { OntologyModule } from '@/concepts/ontology/loadOntology'
 import { loadOntology } from '@/concepts/ontology/loadOntology'
-import { sampleOntology } from '@/concepts/ontology/sample-ontology'
 import { emptyReality } from '@/concepts/reality/Reality'
 import OntologyEditor from '@/concepts/ontology/OntologyEditor.vue'
 
 // Loads this repo's own ontology from concepts/**/*.ts (one file per
-// concept — see concepts/concepts/Concept-ontology.ts for the shape). Falls
-// back to the packaged sample ontology when no ontology data is found, so the
-// demo still has something to show before any ontology data is authored.
+// concept — see concepts/concepts/Concept-ontology.ts for the shape).
 const modules = import.meta.glob<{ default: OntologyModule }>(
   '../../../../../../concepts/**/*.ts',
   { eager: true },
 )
-const loaded = loadOntology(modules, 'cdd')
-const ontology = ref<Ontology>(
-  Object.keys(loaded.instances).length ? loaded : sampleOntology,
-)
+const ontology = ref<Ontology>(loadOntology(modules, 'cdd'))
 const reality = ref<Reality>(emptyReality())
 </script>
 

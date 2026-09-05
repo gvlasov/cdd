@@ -225,7 +225,8 @@ const ontology = loadOntology(modules, 'cdd') // 'cdd' = the root instance's ide
 file. If `concepts/` sits outside the Vite project root, add it to
 `server.fs.allow` so the dev server can read it (see this project's own
 `vite.config.ts` and `src/concepts/app/DemoApp.vue`, which loads this repo's
-own ontology from `/concepts` this way).
+own ontology from `/concepts` this way — it's also symlinked at
+`/concepts/editor/DemoApp.vue` since it reflects the `editor` concept too).
 
 ## Develop
 
