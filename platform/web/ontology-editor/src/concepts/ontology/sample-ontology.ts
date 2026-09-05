@@ -3,9 +3,10 @@ import type { Instance } from '@/concepts/instances/Instance'
 import type { Identity } from '@/concepts/identity/Identity'
 import type { Cardinality } from '@/concepts/attributes/Attribute'
 
-// Fallback ontology for the demo app, used only if concepts/editor (this
-// repo's real, CDD-authored ontology — see loadOntology.ts) is empty. Also
-// doubles as a worked example of the model for anyone reading this file.
+// Fallback ontology for the demo app, used only if this repo's real,
+// CDD-authored ontology (scattered across concepts/**/*.ts — see
+// loadOntology.ts) is empty. Also doubles as a worked example of the model
+// for anyone reading this file.
 //
 // Every entry is an instance; its `concept` property names its type.
 //

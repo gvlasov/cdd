@@ -188,7 +188,7 @@ concept itself, plus any it owns: its attribute instances, transactions, ...).
 Each instance carries its own `identity` property, which becomes its key.
 
 ```ts
-// concepts/editor/concept/Concept.ts
+// concepts/concepts/Concept-ontology.ts
 export default [
   [
     { kind: 'identity', value: 'cdd.concept' },
@@ -215,7 +215,7 @@ The consuming app glob-imports the directory and hands the result to
 import { loadOntology, type OntologyModule } from '@cdd/ontology-editor'
 
 const modules = import.meta.glob<{ default: OntologyModule }>(
-  './concepts/editor/**/*.ts',
+  './concepts/**/*.ts',
   { eager: true },
 )
 const ontology = loadOntology(modules, 'cdd') // 'cdd' = the root instance's identity
@@ -225,7 +225,7 @@ const ontology = loadOntology(modules, 'cdd') // 'cdd' = the root instance's ide
 file. If `concepts/` sits outside the Vite project root, add it to
 `server.fs.allow` so the dev server can read it (see this project's own
 `vite.config.ts` and `src/concepts/app/DemoApp.vue`, which loads this repo's
-own ontology from `/concepts/editor` this way).
+own ontology from `/concepts` this way).
 
 ## Develop
 
