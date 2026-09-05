@@ -64,7 +64,7 @@ const drawn = computed(() =>
     variant="tonal"
     class="flex-grow-1 d-flex align-center overflow-auto"
   >
-    <v-card-text class="d-flex justify-center">
+    <v-card-text class="d-flex justify-center content">
       <div class="d-flex flex-column ga-4" style="max-width: 60ch; width: 100%">
         <component
           :is="entry.kind.render"
@@ -77,3 +77,9 @@ const drawn = computed(() =>
     </v-card-text>
   </v-card>
 </template>
+
+<style scoped>
+.content {
+  color: rgb(var(--v-theme-on-surface));
+}
+</style>
