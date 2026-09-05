@@ -5,8 +5,13 @@ import { isConcept } from '@/concepts/concepts/Concept'
 import { instanceType } from './Instance'
 import { propertyKind } from '@/concepts/properties/kinds/property-kinds'
 import { conceptOf } from '@/concepts/ontology/Ontology'
-import { conceptAttributeSpecs, attributeType, soleOwningAttribute } from '@/concepts/attributes/Attribute'
-import { instanceIdentity } from './Instance'
+import {
+  conceptAttributeSpecs,
+  attributeType,
+  attributeUsageIds,
+  soleOwningAttribute,
+} from '@/concepts/attributes/Attribute'
+import { instanceIdentity, instanceSlug } from './Instance'
 import { useOntology } from '@/concepts/ontology/useOntology'
 
 // The central component: renders one instance as its properties, in
@@ -31,6 +36,23 @@ const mergedConceptProperties = computed(() => {
   return concept.filter((property) => !MERGED_CONCEPT_SKIP.has(property.kind))
 })
 
+// An attribute instance's own page shows its schema (name, type, cardinality)
+// but not its actual values — those live scattered across whichever
+// instances declare them. When the attribute's type is `cdd.example` (a list
+// of described things, like `examples` or `inspirations`), synthesize an
+// entry — under the attribute's own slug/kind, so it renders with that
+// kind's own title (e.g. "Inspirations", not "Examples") — listing every
+// value found anywhere in the ontology under this attribute's slug.
+const usageEntries = computed(() => {
+  if (instanceType(props.instance) !== 'cdd.attribute') return []
+  if (attributeType(props.instance) !== 'cdd.example') return []
+  const myId = instanceIdentity(props.instance)
+  const slug = myId ? instanceSlug(props.instance) : undefined
+  if (!myId || !slug) return []
+  const ids = attributeUsageIds(ontology(), myId)
+  return ids.length ? [{ kind: slug as never, value: ids }] : []
+})
+
 // Ground color: `attribute` for an attribute instance, `concept` when it
 // declares attributes, else `instance`.
 const tone = computed(() => {
@@ -51,7 +73,7 @@ const computedEntries = computed(() => {
 })
 
 const drawn = computed(() =>
-  [...props.instance, ...computedEntries.value, ...mergedConceptProperties.value]
+  [...props.instance, ...computedEntries.value, ...mergedConceptProperties.value, ...usageEntries.value]
     .map((property, i) => ({ property, i, kind: propertyKind(property.kind) }))
     .filter((x) => x.kind?.render && x.property.kind !== 'attributes')
     .sort((a, b) => a.kind.position - b.kind.position || a.i - b.i),

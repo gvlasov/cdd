@@ -3,7 +3,7 @@ import type { Instance } from '@/concepts/instances/Instance'
 import type { Ontology } from '@/concepts/ontology/Ontology'
 import { conceptOf, ontologyConcepts } from '@/concepts/ontology/Ontology'
 import { firstOfKind } from '@/concepts/properties/Property'
-import { instanceName, instanceSlug } from '@/concepts/instances/Instance'
+import { instanceName, instanceSlug, instanceType } from '@/concepts/instances/Instance'
 import { conceptAttributes } from '@/concepts/concepts/Concept'
 
 // An attribute is an instance typed `cdd.attribute`. It defines one slot on
@@ -144,6 +144,33 @@ export function attributesTypedBy(ontology: Ontology, identity: Identity): Ident
     if (attributeType(instance) === identity) attributes.push(ownerId)
   }
   return attributes
+}
+
+/**
+ * Every value stored under `attributeId` specifically — not just any property
+ * sharing its slug (several unrelated attributes across the ontology can
+ * reuse the same slug, e.g. `examples`). Scoped by walking each instance's
+ * own type back to a concept that actually declares `attributeId` among its
+ * `attributes`, then reading that instance's property of the matching slug.
+ * Used to list an attribute's actual values on its own page, since a
+ * list-typed attribute otherwise only shows its schema (type, cardinality)
+ * there.
+ */
+export function attributeUsageIds(ontology: Ontology, attributeId: Identity): Identity[] {
+  const attribute = conceptOf(ontology, attributeId)
+  const slug = attribute ? instanceSlug(attribute) : undefined
+  if (!slug) return []
+  const ids: Identity[] = []
+  for (const instance of Object.values(ontology.instances)) {
+    const typeId = instanceType(instance)
+    const type = typeId ? conceptOf(ontology, typeId) : undefined
+    if (!type || !conceptAttributes(type).includes(attributeId)) continue
+    const property = firstOfKind(instance, slug as never)
+    if (!property) continue
+    const values = Array.isArray(property.value) ? property.value : [property.value]
+    ids.push(...values)
+  }
+  return ids
 }
 
 /**
