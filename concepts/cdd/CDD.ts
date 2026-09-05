@@ -1,10 +1,15 @@
 // The ontology root — an instance of the Ontology concept (cdd.ontology), not
-// a concept itself. Its `concepts` property lists the concepts it contains;
-// `inspirations` lists the outside ideas CDD's own design borrows from (see
-// README.md's "Inspiration" section, which this mirrors). Glob-loaded by
-// platform/web/ontology-editor's demo app; see that project's README for the
-// file contract (one array of instances, each with its own `identity`
-// property, exported as default).
+// a concept itself. Its `concepts` property lists the concepts it contains.
+// Glob-loaded by platform/web/ontology-editor's demo app; see that project's
+// README for the file contract (one array of instances, each with its own
+// `identity` property, exported as default).
+//
+// `cdd.project` is a separate, CDD-specific singleton concept (see
+// concepts/singletons/Singleton.md) — its one instance, also identified
+// `cdd.project`, is CDD the methodology/project itself, distinct from the
+// ontology-viewer root above. `inspirations` lists the outside ideas CDD's
+// own design borrows from (see README.md's "Inspiration" section, which this
+// mirrors).
 export default [
   [
     { kind: 'identity', value: 'cdd' },
@@ -26,25 +31,50 @@ export default [
         'cdd.string',
         'cdd.transaction',
         'cdd.reflection',
-      ],
-    },
-    {
-      kind: 'inspirations',
-      value: [
-        'cdd:inspirations:screamingArchitecture',
-        'cdd:inspirations:ontology',
-        'cdd:inspirations:setTheory',
-        'cdd:inspirations:oop',
-        'cdd:inspirations:wikipedia',
-        'cdd:inspirations:obsidian',
-        'cdd:inspirations:featureSlicedDesign',
-        'cdd:inspirations:ddd',
-        'cdd:inspirations:rest',
+        'cdd.project',
       ],
     },
   ],
   [
-    { kind: 'identity', value: 'cdd:inspirations:screamingArchitecture' },
+    { kind: 'identity', value: 'cdd.project' },
+    { kind: 'concept', value: 'cdd.concept' },
+    { kind: 'slug', value: 'project' },
+    { kind: 'name', value: 'CDD' },
+    {
+      kind: 'definition',
+      value: 'the {concept,cohesion,cli,convenience}-driven design methodology and its reference project — a singleton: the one instance is CDD itself.',
+    },
+    { kind: 'attributes', value: ['cdd.project:inspirations'] },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.project:inspirations' },
+    { kind: 'concept', value: 'cdd.attribute' },
+    { kind: 'slug', value: 'inspirations' },
+    { kind: 'name', value: 'inspirations' },
+    { kind: 'type', value: 'cdd.example' },
+    { kind: 'cardinality', value: '0+' },
+    { kind: 'description', value: 'outside ideas CDD’s own design borrows from.' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.project:instance' },
+    { kind: 'concept', value: 'cdd.project' },
+    {
+      kind: 'inspirations',
+      value: [
+        'cdd.project:inspirations:screamingArchitecture',
+        'cdd.project:inspirations:ontology',
+        'cdd.project:inspirations:setTheory',
+        'cdd.project:inspirations:oop',
+        'cdd.project:inspirations:wikipedia',
+        'cdd.project:inspirations:obsidian',
+        'cdd.project:inspirations:featureSlicedDesign',
+        'cdd.project:inspirations:ddd',
+        'cdd.project:inspirations:rest',
+      ],
+    },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.project:inspirations:screamingArchitecture' },
     { kind: 'concept', value: 'cdd.example' },
     {
       kind: 'description',
@@ -53,7 +83,7 @@ export default [
     },
   ],
   [
-    { kind: 'identity', value: 'cdd:inspirations:ontology' },
+    { kind: 'identity', value: 'cdd.project:inspirations:ontology' },
     { kind: 'concept', value: 'cdd.example' },
     {
       kind: 'description',
@@ -61,7 +91,7 @@ export default [
     },
   ],
   [
-    { kind: 'identity', value: 'cdd:inspirations:setTheory' },
+    { kind: 'identity', value: 'cdd.project:inspirations:setTheory' },
     { kind: 'concept', value: 'cdd.example' },
     {
       kind: 'description',
@@ -70,12 +100,12 @@ export default [
     },
   ],
   [
-    { kind: 'identity', value: 'cdd:inspirations:oop' },
+    { kind: 'identity', value: 'cdd.project:inspirations:oop' },
     { kind: 'concept', value: 'cdd.example' },
     { kind: 'description', value: 'Object-oriented programming — only the best parts.' },
   ],
   [
-    { kind: 'identity', value: 'cdd:inspirations:wikipedia' },
+    { kind: 'identity', value: 'cdd.project:inspirations:wikipedia' },
     { kind: 'concept', value: 'cdd.example' },
     {
       kind: 'description',
@@ -83,17 +113,17 @@ export default [
     },
   ],
   [
-    { kind: 'identity', value: 'cdd:inspirations:obsidian' },
+    { kind: 'identity', value: 'cdd.project:inspirations:obsidian' },
     { kind: 'concept', value: 'cdd.example' },
     { kind: 'description', value: 'Obsidian.' },
   ],
   [
-    { kind: 'identity', value: 'cdd:inspirations:featureSlicedDesign' },
+    { kind: 'identity', value: 'cdd.project:inspirations:featureSlicedDesign' },
     { kind: 'concept', value: 'cdd.example' },
     { kind: 'description', value: 'Feature-sliced design, pushed to its logical end.' },
   ],
   [
-    { kind: 'identity', value: 'cdd:inspirations:ddd' },
+    { kind: 'identity', value: 'cdd.project:inspirations:ddd' },
     { kind: 'concept', value: 'cdd.example' },
     {
       kind: 'description',
@@ -102,7 +132,7 @@ export default [
     },
   ],
   [
-    { kind: 'identity', value: 'cdd:inspirations:rest' },
+    { kind: 'identity', value: 'cdd.project:inspirations:rest' },
     { kind: 'concept', value: 'cdd.example' },
     {
       kind: 'description',
