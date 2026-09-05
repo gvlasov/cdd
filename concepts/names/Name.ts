@@ -1,4 +1,7 @@
-// A leaf concept — declares no attributes.
+// A leaf concept — declares no attributes. An attribute-concept (see
+// concepts/attribute-concepts/AttributeConcept.md): the only attribute typed
+// `cdd.name` is `cdd.instance:name`, so it merges into that attribute's own
+// page instead of getting one of its own — see `soleOwningAttribute`.
 export default [
   [
     { kind: 'identity', value: 'cdd.name' },

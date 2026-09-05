@@ -16,7 +16,6 @@ export default [
     {
       kind: 'attributes',
       value: [
-        'cdd.attribute:name',
         'cdd.attribute:slug',
         'cdd.attribute:type',
         'cdd.attribute:cardinality',
@@ -25,14 +24,6 @@ export default [
         'cdd.attribute:description',
       ],
     },
-  ],
-  [
-    { kind: 'identity', value: 'cdd.attribute:name' },
-    { kind: 'concept', value: 'cdd.attribute' },
-    { kind: 'slug', value: 'name' },
-    { kind: 'name', value: 'name' },
-    { kind: 'type', value: 'cdd.name' },
-    { kind: 'cardinality', value: '1' },
   ],
   [
     { kind: 'identity', value: 'cdd.attribute:slug' },
@@ -63,8 +54,9 @@ export default [
     { kind: 'concept', value: 'cdd.attribute' },
     { kind: 'slug', value: 'computed' },
     { kind: 'name', value: 'computed' },
-    { kind: 'type', value: 'cdd.name' },
+    { kind: 'type', value: 'cdd.string' },
     { kind: 'cardinality', value: '0-1' },
+    { kind: 'description', value: "'true' when the attribute's value is derived, not stored." },
   ],
   [
     { kind: 'identity', value: 'cdd.attribute:function' },
