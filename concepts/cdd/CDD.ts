@@ -76,7 +76,7 @@ export default [
     {
       kind: 'description',
       value:
-        'Screaming Architecture (Bob Martin) — CDD is a complete implementation of the idea: a project structure that screams its domain, not its framework.',
+        '[Screaming Architecture](https://blog.cleancoder.com/uncle-bob/2011/09/30/Screaming-Architecture.html) (Bob Martin) — CDD is a complete implementation of the idea: a project structure that screams its domain, not its framework.',
     },
   ],
   [
@@ -84,7 +84,7 @@ export default [
     { kind: 'concept', value: 'cdd.example' },
     {
       kind: 'description',
-      value: 'Ontology, the philosophical study of being.',
+      value: '[Ontology](https://en.wikipedia.org/wiki/Ontology), the philosophical study of being.',
     },
   ],
   [
@@ -93,13 +93,17 @@ export default [
     {
       kind: 'description',
       value:
-        'Set theory — concepts are classes, their instances comprise a volume, and a project’s modeled reality is that volume’s real subset.',
+        '[Set theory](https://en.wikipedia.org/wiki/Set_theory) — concepts are classes, their instances comprise a volume, and a project’s modeled reality is that volume’s real subset.',
     },
   ],
   [
     { kind: 'identity', value: 'cdd.project:inspirations:oop' },
     { kind: 'concept', value: 'cdd.example' },
-    { kind: 'description', value: 'Object-oriented programming — only the best parts.' },
+    {
+      kind: 'description',
+      value:
+        '[Object-oriented programming](https://en.wikipedia.org/wiki/Object-oriented_programming) — only the best parts.',
+    },
   ],
   [
     { kind: 'identity', value: 'cdd.project:inspirations:wikipedia' },
@@ -112,12 +116,15 @@ export default [
   [
     { kind: 'identity', value: 'cdd.project:inspirations:obsidian' },
     { kind: 'concept', value: 'cdd.example' },
-    { kind: 'description', value: 'Obsidian.' },
+    { kind: 'description', value: '[Obsidian](https://obsidian.md).' },
   ],
   [
     { kind: 'identity', value: 'cdd.project:inspirations:featureSlicedDesign' },
     { kind: 'concept', value: 'cdd.example' },
-    { kind: 'description', value: 'Feature-sliced design, pushed to its logical end.' },
+    {
+      kind: 'description',
+      value: '[Feature-sliced design](https://feature-sliced.design/), pushed to its logical end.',
+    },
   ],
   [
     { kind: 'identity', value: 'cdd.project:inspirations:ddd' },

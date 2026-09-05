@@ -4,6 +4,7 @@ import type { Property } from '@/concepts/properties/Property'
 import { firstOfKind } from '@/concepts/properties/Property'
 import type { Instance } from '@/concepts/instances/Instance'
 import { useOntology } from '@/concepts/ontology/useOntology'
+import ConceptText from '@/concepts/concept-links/ConceptText.vue'
 
 // `examples` value identities reference Example instances — each one pairs an
 // optional linked `instance` (a concept, shown as a link) with a
@@ -18,6 +19,12 @@ function literal(value: Property['value']): string {
   return Array.isArray(value) ? (value[0] ?? '') : value
 }
 
+// A plain-text description (no linked instance) renders as inline code when
+// it's a short literal like `logs:view`, or as parsed text — with markdown
+// links and inline code — when it contains a markdown link, since a code
+// span can't itself hold a link.
+const MARKDOWN_LINK = /\[[^\]]+\]\([^)]+\)/
+
 const examples = computed(() => {
   const ids = Array.isArray(props.property.value)
     ? props.property.value
@@ -27,11 +34,13 @@ const examples = computed(() => {
     const linked = example ? firstOfKind(example, 'instance') : undefined
     const description = example ? firstOfKind(example, 'description') : undefined
     const target = linked ? literal(linked.value) : undefined
+    const descriptionText = description ? literal(description.value) : undefined
     return {
       key: id,
       target,
       label: target ? (conceptLabel(target) ?? target) : undefined,
-      description: description ? literal(description.value) : undefined,
+      description: descriptionText,
+      descriptionHasLink: descriptionText ? MARKDOWN_LINK.test(descriptionText) : false,
     }
   })
 })
@@ -44,8 +53,11 @@ const examples = computed(() => {
       <li v-for="ex in examples" :key="ex.key">
         <template v-if="ex.target"
           ><a href="#" class="link" @click.prevent="navigate(ex.target)">{{ ex.label }}</a
-          ><template v-if="ex.description">&nbsp;&mdash;&nbsp;{{ ex.description }}</template></template
-        ><code v-else class="inline-code">{{ ex.description }}</code>
+          ><template v-if="ex.description"
+            >&nbsp;&mdash;&nbsp;<ConceptText :text="ex.description" /></template
+        ></template>
+        <ConceptText v-else-if="ex.descriptionHasLink" :text="ex.description ?? ''" />
+        <code v-else class="inline-code">{{ ex.description }}</code>
       </li>
     </ul>
   </div>

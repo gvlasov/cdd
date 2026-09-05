@@ -37,6 +37,9 @@ function known(target: string): boolean {
       <span v-else-if="seg.kind === 'link'" class="concept-link concept-link--broken">{{
         seg.label
       }}</span>
+      <a v-else-if="seg.kind === 'external-link'" class="external-link" :href="seg.href"
+        >{{ seg.label }}<v-icon icon="mdi-open-in-new" size="14" class="external-link-icon"
+      /></a>
       <code v-else-if="seg.kind === 'code'" class="inline-code">{{ seg.text }}</code>
       <template v-else>{{ seg.text }}</template>
     </template>
@@ -53,6 +56,16 @@ function known(target: string): boolean {
 .concept-link--broken {
   color: rgb(var(--v-theme-error));
   cursor: default;
+}
+.external-link {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+}
+.external-link-icon {
+  vertical-align: super;
+  margin-left: 0.15em;
+  opacity: 0.75;
 }
 .inline-code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
