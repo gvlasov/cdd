@@ -12,18 +12,18 @@ import ConceptsProperty from './ConceptsProperty.vue'
 import ParentConceptProperty from './ParentConceptProperty.vue'
 import CanonicalNameProperty from './CanonicalNameProperty.vue'
 import StringListProperty from './StringListProperty.vue'
+import AttributesProperty from './AttributesProperty.vue'
 
 // The predefined property kinds and their draw positions inside the instance
 // renderer. Equal positions draw in renderer-defined order. A kind with no
 // `render` is not drawn inside the instance:
 //  - `identity` is the instance's key, not something to show
-//  - `attributes` is a concept's schema for its instances; drawn below the
-//    instance by ConceptView, not inside it
+//  - `attributes` is a concept's schema for its instances; rendered as a
+//    linked list inside its instance card
 //  - `concept` (the type reference) is drawn below the instance as a navigable
 //    chip, not inside it
 //  - `transactions` and `concepts` are drawn inside the instance (like
-//    `examples`); running a transaction is a separate action, handled by
-//    TransactionBar below the instance
+//    `examples`); each transaction item includes its own run action
 //  - `computed` and `function` describe a computed attribute's own
 //    derivation (see cdd.attribute); they are not drawn on the instances
 //    that attribute applies to — AttributeValueEditor reads them directly
@@ -50,7 +50,7 @@ export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   concept: { name: 'concept', position: 4 },
   concepts: { name: 'concepts', position: 7, render: ConceptsProperty },
   inspirations: { name: 'inspirations', position: 7, render: ExamplesProperty },
-  attributes: { name: 'attributes', position: 5 },
+  attributes: { name: 'attributes', position: 5, render: AttributesProperty },
   transactions: { name: 'transactions', position: 7, render: TransactionsProperty },
   required: { name: 'required', position: 5 },
   type: { name: 'type', position: 5 },

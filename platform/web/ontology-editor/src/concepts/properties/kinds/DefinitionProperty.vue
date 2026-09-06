@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import type { Property } from '@/concepts/properties/Property'
 import type { Instance } from '@/concepts/instances/Instance'
+import { isConcept } from '@/concepts/concepts/Concept'
 import ConceptText from '@/concepts/concept-links/ConceptText.vue'
 
 const props = defineProps<{ property: Property; instance: Instance }>()
@@ -13,6 +14,6 @@ const text = computed(() =>
 
 <template>
   <p class="text-body-1 text-medium-emphasis text-left">
-    <ConceptText :text="text" />
+    <ConceptText :text="text" :capitalize="isConcept(instance)" />
   </p>
 </template>

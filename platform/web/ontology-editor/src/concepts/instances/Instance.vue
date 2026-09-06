@@ -15,8 +15,7 @@ import { instanceIdentity, instanceSlug } from './Instance'
 import { useOntology } from '@/concepts/ontology/useOntology'
 
 // The central component: renders one instance as its properties, in
-// kind-position order. Equal positions keep source order. A concept's
-// `attributes` are NOT drawn here — they belong below the instance, not inside.
+// kind-position order. Equal positions keep source order.
 const props = defineProps<{ instance: Instance }>()
 
 const { ontology } = useOntology()
@@ -26,8 +25,8 @@ const { ontology } = useOntology()
 // properties (definition, examples, transactions, ...) are drawn here too,
 // alongside the attribute's own, so the merged page carries both. Identity,
 // naming, and schema properties are skipped: the attribute's own name/type
-// stand in for them, and `attributes` is drawn below by ConceptView.
-const MERGED_CONCEPT_SKIP = new Set(['identity', 'concept', 'slug', 'name', 'attributes'])
+// stand in for them. Declared attributes remain, rendered inside the card.
+const MERGED_CONCEPT_SKIP = new Set(['identity', 'concept', 'slug', 'name'])
 const mergedConceptProperties = computed(() => {
   const type = attributeType(props.instance)
   const myId = instanceIdentity(props.instance)
@@ -75,7 +74,7 @@ const computedEntries = computed(() => {
 const drawn = computed(() =>
   [...props.instance, ...computedEntries.value, ...mergedConceptProperties.value, ...usageEntries.value]
     .map((property, i) => ({ property, i, kind: propertyKind(property.kind) }))
-    .filter((x) => x.kind?.render && x.property.kind !== 'attributes')
+    .filter((x) => x.kind?.render)
     .sort((a, b) => a.kind.position - b.kind.position || a.i - b.i),
 )
 </script>

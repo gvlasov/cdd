@@ -3,12 +3,14 @@ import { computed } from 'vue'
 import { conceptSlug } from '@/concepts/concepts/Concept'
 import { conceptOf, rootConcept } from '@/concepts/ontology/Ontology'
 import { useOntology } from '@/concepts/ontology/useOntology'
-import { parseConceptLinks } from './parseConceptLinks'
+import { parseConceptLinks, type Segment } from './parseConceptLinks'
 
 // Renders text that may embed [Label](identity) links to other concepts and
 // `inline code` spans. A leading dot in a link target means "this ontology":
 // `.attribute` → `<rootSlug>.attribute`.
-const props = defineProps<{ text: string }>()
+const props = withDefaults(defineProps<{ text: string; capitalize?: boolean }>(), {
+  capitalize: false,
+})
 
 const { ontology, navigate } = useOntology()
 
@@ -17,7 +19,37 @@ const rootSlug = computed(() => {
   return root ? conceptSlug(root) : undefined
 })
 
-const segments = computed(() => parseConceptLinks(props.text, rootSlug.value))
+function capitalizeFirstLetter(segments: Segment[]): Segment[] {
+  const result = [...segments]
+
+  for (let i = 0; i < result.length; i += 1) {
+    const segment = result[i]
+    if (segment.kind === 'code') break
+
+    if (segment.kind === 'text') {
+      const firstLetter = segment.text.search(/\S/)
+      if (firstLetter === -1) continue
+      result[i] = {
+        ...segment,
+        text:
+          segment.text.slice(0, firstLetter) +
+          segment.text[firstLetter].toLocaleUpperCase() +
+          segment.text.slice(firstLetter + 1),
+      }
+      break
+    }
+
+    result[i] = { ...segment, label: segment.label[0].toLocaleUpperCase() + segment.label.slice(1) }
+    break
+  }
+
+  return result
+}
+
+const segments = computed(() => {
+  const parsed = parseConceptLinks(props.text, rootSlug.value)
+  return props.capitalize ? capitalizeFirstLetter(parsed) : parsed
+})
 
 function known(target: string): boolean {
   return conceptOf(ontology(), target) !== undefined
