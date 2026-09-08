@@ -33,6 +33,8 @@ export default [
         'cdd.reflection',
         'cdd.project',
         'cdd.attributeConcept',
+        'cdd.user',
+        'cdd.subject',
       ],
     },
   ],
