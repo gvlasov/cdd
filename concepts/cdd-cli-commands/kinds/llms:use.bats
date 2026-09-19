@@ -13,7 +13,7 @@ windows:
   - llm:
       panes:
         - claude --resume
-        #- codex --approve-for-me resume
+        #- codex --dangerously-bypass-approvals-and-sandbox resume
 YAML
   cd "$project"
 }
@@ -22,7 +22,7 @@ YAML
   run "$CDD" llms:use codex
 
   assert_success
-  grep -Eq '^[[:space:]]*- codex --approve-for-me resume$' "$config"
+  grep -Eq '^[[:space:]]*- codex --dangerously-bypass-approvals-and-sandbox resume$' "$config"
   grep -Eq '^[[:space:]]*#- claude --resume$' "$config"
 }
 
@@ -36,7 +36,7 @@ YAML
 
   assert_success
   grep -Eq '^[[:space:]]*- claude --resume$' "$config"
-  grep -Eq '^[[:space:]]*#- codex --approve-for-me resume$' "$config"
+  grep -Eq '^[[:space:]]*#- codex --dangerously-bypass-approvals-and-sandbox resume$' "$config"
 }
 
 @test "llms:use rejects unsupported LLMs without changing the config" {

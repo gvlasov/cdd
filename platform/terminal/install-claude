@@ -16,6 +16,7 @@ source_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
 install_dir="$HOME/.local/bin"
 
 mkdir -p "$install_dir"
+command -p install -m 0755 "$source_dir/terminal-tmuxinator" "$install_dir/terminal-tmuxinator"
 command -p install -m 0755 "$source_dir/terminal-tmuxinator-claude" "$install_dir/terminal-tmuxinator-claude"
 
 printf 'Installed terminal-tmuxinator-claude to %s/terminal-tmuxinator-claude\n' "$install_dir"

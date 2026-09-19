@@ -18,6 +18,7 @@ assert_installed_support() {
   [ -f "$HOME/.claude/skills/cdd/references/concepts.md" ]
   [ -x "$HOME/.local/bin/terminal-tmuxinator-codex" ]
   [ -x "$HOME/.local/bin/terminal-tmuxinator-claude" ]
+  [ -x "$HOME/.local/bin/terminal-tmuxinator" ]
 
   [ "$(sed -n '1p' "$HOME/.codex/skills/cdd/SKILL.md")" = "---" ]
   [ "$(sed -n '4p' "$HOME/.codex/skills/cdd/SKILL.md")" = "---" ]
