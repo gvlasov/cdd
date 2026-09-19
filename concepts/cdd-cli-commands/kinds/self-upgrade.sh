@@ -38,7 +38,7 @@ fi
 
 if [ "$skip_tests" != "1" ]; then
   printf 'Running CDD tests...\n'
-  "$cdd_home/platform/cdd/cdd" tests
+"$cdd_home/platform/entrypoints/cdd" tests
   printf '\033[32m✓\033[0m All tests pass fine\n'
 fi
 

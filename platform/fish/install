@@ -19,7 +19,7 @@ conf_dir="$HOME/.config/fish/conf.d"
 completion_dir="$HOME/.config/fish/completions"
 
 mkdir -p "$bin_dir" "$conf_dir" "$completion_dir"
-ln -sfn "$cdd_home/platform/cdd/cdd" "$bin_dir/cdd"
+ln -sfn "$cdd_home/platform/entrypoints/cdd" "$bin_dir/cdd"
 command -p install -m 0644 "$cdd_home/platform/fish/cdd.fish" "$conf_dir/cdd.fish"
 command -p install -m 0644 "$cdd_home/platform/fish/completions/cdd.fish" "$completion_dir/cdd.fish"
 

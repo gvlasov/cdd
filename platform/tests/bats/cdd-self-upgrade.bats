@@ -4,7 +4,7 @@ load test_helper
 
 assert_installed_support() {
   [ -L "$HOME/.local/bin/cdd" ]
-  [ "$(readlink "$HOME/.local/bin/cdd")" = "$PROJECT_ROOT/platform/cdd/cdd" ]
+  [ "$(readlink "$HOME/.local/bin/cdd")" = "$PROJECT_ROOT/platform/entrypoints/cdd" ]
   [ -f "$HOME/.local/share/bash-completion/completions/cdd" ]
   [ -f "$HOME/.bashrc.d/cdd.bash" ]
   [ -f "$HOME/.bashrc" ]

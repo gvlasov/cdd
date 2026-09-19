@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 PROJECT_ROOT="${PROJECT_ROOT:-/workspace}"
-CDD="$PROJECT_ROOT/platform/cdd/cdd"
+CDD="$PROJECT_ROOT/platform/entrypoints/cdd"
 
 setup_test_home() {
   export HOME="$BATS_TEST_TMPDIR/home"

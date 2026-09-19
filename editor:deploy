@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Build the ontology editor and publish its static files through Problemos at /cdd/.
+set -euo pipefail
+
+source_path="${BASH_SOURCE[0]}"
+while [ -L "$source_path" ]; do
+  source_dir="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
+  source_path="$(readlink "$source_path")"
+  case "$source_path" in
+    /*) ;;
+    *) source_path="$source_dir/$source_path" ;;
+  esac
+done
+
+cdd_root="$(cd -P "$(dirname "$source_path")" >/dev/null 2>&1 && pwd)"
+editor_dir="$cdd_root/platform/web/ontology-editor"
+problemos_dir="$($cdd_root/platform/entrypoints/cdd projects:cd problemos)"
+
+if [ ! -d "$editor_dir/node_modules" ]; then
+  printf 'editor:deploy: installing dependencies...\n' >&2
+  npm install --prefix "$editor_dir"
+fi
+
+npm --prefix "$editor_dir" run build -- --base=/cdd/
+
+"$problemos_dir/commands/prod" mkdir -p platform/laravel/public/cdd
+tar -C "$editor_dir/dist" -czf - . |
+  "$problemos_dir/commands/prod" tar -xzf - -C platform/laravel/public/cdd
+
+printf 'editor:deploy: published https://problemos.lol/cdd/\n'
