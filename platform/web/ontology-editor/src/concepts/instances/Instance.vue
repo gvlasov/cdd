@@ -13,6 +13,7 @@ import {
 } from '@/concepts/attributes/Attribute'
 import { instanceIdentity, instanceSlug } from './Instance'
 import { useOntology } from '@/concepts/ontology/useOntology'
+import { propertyKinds } from '@/concepts/properties/kinds/property-kinds'
 
 // The central component: renders one instance as its properties, in
 // kind-position order. Equal positions keep source order.
@@ -73,7 +74,18 @@ const computedEntries = computed(() => {
 
 const drawn = computed(() =>
   [...props.instance, ...computedEntries.value, ...mergedConceptProperties.value, ...usageEntries.value]
-    .map((property, i) => ({ property, i, kind: propertyKind(property.kind) }))
+    .map((property, i) => {
+      const typeId = instanceType(props.instance)
+      const type = typeId ? conceptOf(ontology(), typeId) : undefined
+      const attribute = type
+        ? conceptAttributeSpecs(ontology(), type).find((spec) => spec.slug === property.kind)
+        : undefined
+      // `cdd.scheme` is a value type, not a globally reserved property name.
+      // This lets a concept call its diagram `map`, `model`, etc. and still
+      // receive the full-width scheme renderer.
+      const kind = attribute?.type === 'cdd.scheme' ? propertyKinds.scheme : propertyKind(property.kind)
+      return { property, i, kind }
+    })
     .filter((x) => x.kind?.render)
     .sort((a, b) => a.kind.position - b.kind.position || a.i - b.i),
 )

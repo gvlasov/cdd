@@ -19,12 +19,6 @@ function literal(value: Property['value']): string {
   return Array.isArray(value) ? (value[0] ?? '') : value
 }
 
-// A plain-text description (no linked instance) renders as inline code when
-// it's a short literal like `logs:view`, or as parsed text — with markdown
-// links and inline code — when it contains a markdown link, since a code
-// span can't itself hold a link.
-const MARKDOWN_LINK = /\[[^\]]+\]\([^)]+\)/
-
 const examples = computed(() => {
   const ids = Array.isArray(props.property.value)
     ? props.property.value
@@ -40,7 +34,6 @@ const examples = computed(() => {
       target,
       label: target ? (conceptLabel(target) ?? target) : undefined,
       description: descriptionText,
-      descriptionHasLink: descriptionText ? MARKDOWN_LINK.test(descriptionText) : false,
     }
   })
 })
@@ -49,39 +42,25 @@ const examples = computed(() => {
 <template>
   <div>
     <h3 class="text-left mb-1">{{ title }}</h3>
-    <ul class="examples-list">
+    <ul class="rich-text-list">
       <li v-for="ex in examples" :key="ex.key">
         <template v-if="ex.target"
           ><a href="#" class="link" @click.prevent="navigate(ex.target)">{{ ex.label }}</a
           ><template v-if="ex.description"
             >&nbsp;&mdash;&nbsp;<ConceptText :text="ex.description" /></template
         ></template>
-        <ConceptText v-else-if="ex.descriptionHasLink" :text="ex.description ?? ''" />
-        <code v-else class="inline-code">{{ ex.description }}</code>
+        <ConceptText v-else :text="ex.description ?? ''" />
       </li>
     </ul>
   </div>
 </template>
 
+<style scoped src="./rich-text-list.css"></style>
+
 <style scoped>
-.examples-list {
-  list-style: disc;
-  padding-left: 1.25em;
-  margin: 0;
-}
-.examples-list li + li {
-  margin-top: 0.75em;
-}
 .link {
   color: rgb(var(--v-theme-concept));
   text-decoration: none;
   border-bottom: 2px solid currentColor;
-}
-.inline-code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.9em;
-  padding: 0.1em 0.35em;
-  border-radius: 4px;
-  background: rgb(var(--v-theme-on-surface) / 0.08);
 }
 </style>

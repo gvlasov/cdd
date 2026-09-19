@@ -34,7 +34,9 @@ constructor `cdd.concept:create`).
 
 ## Commands
 
-- `editor:up` — bring up the local environment: install deps if needed and start
-  the Vite dev server (HMR). No backend.
+- `editor:up` — bring up the Docker local environment and its Vite service
+  (HMR). No backend.
+- `editor:compose` — forward arguments to the environment's Docker Compose
+  project; for example, `editor:compose restart` restarts Vite.
 - `editor:open` — `editor:up` plus opening the demo app in the browser.
 - `editor:build` — build the embeddable component bundle into `dist/` here.

@@ -20,6 +20,7 @@ export default [
       value: [
         'cdd.concept:slug',
         'cdd.concept:definition',
+        'cdd.concept:details',
         'cdd.concept:attributes',
         'cdd.concept:transactions',
         'cdd.concept:examples',
@@ -71,6 +72,14 @@ export default [
     { kind: 'concept', value: 'cdd.attribute' },
     { kind: 'slug', value: 'definition' },
     { kind: 'name', value: 'definition' },
+    { kind: 'type', value: 'cdd.definition' },
+    { kind: 'cardinality', value: '0-1' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.concept:details' },
+    { kind: 'concept', value: 'cdd.attribute' },
+    { kind: 'slug', value: 'details' },
+    { kind: 'name', value: 'details' },
     { kind: 'type', value: 'cdd.definition' },
     { kind: 'cardinality', value: '0-1' },
   ],

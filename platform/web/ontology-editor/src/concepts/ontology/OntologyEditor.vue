@@ -157,12 +157,15 @@ function runTransaction(id: TransactionId, input: unknown) {
   }
 }
 
-// Concept search — options are every concept, filtered by name in the dropdown.
+// Search includes the ontology root as well as its concepts: the root is a
+// navigable instance in its own right and may carry an overview Scheme.
 const conceptSearchItems = computed(() =>
-  ontologyConcepts(props.modelValue).map((id) => {
+  [props.modelValue.root, ...ontologyConcepts(props.modelValue)]
+    .filter((id, index, all) => all.indexOf(id) === index)
+    .map((id) => {
     const c = conceptOf(props.modelValue, id)
     return { value: id, title: (c && conceptLabelOf(c)) || id }
-  }),
+    }),
 )
 const search = ref<Identity | null>(null)
 function onSearchSelect(id: Identity | null) {

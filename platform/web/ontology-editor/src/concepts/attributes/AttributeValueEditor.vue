@@ -15,6 +15,7 @@ import {
   type AttributeSpec,
 } from './Attribute'
 import InstanceForm from '@/concepts/editing/InstanceForm.vue'
+import SchemeValueEditor from '@/concepts/schemes/SchemeValueEditor.vue'
 
 // Edits one attribute's value(s) on an owner instance.
 //  - leaf type       → a plain text field (select for cardinality)
@@ -26,7 +27,7 @@ const props = withDefaults(
   { ancestors: () => [] },
 )
 
-const { ontology, apply, conceptLabel } = useOntology()
+const { ontology, apply, conceptLabel, instanceOptions } = useOntology()
 
 const owner = computed(() => conceptOf(ontology(), props.ownerId))
 // The `attributes` slot is managed only through "define attribute" — editing
@@ -37,7 +38,8 @@ const computedValue = computed(() => {
   return computeAttributeValue(props.spec.function, owner.value, ontology())
 })
 const leaf = computed(() => isLeafConcept(ontology(), props.spec.type))
-const reference = computed(() => props.spec.type === 'cdd.concept')
+const reference = computed(() => props.spec.type === 'cdd.concept' || props.spec.type === 'cdd.instance')
+const scheme = computed(() => props.spec.type === 'cdd.scheme')
 const list = computed(() => isList(props.spec.cardinality))
 const cardinalityValued = computed(() => props.spec.type === 'cdd.cardinality')
 const CARDS: string[] = [...CARDINALITIES]
@@ -75,6 +77,9 @@ const conceptItems = computed(() => [
     .filter((id) => id !== props.ownerId)
     .map((id) => ({ value: id, title: conceptLabel(id) ?? id })),
 ])
+const referenceItems = computed(() =>
+  props.spec.type === 'cdd.instance' ? instanceOptions() : conceptItems.value,
+)
 const creating = ref(false)
 const newSlug = ref('')
 const newError = computed(() => {
@@ -130,6 +135,13 @@ function submitNew() {
         <span v-if="!valueIds.length" class="text-caption text-medium-emphasis">none yet</span>
       </div>
     </template>
+
+    <SchemeValueEditor
+      v-else-if="scheme"
+      :owner-id="ownerId"
+      :slug="spec.slug"
+      :scheme-id="valueIds[0]"
+    />
 
     <!-- leaf: single field (list of fields when 0+/1+) -->
     <template v-else-if="leaf">
@@ -196,7 +208,7 @@ function submitNew() {
       <v-autocomplete
         v-else
         :model-value="list ? valueIds : literalValue"
-        :items="conceptItems"
+        :items="referenceItems"
         :label="spec.name"
         :multiple="list"
         :chips="list"

@@ -99,7 +99,13 @@ export function renameSlug(
   return rekeyForSlug({ root: ontology.root, instances }, instanceId)
 }
 
-const REF_KINDS: PropertyKindName[] = ['attributes', 'concept', 'concepts']
+// Reference-valued properties must follow an instance when its slug changes.
+// Scheme references are semantic references too: `source`/`target` name Box
+// instances and `denotatum` points at the ontology instance an element depicts.
+const REF_KINDS: PropertyKindName[] = [
+  'attributes', 'concept', 'concepts', 'scheme', 'boxes', 'edges', 'texts',
+  'denotatum', 'source', 'target',
+]
 
 function rekeyForSlug(ontology: Ontology, oldId: Identity): Ontology {
   const newId = derivedIdentity(ontology, oldId)

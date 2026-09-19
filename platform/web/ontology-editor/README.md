@@ -157,6 +157,44 @@ A `<OntologyEditor>` Vue component that other apps can embed.
 - [ ] Persistence adapters
 - [ ] `.d.ts` emission for the published bundle
 
+## `.cdd`: portable ontology XML
+
+A `.cdd` file is the uncompressed, standalone interchange form of an ontology.
+It contains the root identity and every addressable instance, so a recipient
+does not need the source repository or any TypeScript modules. The editor demo
+can open a local `.cdd` file and download its current ontology as one.
+
+Version 1 is UTF-8 XML:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<cdd version="1" root="cdd">
+  <instances>
+    <instance identity="cdd">
+      <property kind="identity"><string>cdd</string></property>
+      <property kind="concepts"><list><item>cdd.concept</item></list></property>
+    </instance>
+  </instances>
+</cdd>
+```
+
+- `root` is the identity of the ontology root and must identify an included
+  `<instance>`.
+- Every `instance` has a unique `identity`; its properties remain ordered.
+- A property has a `kind` and exactly one value: `<string>` for a scalar or
+  `<list>` of `<item>` elements for an ordered list. This preserves empty
+  strings and empty lists distinctly.
+- XML escaping preserves arbitrary Unicode, rich text, and JavaScript held in
+  properties. The parser accepts property kinds unknown to the current UI, so
+  future metadata remains distributable.
+- `version="1"` is required. Future incompatible formats use a new version;
+  compression is deliberately outside this version.
+
+Library consumers can use `serializeCdd(ontology)` and `parseCdd(xml)` from
+`@cdd/ontology-editor`. `parseCdd` rejects malformed XML, unsupported versions,
+duplicate identities, and a missing root instance with `CddXmlError`.
+
+
 ## Layout (CDD)
 
 ```
@@ -233,23 +271,22 @@ own ontology from `/concepts` this way — it's also symlinked at
 From anywhere in the repo:
 
 ```bash
-editor:up        # install deps if needed + start the Vite dev server (HMR)
+editor:up        # start the Docker environment and its Vite dev server (HMR)
 editor:open      # editor:up, and open the demo app in the browser
+editor:compose restart  # restart the Vite service
 editor:build     # build the embeddable bundle into /concepts/ontology-editor/dist
 ```
 
 Or directly:
 
 ```bash
-cd platform/web/ontology-editor
-npm install
-npm run dev        # demo app
+editor:compose logs -f vite
 npm run check      # type-check
 npm run build:lib  # build the embeddable bundle into ./dist
 ```
 
-`editor:open` serves on port 5273 (override with `EDITOR_PORT`), falling through
-to the next free port if taken.
+The Docker Vite service is available at http://127.0.0.1:5274. Source files
+are mounted into the container, so edits are reflected through HMR.
 
 ## Embed
 

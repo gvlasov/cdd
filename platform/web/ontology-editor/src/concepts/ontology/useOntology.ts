@@ -15,6 +15,8 @@ export interface OntologyContext {
   conceptLabel: (identity: Identity) => string | undefined
   /** { value, title } options for picking a concept in an editor. */
   conceptOptions: () => Array<{ value: Identity; title: string }>
+  /** All addressable ontology instances, for a semantic denotatum. */
+  instanceOptions: () => Array<{ value: Identity; title: string }>
   navigate: (identity: Identity) => void
   /** Apply an immutable edit and emit the new ontology. */
   apply: (mutate: (ontology: Ontology) => Ontology) => void
@@ -52,6 +54,10 @@ export function provideOntology(ctx: {
     conceptLabel: label,
     conceptOptions: () =>
       ontologyConcepts(ctx.ontology()).map((id) => ({ value: id, title: label(id) ?? id })),
+    instanceOptions: () =>
+      Object.keys(ctx.ontology().instances)
+        .sort()
+        .map((id) => ({ value: id, title: label(id) ?? id })),
   })
 }
 

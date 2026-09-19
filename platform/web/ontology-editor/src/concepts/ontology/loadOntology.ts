@@ -1,6 +1,7 @@
 import type { Identity } from '@/concepts/identity/Identity'
 import type { Instance } from '@/concepts/instances/Instance'
 import { instanceIdentity } from '@/concepts/instances/Instance'
+import type { Property } from '@/concepts/properties/Property'
 import type { Ontology } from './Ontology'
 
 // A CDD-authored ontology file: one per concept, exporting that concept's own
@@ -8,6 +9,24 @@ import type { Ontology } from './Ontology'
 // flat array. Each entry carries its own `identity` property, which becomes
 // its key in the assembled Ontology.
 export type OntologyModule = Instance[]
+
+function mergeProperties(existing: Instance, incoming: Instance): Instance {
+  const merged = [...existing]
+  for (const property of incoming) {
+    const index = merged.findIndex((candidate) => candidate.kind === property.kind)
+    if (index < 0) {
+      merged.push(property)
+      continue
+    }
+    const previous = merged[index] as Property
+    if (Array.isArray(previous.value) && Array.isArray(property.value)) {
+      merged[index] = { ...property, value: [...new Set([...previous.value, ...property.value])] }
+      continue
+    }
+    merged[index] = property
+  }
+  return merged
+}
 
 /**
  * Assemble an Ontology from a glob-imported module map (as produced by
@@ -24,7 +43,7 @@ export function loadOntology(
     for (const instance of mod.default) {
       const id = instanceIdentity(instance)
       if (!id) continue
-      instances[id] = instance
+      instances[id] = instances[id] ? mergeProperties(instances[id], instance) : instance
     }
   }
   return { root, instances }

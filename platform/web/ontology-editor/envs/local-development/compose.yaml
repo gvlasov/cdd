@@ -1,0 +1,27 @@
+name: cdd-ontology-editor
+
+services:
+  vite:
+    build:
+      context: .
+      dockerfile: envs/local-development/Dockerfile
+    # The editor reads the repository ontology through an import glob, so the
+    # complete repository — not just this platform reflection — must exist at
+    # the same relative path it has on the host.
+    working_dir: /repo/platform/web/ontology-editor
+    command:
+      - sh
+      - -c
+      - >-
+        if [ ! -x node_modules/.bin/vite ]; then npm ci; fi;
+        exec npm run dev -- --host 0.0.0.0 --port 5274 --strictPort
+    ports:
+      - "127.0.0.1:5274:5274"
+    volumes:
+      - ../../..:/repo
+      - ontology_editor_node_modules:/repo/platform/web/ontology-editor/node_modules
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+
+volumes:
+  ontology_editor_node_modules:

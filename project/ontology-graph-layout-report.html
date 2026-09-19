@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Автоматическая отрисовка онтологии CDD</title>
+  <style>
+    :root { color-scheme: light; --ink:#192127; --muted:#5e6b73; --line:#d9e0e3; --accent:#0a6c68; --paper:#fffefa; --tint:#f1f8f7; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:#e9efed; color:var(--ink); font:17px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+    main { max-width:960px; margin:32px auto; padding:54px 64px 72px; background:var(--paper); box-shadow:0 8px 28px #22342c20; }
+    h1,h2 { line-height:1.18; letter-spacing:-.025em; } h1 { font-size:2.35rem; margin:0 0 12px; } h2 { font-size:1.45rem; margin:48px 0 14px; }
+    p { margin:12px 0; } .lead { font-size:1.15rem; color:#39484d; } .meta { color:var(--muted); font-size:.92rem; }
+    .answer { border-left:5px solid var(--accent); padding:12px 18px; background:var(--tint); margin:24px 0; }
+    table { width:100%; border-collapse:collapse; margin:18px 0; font-size:.94rem; } th,td { text-align:left; vertical-align:top; padding:12px; border-bottom:1px solid var(--line); } th { background:#edf4f3; }
+    code { padding:1px 5px; background:#edf1f0; border-radius:4px; font-size:.9em; } a { color:#006b68; } ul { padding-left:24px; } li { margin:7px 0; }
+    .recommendation { padding:20px 24px; background:#192e31; color:#f4f9f7; border-radius:8px; } .recommendation h2 { margin:0 0 10px; font-size:1.3rem; } .recommendation p { color:#d6e6e2; }
+    footer { margin-top:48px; color:var(--muted); font-size:.85rem; }
+    @media (max-width:700px) { main { margin:0; padding:32px 22px 48px; } h1 { font-size:1.85rem; } table { font-size:.82rem; } th,td { padding:8px; } }
+  </style>
+</head>
+<body>
+<main>
+  <p class="meta">CDD · исследовательский отчёт · 11 сентября 2026</p>
+  <h1>Автоматическая отрисовка онтологии</h1>
+  <p class="lead">Как автоматически разместить блоки и провести между ними разные типы связей так, чтобы схема оставалась читаемой.</p>
+
+  <div class="answer"><strong>Вывод.</strong> Задача решаема существующими JavaScript-инструментами. Для онтологии CDD наиболее подходящая базовая комбинация — <strong>ELK.js</strong> для размещения и трассировки + <strong>Cytoscape.js</strong> для просмотра либо <strong>React Flow</strong> для редактирования. Идеальность не гарантируется для произвольного графа: цель алгоритма — хороший, а не абсолютный оптимум.</div>
+
+  <h2>1. Что именно рисуется</h2>
+  <p>Модель — ориентированный типизированный граф. Узлы: <code>concept</code>, <code>process</code>, <code>stakeholder</code>, <code>problem</code>, <code>reflection</code>. Рёбра имеют смысл и вид: например, «является отражением», «участвует в процессе», «решает проблему», «зависит от».</p>
+  <p>Координаты и точки изгиба не должны быть источником истины: это результат вычисления из семантического графа. Однако пользовательские закрепления и ручные поправки стоит хранить как overrides.</p>
+
+  <h2>2. Математическая осуществимость и границы</h2>
+  <ul>
+    <li>Если граф <em>планарный</em>, его можно нарисовать без пересечений; это можно проверить эффективно.</li>
+    <li>Произвольный граф может быть непланарным: полностью убрать пересечения тогда невозможно.</li>
+    <li>Минимизация числа пересечений, длин рёбер, площади и числа изгибов — конфликтующие цели. Для общего случая точная оптимизация вычислительно трудна, поэтому production-движки применяют эвристики.</li>
+    <li>Циклы допустимы. Иерархический алгоритм временно разворачивает часть рёбер для раскладки, а затем рисует их как обратные обходные связи.</li>
+  </ul>
+  <p>Следовательно, нужно проектировать не «автоматический рисунок без ошибок», а управляемый layout: семантические приоритеты, группировка, фильтрация связей, фиксированные узлы и несколько режимов обзора.</p>
+
+  <h2>3. Словарь области</h2>
+  <table><thead><tr><th>Термин</th><th>Значение и применение</th></tr></thead><tbody>
+    <tr><td>Graph drawing / automatic layout</td><td>Автоматическое построение геометрии графа.</td></tr>
+    <tr><td>Layered / Sugiyama layout</td><td>Узлы идут по слоям в одном направлении; подходит для зависимостей и онтологии.</td></tr>
+    <tr><td>Cycle breaking</td><td>Временное обращение части рёбер для работы со слоями в циклическом графе.</td></tr>
+    <tr><td>Crossing minimization</td><td>Упорядочивание узлов внутри слоя, уменьшающее пересечения.</td></tr>
+    <tr><td>Force-directed layout</td><td>Силовая модель: связанные узлы притягиваются, остальные отталкиваются; хороша для обзорной карты сети.</td></tr>
+    <tr><td>Compound graph</td><td>Граф с вложенными группами/контейнерами.</td></tr>
+    <tr><td>Ports / anchors</td><td>Фиксированные точки на границе блока, к которым присоединяются рёбра.</td></tr>
+    <tr><td>Orthogonal routing</td><td>Прокладка линий под прямыми углами вокруг блоков.</td></tr>
+    <tr><td>Incremental layout</td><td>Раскладка, стремящаяся не разрушать уже знакомую пользователю картину.</td></tr>
+  </tbody></table>
+
+  <h2>4. JavaScript-решения</h2>
+  <table><thead><tr><th>Решение</th><th>Сильная сторона</th><th>Ограничение</th><th>Вердикт</th></tr></thead><tbody>
+    <tr><td><strong>ELK.js</strong></td><td>Слоистая раскладка, циклы, порты, подписи, вложенные графы, ортогональные/сплайновые рёбра; Web Worker.</td><td>Это движок геометрии, рендерер нужен отдельно; много параметров.</td><td><strong>Главный выбор</strong> для требований задачи.</td></tr>
+    <tr><td><strong>Cytoscape.js</strong></td><td>Готовый интерактивный просмотрщик графов, стили и большой набор layouts/extensions.</td><td>Редактор блок-схем менее «формовый», чем React Flow.</td><td><strong>Лучший просмотрщик</strong> онтологии.</td></tr>
+    <tr><td><strong>React Flow / XYFlow</strong></td><td>React-редактор: drag/drop, handles, zoom, minmap, кастомные узлы.</td><td>Автораскладки внутри нет: подключается ELK или Dagre.</td><td><strong>Лучший редактор</strong>, если UI на React.</td></tr>
+    <tr><td>Dagre</td><td>Быстрая, простая направленная раскладка DAG/деревьев.</td><td>Меньше контроля над портами, сложной вложенностью и маршрутизацией.</td><td>Отличный MVP, но не целевая основа.</td></tr>
+    <tr><td>d3-force / fCoSE</td><td>Живые карты произвольных сетей.</td><td>Направление и смысл иерархии читаются хуже.</td><td>Второй режим «исследовать связи».</td></tr>
+    <tr><td>Graphviz WASM</td><td>Зрелое качество статического <code>dot</code>-layout и SVG/PDF-экспорт.</td><td>Менее естественен для интерактивного редактирования в браузере.</td><td>Полезен для экспорта и сравнения.</td></tr>
+  </tbody></table>
+
+  <section class="recommendation">
+    <h2>Рекомендуемая реализация</h2>
+    <p><strong>Начать с ELK Layered:</strong> направление слева направо, ортогональные стрелки, порты на сторонах карточки, различимый стиль для обратных/второстепенных связей.</p>
+    <p>Для просмотра использовать Cytoscape.js; для ручного построения и редактирования — React Flow + тот же ELK.js. Добавить закрепление узлов, сворачивание групп и фильтр типов рёбер. Для плотных неиерархических связей дать отдельный force-directed режим.</p>
+  </section>
+
+  <h2>5. Реалистичная оценка покрытия</h2>
+  <p>Библиотеки закроют примерно <strong>80–90%</strong> технической части: размещение блоков, прокладку линий, взаимодействие, масштабирование и стили. Оставшиеся 10–20% — ключевая доменная работа: правила приоритета связей, семантические группы, устойчивость схемы при изменениях и UX для очень плотных подграфов.</p>
+
+  <h2>Источники</h2>
+  <ul>
+    <li><a href="https://eclipse.dev/elk/reference/algorithms/org-eclipse-elk-layered.html">ELK Layered — официальная справка</a></li>
+    <li><a href="https://github.com/kieler/elkjs">elkjs — JavaScript-порт ELK</a></li>
+    <li><a href="https://reactflow.dev/learn/layouting/layouting">React Flow: сравнение layout-движков</a></li>
+    <li><a href="https://js.cytoscape.org/">Cytoscape.js</a></li>
+    <li><a href="https://blog.js.cytoscape.org/2020/05/11/layouts/">Cytoscape: guide to layouts</a></li>
+    <li><a href="https://github.com/dagrejs/dagre">Dagre</a></li>
+  </ul>
+  <footer>Отчёт подготовлен для CDD. Технология — отражение доменного концепта «визуализация онтологии», а не замена самой модели.</footer>
+</main>
+</body>
+</html>

@@ -13,6 +13,8 @@ import ParentConceptProperty from './ParentConceptProperty.vue'
 import CanonicalNameProperty from './CanonicalNameProperty.vue'
 import StringListProperty from './StringListProperty.vue'
 import AttributesProperty from './AttributesProperty.vue'
+import DetailsProperty from './DetailsProperty.vue'
+import SchemeProperty from '@/concepts/schemes/SchemeProperty.vue'
 
 // The predefined property kinds and their draw positions inside the instance
 // renderer. Equal positions draw in renderer-defined order. A kind with no
@@ -46,6 +48,7 @@ export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
     render: DefinitionProperty,
     edit: DefinitionEdit,
   },
+  details: { name: 'details', position: 3, render: DetailsProperty },
   identity: { name: 'identity', position: 3 },
   concept: { name: 'concept', position: 4 },
   concepts: { name: 'concepts', position: 7, render: ConceptsProperty },
@@ -65,6 +68,31 @@ export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   canonicalName: { name: 'canonicalName', position: 1, render: CanonicalNameProperty },
   computed: { name: 'computed', position: 5 },
   function: { name: 'function', position: 8 },
+  // A scheme is normally supplied through an attribute typed `cdd.scheme`.
+  // The instance renderer also selects this kind by attribute type, so the
+  // enclosing concept may name its slot something other than `scheme`.
+  scheme: { name: 'scheme', position: 6, render: SchemeProperty },
+  exampleDiagram: { name: 'exampleDiagram', position: 6, render: SchemeProperty },
+  // An ontology overview is navigation, so show it before a concept's often
+  // long documentation rather than hiding it at the end of the page.
+  ontologyDiagram: { name: 'ontologyDiagram', position: 3, render: SchemeProperty },
+  boxes: { name: 'boxes', position: 7 },
+  edges: { name: 'edges', position: 7 },
+  texts: { name: 'texts', position: 7 },
+  content: { name: 'content', position: 7 },
+  denotatum: { name: 'denotatum', position: 7 },
+  color: { name: 'color', position: 7 },
+  backgroundColor: { name: 'backgroundColor', position: 7 },
+  borderColor: { name: 'borderColor', position: 7 },
+  padding: { name: 'padding', position: 7 },
+  source: { name: 'source', position: 7 },
+  target: { name: 'target', position: 7 },
+  lineStyle: { name: 'lineStyle', position: 7 },
+  routing: { name: 'routing', position: 7 },
+  boldness: { name: 'boldness', position: 7 },
+  startHead: { name: 'startHead', position: 7 },
+  endHead: { name: 'endHead', position: 7 },
+  align: { name: 'align', position: 7 },
 }
 
 export function propertyKind(name: PropertyKindName): PropertyKind {

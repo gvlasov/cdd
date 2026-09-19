@@ -34,7 +34,7 @@ const concepts = computed(() => {
 <template>
   <div>
     <h3 class="text-left mb-1">Concepts</h3>
-    <ul class="concepts-list">
+    <ul class="rich-text-list">
       <li v-for="c in concepts" :key="c.id">
         <a href="#" class="link" @click.prevent="navigate(c.id)">{{ c.label }}</a
         ><template v-if="c.definition">&nbsp;&mdash;&nbsp;<ConceptText :text="c.definition" /></template>
@@ -43,15 +43,9 @@ const concepts = computed(() => {
   </div>
 </template>
 
+<style scoped src="./rich-text-list.css"></style>
+
 <style scoped>
-.concepts-list {
-  list-style: disc;
-  padding-left: 1.25em;
-  margin: 0;
-}
-.concepts-list li + li {
-  margin-top: 0.75em;
-}
 .link {
   color: rgb(var(--v-theme-concept));
   text-decoration: none;

@@ -16,6 +16,7 @@ export {
 } from '@/concepts/ontology/Ontology'
 export type { OntologyModule } from '@/concepts/ontology/loadOntology'
 export { loadOntology } from '@/concepts/ontology/loadOntology'
+export { CDD_XML_VERSION, CddXmlError, parseCdd, serializeCdd } from '@/concepts/ontology/cddXml'
 
 export type { Identity } from '@/concepts/identity/Identity'
 export { IdentityRepository } from '@/concepts/identity/IdentityRepository'

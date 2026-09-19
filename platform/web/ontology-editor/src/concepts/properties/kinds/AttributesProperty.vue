@@ -3,12 +3,12 @@ import { computed } from 'vue'
 import type { Instance } from '@/concepts/instances/Instance'
 import type { Property } from '@/concepts/properties/Property'
 import { firstOfKind } from '@/concepts/properties/Property'
-import { attributeType } from '@/concepts/attributes/Attribute'
+import { instanceName, instanceSlug } from '@/concepts/instances/Instance'
 import { useOntology } from '@/concepts/ontology/useOntology'
 import ConceptText from '@/concepts/concept-links/ConceptText.vue'
 
 const props = defineProps<{ property: Property; instance: Instance }>()
-const { ontology, conceptLabel, navigate } = useOntology()
+const { ontology, navigate } = useOntology()
 
 function literal(value: Property['value']): string {
   return Array.isArray(value) ? (value[0] ?? '') : value
@@ -26,15 +26,14 @@ const attributes = computed(() => {
 
   return ids.map((id) => {
     const attribute = ontology().instances[id]
-    // An attribute's type is the concept that gives the slot its meaning:
-    // `cdd.concept:slug` therefore presents as the `Slug` concept, rather
-    // than as the local implementation attribute named `slug`.
-    const displayedId = attribute ? (attributeType(attribute) ?? id) : id
-    const displayed = ontology().instances[displayedId]
+    const label = attribute ? (instanceSlug(attribute) ?? instanceName(attribute) ?? id) : id
+    const name = attribute ? instanceName(attribute) : undefined
     return {
-      id: displayedId,
-      label: conceptLabel(displayedId) ?? displayedId,
-      definition: definitionOf(displayed),
+      id,
+      label,
+      // Definitions explain the slot itself. Its type is deliberately not
+      // displayed here: it is available from the attribute's own page.
+      definition: definitionOf(attribute) ?? (name && name !== label ? name : undefined),
     }
   })
 })
@@ -43,7 +42,7 @@ const attributes = computed(() => {
 <template>
   <div>
     <h3 class="text-left mb-1">Attributes</h3>
-    <ul class="attributes-list">
+    <ul class="rich-text-list">
       <li v-for="attribute in attributes" :key="attribute.id">
         <a href="#" class="link" @click.prevent="navigate(attribute.id)">{{ attribute.label }}</a>
         <template v-if="attribute.definition">
@@ -54,15 +53,9 @@ const attributes = computed(() => {
   </div>
 </template>
 
+<style scoped src="./rich-text-list.css"></style>
+
 <style scoped>
-.attributes-list {
-  list-style: disc;
-  padding-left: 1.25em;
-  margin: 0;
-}
-.attributes-list li + li {
-  margin-top: 0.75em;
-}
 .link {
   color: rgb(var(--v-theme-attribute));
   text-decoration: none;
