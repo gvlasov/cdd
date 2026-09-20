@@ -52,6 +52,7 @@ export default [
         'cdd.goal',
         'cdd.help',
         'cdd.ides',
+        'cdd.image',
         'cdd.instance',
         'cdd.invisibility',
         'cdd.kind',

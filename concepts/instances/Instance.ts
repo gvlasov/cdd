@@ -11,7 +11,7 @@ export default [
       value:
         'anything the ontology holds: a collection of [properties](.property) addressed by a unique identity, typed by its `concept` property. a [concept](.concept) is an instance that also declares [attributes](.attribute).',
     },
-    { kind: 'attributes', value: ['cdd.instance:name'] },
+    { kind: 'attributes', value: ['cdd.instance:name', 'cdd.instance:prototypeImage'] },
   ],
   [
     { kind: 'identity', value: 'cdd.instance:name' },
@@ -20,5 +20,13 @@ export default [
     { kind: 'name', value: 'name' },
     { kind: 'type', value: 'cdd.name' },
     { kind: 'cardinality', value: '1' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.instance:prototypeImage' },
+    { kind: 'concept', value: 'cdd.attribute' },
+    { kind: 'slug', value: 'prototypeImage' },
+    { kind: 'name', value: 'prototype image' },
+    { kind: 'type', value: 'cdd.image' },
+    { kind: 'cardinality', value: '0-1' },
   ],
 ]

@@ -15,6 +15,7 @@ export default [
       value:
         'a cohesion unit. a concept is a collection of [properties](.property); its [attributes](.attribute) declare what its instances may hold.',
     },
+    { kind: 'prototypeImage', value: 'cdd.concept:prototypeImage:exemplarTheory' },
     {
       kind: 'attributes',
       value: [
@@ -31,6 +32,15 @@ export default [
     {
       kind: 'examples',
       value: ['cdd.concept:examples:attribute', 'cdd.concept:examples:instance', 'cdd.concept:examples:property'],
+    },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.concept:prototypeImage:exemplarTheory' },
+    { kind: 'concept', value: 'cdd.image' },
+    { kind: 'name', value: 'Exemplar theory diagram' },
+    {
+      kind: 'url',
+      value: 'https://upload.wikimedia.org/wikipedia/commons/c/c9/Exemplar_theory.svg',
     },
   ],
   [

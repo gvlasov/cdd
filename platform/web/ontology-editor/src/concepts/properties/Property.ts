@@ -81,6 +81,9 @@ export type PropertyKindName =
   | 'startHead'
   | 'endHead'
   | 'align'
+  | 'prototypeImage'
+  | 'url'
+  | 'blob'
 
 export function propertiesOfKind(
   properties: Property[],

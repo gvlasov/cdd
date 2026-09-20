@@ -15,6 +15,7 @@ import StringListProperty from './StringListProperty.vue'
 import AttributesProperty from './AttributesProperty.vue'
 import DetailsProperty from './DetailsProperty.vue'
 import SchemeProperty from '@/concepts/schemes/SchemeProperty.vue'
+import PrototypeImageProperty from '@/concepts/images/PrototypeImageProperty.vue'
 
 // The predefined property kinds and their draw positions inside the instance
 // renderer. Equal positions draw in renderer-defined order. A kind with no
@@ -48,6 +49,7 @@ export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
     render: DefinitionProperty,
     edit: DefinitionEdit,
   },
+  prototypeImage: { name: 'prototypeImage', position: 2.5, render: PrototypeImageProperty },
   details: { name: 'details', position: 3, render: DetailsProperty },
   identity: { name: 'identity', position: 3 },
   concept: { name: 'concept', position: 4 },
@@ -93,6 +95,8 @@ export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   startHead: { name: 'startHead', position: 7 },
   endHead: { name: 'endHead', position: 7 },
   align: { name: 'align', position: 7 },
+  url: { name: 'url', position: 7 },
+  blob: { name: 'blob', position: 7 },
 }
 
 export function propertyKind(name: PropertyKindName): PropertyKind {
