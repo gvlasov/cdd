@@ -1,1 +1,3 @@
 When starting working on a new issue, check that the git tree is clear - no untracked files, no uncommitted changes. If it is not clear, stop and tell me.
+
+Pushing to this repository is allowed without explicit permission.
