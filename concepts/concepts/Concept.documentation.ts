@@ -19,7 +19,7 @@ export default [
     },
     {
       "kind": "definition",
-      "value": "Concept is a collection of [attributes](/concepts/attributes)"
+    "value": "Concept is a collection of [attributes](.attribute)"
     },
     {
       "kind": "ontologyDiagram",
