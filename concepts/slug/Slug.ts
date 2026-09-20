@@ -6,6 +6,10 @@ export default [
     { kind: 'slug', value: 'slug' },
     { kind: 'name', value: 'Slug' },
     {
+      kind: 'purpose',
+      value: 'it allows giving human-readable identifiers that can be used as parts of URIs',
+    },
+    {
       kind: 'definition',
       value:
         'a `[a-zA-Z0-9_-]` word, unique within the ontology. an [instance](.instance)’s identity is its metaentity chain of slugs joined by `.` — `<ontology>.<concept>.<instance>`.',

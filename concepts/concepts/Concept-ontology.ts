@@ -1,6 +1,6 @@
-// `definition` is an attribute of Concept — only concepts get one. `slug` is
-// declared here too (identity derivation is concept-specific); `name` is
-// declared on Instance instead, since any instance may have one. `examples`
+// `definition` and `purpose` are attributes of Concept — only concepts get
+// them. `slug` is declared here too (identity derivation is concept-specific);
+// `name` is declared on Instance instead, since any instance may have one. `examples`
 // (0+, typed cdd.example) owns a list of Example instances — each pairs a
 // linked concept instance with a description of it in this context. Also
 // carries a constructor transaction, cdd.concept:create.
@@ -20,6 +20,7 @@ export default [
       value: [
         'cdd.concept:slug',
         'cdd.concept:definition',
+        'cdd.concept:purpose',
         'cdd.concept:details',
         'cdd.concept:attributes',
         'cdd.concept:transactions',
@@ -73,6 +74,14 @@ export default [
     { kind: 'slug', value: 'definition' },
     { kind: 'name', value: 'definition' },
     { kind: 'type', value: 'cdd.definition' },
+    { kind: 'cardinality', value: '0-1' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.concept:purpose' },
+    { kind: 'concept', value: 'cdd.attribute' },
+    { kind: 'slug', value: 'purpose' },
+    { kind: 'name', value: 'purpose' },
+    { kind: 'type', value: 'cdd.string' },
     { kind: 'cardinality', value: '0-1' },
   ],
   [
