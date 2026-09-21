@@ -5,7 +5,7 @@ _cdd()
   COMPREPLY=()
   current="${COMP_WORDS[COMP_CWORD]}"
   previous="${COMP_WORDS[COMP_CWORD - 1]}"
-  commands="self-help help github:open init print self-upgrade projects source-code:print source-code:volume source-code:volume:analyze source-code:volume:assess skill:print"
+  commands="self-help help github:open init print self-upgrade projects cd source-code:print source-code:volume source-code:volume:analyze source-code:volume:assess skill:print"
 
   for command_dir in ./commands ./concepts/cdd-cli-commands/kinds; do
     if [[ -d "$command_dir" ]]; then
@@ -58,7 +58,7 @@ _cdd()
       _cdd_complete_projects "$current"
       return 0
       ;;
-    projects:cd)
+    cd|projects:cd)
       _cdd_complete_projects_paths "$current"
       return 0
       ;;

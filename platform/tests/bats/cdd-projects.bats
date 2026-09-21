@@ -42,6 +42,16 @@ load test_helper
   [ "$output" = "$(realpath "$projects_root/problems")" ]
 }
 
+@test "cdd cd aliases projects:cd" {
+  projects_root="$BATS_TEST_TMPDIR/projects"
+  mkdir -p "$projects_root/problems"
+
+  run env CDD_PROJECTS_DIRECTORY="$projects_root" "$CDD" cd problems
+
+  assert_success
+  [ "$output" = "$(realpath "$projects_root/problems")" ]
+}
+
 @test "bash cdd projects:cd changes into the project directory" {
   projects_root="$BATS_TEST_TMPDIR/projects"
   mkdir -p "$projects_root/problems"
@@ -56,6 +66,20 @@ load test_helper
   [ "$output" = "$(realpath "$projects_root/problems")" ]
 }
 
+@test "bash cdd cd changes into the project directory" {
+  projects_root="$BATS_TEST_TMPDIR/projects"
+  mkdir -p "$projects_root/problems"
+
+  run env CDD_PROJECTS_DIRECTORY="$projects_root" PROJECT_ROOT="$PROJECT_ROOT" PATH="$PROJECT_ROOT/platform/entrypoints:$PATH" bash -c '
+    source "$PROJECT_ROOT/platform/bash/cdd.bash"
+    cdd cd problems
+    pwd -P
+  '
+
+  assert_success
+  [ "$output" = "$(realpath "$projects_root/problems")" ]
+}
+
 @test "fish cdd projects:cd changes into the project directory" {
   projects_root="$BATS_TEST_TMPDIR/projects"
   mkdir -p "$projects_root/problems"
@@ -63,6 +87,20 @@ load test_helper
   run env CDD_PROJECTS_DIRECTORY="$projects_root" PROJECT_ROOT="$PROJECT_ROOT" PATH="$PROJECT_ROOT/platform/entrypoints:$PATH" fish --no-config -c '
     source "$PROJECT_ROOT/platform/fish/cdd.fish"
     cdd projects:cd problems
+    pwd -P
+  '
+
+  assert_success
+  [ "$output" = "$(realpath "$projects_root/problems")" ]
+}
+
+@test "fish cdd cd changes into the project directory" {
+  projects_root="$BATS_TEST_TMPDIR/projects"
+  mkdir -p "$projects_root/problems"
+
+  run env CDD_PROJECTS_DIRECTORY="$projects_root" PROJECT_ROOT="$PROJECT_ROOT" PATH="$PROJECT_ROOT/platform/entrypoints:$PATH" fish --no-config -c '
+    source "$PROJECT_ROOT/platform/fish/cdd.fish"
+    cdd cd problems
     pwd -P
   '
 
@@ -117,6 +155,12 @@ load test_helper
   COMPREPLY=()
   _cdd
   [ "$(printf '%s\n' "${COMPREPLY[@]}" | sort)" = $'features\nproblems' ]
+
+  COMP_WORDS=(cdd cd "")
+  COMP_CWORD=2
+  COMPREPLY=()
+  _cdd
+  [ "$(printf '%s\n' "${COMPREPLY[@]}" | sort)" = $'features\nproblems' ]
 }
 
 @test "cdd projects fish completion offers subcommands then project names" {
@@ -134,6 +178,11 @@ load test_helper
   [ "$output" = "problems" ]
 
   run env PROJECT_ROOT="$PROJECT_ROOT" CDD_PROJECTS_DIRECTORY="$projects_root" fish --no-config -c 'source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd projects:cd p"'
+
+  assert_success
+  [ "$output" = "problems" ]
+
+  run env PROJECT_ROOT="$PROJECT_ROOT" CDD_PROJECTS_DIRECTORY="$projects_root" fish --no-config -c 'source "$PROJECT_ROOT/platform/fish/completions/cdd.fish"; complete -C "cdd cd p"'
 
   assert_success
   [ "$output" = "problems" ]

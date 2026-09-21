@@ -49,6 +49,10 @@ case "$command" in
     shift
     exec "$command_dir/projects" "$@"
     ;;
+  cd)
+    shift
+    exec "$command_dir/projects:cd" "$@"
+    ;;
   *)
     shift
     if [ -x "$command_dir/$command" ] && [ "$command" != "cdd" ]; then

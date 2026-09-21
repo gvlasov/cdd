@@ -13,6 +13,7 @@ complete -c cdd -n '__fish_use_subcommand' -a 'source-code:volume:assess' -d 'Br
 complete -c cdd -n '__fish_use_subcommand' -a 'skill:print' -d 'Print the freshest installed CDD skill'
 complete -c cdd -n '__fish_use_subcommand' -a self-upgrade -d 'Self-upgrade CDD support from CDD_SOURCE_PATH'
 complete -c cdd -n '__fish_use_subcommand' -a projects -d 'List, resolve, or print projects'
+complete -c cdd -n '__fish_use_subcommand' -a cd -d 'Change into a project directory'
 complete -c cdd -n '__fish_use_subcommand' -a 'projects:cd' -d 'Resolve a project directory to change into'
 complete -c cdd -n '__fish_use_subcommand' -a '(__cdd_top_level_commands)'
 complete -c cdd -n '__fish_seen_subcommand_from init' -a '(__fish_complete_directories)'
@@ -94,7 +95,7 @@ function __cdd_plans_open_complete
 end
 
 function __cdd_top_level_commands
-    set -l seen cdd self-help help github:open init print source-code:print source-code:volume source-code:volume:analyze source-code:volume:assess skill:print self-upgrade projects
+    set -l seen cdd self-help help github:open init print source-code:print source-code:volume source-code:volume:analyze source-code:volume:assess skill:print self-upgrade projects cd
     for dir in ./commands ./concepts/cdd-cli-commands/kinds
         test -d "$dir"; or continue
         for filepath in $dir/*
@@ -238,7 +239,7 @@ function __cdd_projects_should_complete_paths
 
     if test (count $tokens) -ge 2
         switch $tokens[2]
-            case 'projects:cd'
+            case cd 'projects:cd'
                 return 0
         end
     end

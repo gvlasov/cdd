@@ -40,9 +40,10 @@ function help
     end
 end
 
-# Fish wrapper so `cdd projects:cd <project>` can change the current shell directory.
+# Fish wrapper so `cdd cd <project>` and `cdd projects:cd <project>` can change
+# the current shell directory.
 function cdd
-    if test (count $argv) -eq 2; and test "$argv[1]" = "projects:cd"
+    if test (count $argv) -eq 2; and contains -- "$argv[1]" cd projects:cd
         set -l project_path (command cdd projects:cd "$argv[2]")
         or return $status
         cd "$project_path"
