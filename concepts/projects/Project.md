@@ -21,6 +21,7 @@ CDD suggests storing all projects in `$CDD_PROJECTS_DIRECTORY` which is `~/Proje
 - Authors
 - Stakeholders
 - Plans
+- Roadmap
 - Commands
 
 Some things that can be thought about as an attribute of a project are actually platform/concept concerns.
