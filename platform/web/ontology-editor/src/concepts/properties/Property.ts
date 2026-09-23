@@ -84,6 +84,7 @@ export type PropertyKindName =
   | 'prototypeImage'
   | 'url'
   | 'blob'
+  | 'originalName'
 
 export function propertiesOfKind(
   properties: Property[],

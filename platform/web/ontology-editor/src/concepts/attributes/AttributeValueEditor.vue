@@ -16,10 +16,13 @@ import {
 } from './Attribute'
 import InstanceForm from '@/concepts/editing/InstanceForm.vue'
 import SchemeValueEditor from '@/concepts/schemes/SchemeValueEditor.vue'
+import ImageValueEditor from '@/concepts/images/ImageValueEditor.vue'
+import { IMAGE_CONCEPT } from '@/concepts/images/Image'
 
 // Edits one attribute's value(s) on an owner instance.
 //  - leaf type       → a plain text field (select for cardinality)
 //  - `cdd.concept`   → the value IS a concept — a concept picker (+ create)
+//  - `cdd.image`     → upload / choose an uploaded file / type a URL
 //  - other structured type → a nested InstanceForm per owned value instance
 //  - list cardinality → repeat, with add / remove
 const props = withDefaults(
@@ -40,6 +43,7 @@ const computedValue = computed(() => {
 const leaf = computed(() => isLeafConcept(ontology(), props.spec.type))
 const reference = computed(() => props.spec.type === 'cdd.concept' || props.spec.type === 'cdd.instance')
 const scheme = computed(() => props.spec.type === 'cdd.scheme')
+const image = computed(() => props.spec.type === IMAGE_CONCEPT)
 const list = computed(() => isList(props.spec.cardinality))
 const cardinalityValued = computed(() => props.spec.type === 'cdd.cardinality')
 const CARDS: string[] = [...CARDINALITIES]
@@ -141,6 +145,14 @@ function submitNew() {
       :owner-id="ownerId"
       :slug="spec.slug"
       :scheme-id="valueIds[0]"
+    />
+
+    <ImageValueEditor
+      v-else-if="image"
+      :owner-id="ownerId"
+      :slug="spec.slug"
+      :name="spec.name"
+      :list="list"
     />
 
     <!-- leaf: single field (list of fields when 0+/1+) -->

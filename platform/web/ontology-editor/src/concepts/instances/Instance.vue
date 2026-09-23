@@ -14,6 +14,7 @@ import {
 import { instanceIdentity, instanceSlug } from './Instance'
 import { useOntology } from '@/concepts/ontology/useOntology'
 import { propertyKinds } from '@/concepts/properties/kinds/property-kinds'
+import { IMAGE_CONCEPT } from '@/concepts/images/Image'
 
 // The central component: renders one instance as its properties, in
 // kind-position order. Equal positions keep source order.
@@ -82,8 +83,14 @@ const drawn = computed(() =>
         : undefined
       // `cdd.scheme` is a value type, not a globally reserved property name.
       // This lets a concept call its diagram `map`, `model`, etc. and still
-      // receive the full-width scheme renderer.
-      const kind = attribute?.type === 'cdd.scheme' ? propertyKinds.scheme : propertyKind(property.kind)
+      // receive the full-width scheme renderer. `cdd.image` likewise draws as
+      // an image whatever the slot is called.
+      const kind =
+        attribute?.type === 'cdd.scheme'
+          ? propertyKinds.scheme
+          : attribute?.type === IMAGE_CONCEPT
+            ? propertyKinds.prototypeImage
+            : propertyKind(property.kind)
       return { property, i, kind }
     })
     .filter((x) => x.kind?.render)

@@ -1,0 +1,15 @@
+# Local development front door: the file store API goes to PHP-FPM, everything
+# else (including Vite's HMR websocket) to the Vite dev server.
+{
+	admin off
+}
+
+:5274 {
+	handle_path /api/* {
+		import /repo/platform/web/file-store/routes.caddy /repo/platform/web/file-store/public /data/file-store /api php:9000
+	}
+
+	handle {
+		reverse_proxy vite:5173
+	}
+}

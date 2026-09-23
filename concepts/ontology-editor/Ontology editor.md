@@ -17,6 +17,8 @@ the same stack as the `problems` app (Vue 3 + Vite + Vuetify 4 + TypeScript).
 ## Reflections
 
 - `/platform/web/ontology-editor/` — the component's source, demo app, and build.
+- `/platform/web/file-store/` — the PHP backend that keeps files uploaded to an
+  ontology (images), behind the editor's `FileStore` interface.
 - `dist/` (here) — the built embeddable bundle, produced by `cdd editor:build`.
   Generated, git-ignored; run the command to (re)create it.
 

@@ -20,6 +20,11 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       port: 5174,
+      // In the Docker environment the browser reaches Vite through Caddy on
+      // another port, so the HMR websocket must connect back to that one.
+      hmr: process.env.VITE_HMR_CLIENT_PORT
+        ? { clientPort: Number(process.env.VITE_HMR_CLIENT_PORT) }
+        : undefined,
       // The demo app loads this repo's ontology data from ../../../concepts
       // (outside this package's own root), so the dev server must be allowed
       // to read it.

@@ -82,6 +82,10 @@ export {
 export { createAttribute, newAttributeIdentity } from '@/concepts/attributes/editAttributes'
 export { spawnValue, removeValue } from '@/concepts/attributes/spawnValue'
 
+export type { FileStore, StoredFile } from '@/concepts/files/FileStore'
+export { restFileStore } from '@/concepts/files/restFileStore'
+export { default as ImageValueEditor } from '@/concepts/images/ImageValueEditor.vue'
+
 export type { Reality } from '@/concepts/reality/Reality'
 export { emptyReality, realityInstance, instancesOfConcept } from '@/concepts/reality/Reality'
 

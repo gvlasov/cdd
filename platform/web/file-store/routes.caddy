@@ -1,0 +1,13 @@
+# Caddy routes for the file store, shared by every environment that serves it.
+# Import inside a `handle_path <api base>/*` block:
+#
+#   import routes.caddy <public dir> <storage dir> <api base> <php-fpm upstream>
+#
+# <public dir> must resolve to this directory's `public/` in both the Caddy and
+# the PHP-FPM container, since Caddy hands PHP the script path it sees.
+root * {args[0]}
+rewrite * /index.php
+php_fastcgi {args[3]} {
+	env FILE_STORE_DIR {args[1]}
+	env FILE_STORE_BASE {args[2]}
+}

@@ -138,7 +138,34 @@ The type's attributes are not repeated here; they live on the type's own page.
 Clicking any chip navigates.
 
 Same stack as the `problems` app: Vue 3 + Vite + Vuetify 4 + TypeScript.
-No backend.
+Uploaded files are kept by a small PHP backend,
+[`platform/web/file-store`](../file-store/README.md).
+
+## Files & images
+
+Pass a `FileStore` as `file-store` to let the editor upload files:
+
+```ts
+import { restFileStore } from '@cdd/ontology-editor'
+
+const fileStore = restFileStore('api', 'cdd') // API base, ontology slug
+```
+
+```vue
+<OntologyEditor v-model="ontology" :file-store="fileStore" editable />
+```
+
+`FileStore` is an interface (`list`, `upload`, `remove`); `restFileStore`
+implements it over the file store's REST API. The API base `api` is relative, so
+it resolves under wherever the editor is served (`/api` locally, `/cdd/api` in
+Problemos).
+
+An attribute typed `cdd.image` (define one with type **Image**) edits with an
+image editor: **Upload** a file, **Choose uploaded** from the ontology's files
+(files no Image references can be deleted there), or type a **URL**. Each value
+is an owned `cdd.image` instance whose `url` points at the file. In view mode,
+any `cdd.image`-typed property draws as an image, like `prototypeImage`.
+Without a `file-store`, only the URL option is offered.
 
 ## Goal
 
@@ -154,6 +181,7 @@ A `<OntologyEditor>` Vue component that other apps can embed.
 - [x] Reality + concept transactions with executable `effect` (constructor etc.)
 - [x] Attributes with type + cardinality; +attribute dialog; nested value forms
 - [ ] Editing: delete concepts / attributes / values
+- [x] File uploads (`FileStore`) and image attributes
 - [ ] Persistence adapters
 - [ ] `.d.ts` emission for the published bundle
 
@@ -209,6 +237,8 @@ src/concepts/
   editing/        immutable edits, <ConceptEditor> (+attribute dialog), <InstanceForm>
   reality/        Reality (instances of concepts), <RealityPanel>
   transactions/   Transaction model, runEffect, <TransactionBar>
+  files/          FileStore interface and its REST implementation
+  images/         Image helpers, <ImageProperty> renderer, <ImageValueEditor>
   concept-view/   <ConceptView> — instance renderer + parents above + attributes below
   app/            local demo app (not part of the published bundle)
 src/index.ts      public entry point for the embeddable component
@@ -285,8 +315,10 @@ npm run check      # type-check
 npm run build:lib  # build the embeddable bundle into ./dist
 ```
 
-The Docker Vite service is available at http://127.0.0.1:5274. Source files
-are mounted into the container, so edits are reflected through HMR.
+The Docker environment is available at http://127.0.0.1:5274. Caddy serves
+it: `/api/*` goes to PHP-FPM running the file store, everything else to Vite.
+Source files are mounted into the containers, so edits are reflected through
+HMR.
 
 ## Embed
 

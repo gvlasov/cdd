@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Bring up the Docker local environment for the ontology editor. Vite runs in
-# its own Compose service and watches the mounted source tree for HMR updates.
+# Bring up the Docker local environment for the ontology editor: Caddy in front
+# of the PHP file store and Vite. Vite watches the mounted source tree for HMR
+# updates.
 #
 # With --open, also open the app in the browser once Vite is serving.
 set -euo pipefail
@@ -27,7 +28,7 @@ open_in_browser="$repo_root/commands/open-in-browser"
 
 port=5274
 
-"$project_dir/editor:compose" up --detach vite
+"$project_dir/editor:compose" up --detach caddy
 
 if [ "$open_browser" -eq 1 ]; then
   (

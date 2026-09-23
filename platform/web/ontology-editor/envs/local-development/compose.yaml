@@ -1,6 +1,21 @@
 name: cdd-ontology-editor
 
+# Caddy is the only published service. It routes /api/* to the PHP file store
+# and everything else to Vite, the same Caddy + PHP-FPM shape the editor is
+# deployed into inside Problemos.
 services:
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "127.0.0.1:5274:5274"
+    volumes:
+      - ./envs/local-development/Caddyfile:/etc/caddy/Caddyfile:ro
+      # routes.caddy and the PHP front controller path are read from here.
+      - ../../..:/repo:ro
+    depends_on:
+      - vite
+      - php
+
   vite:
     build:
       context: .
@@ -14,14 +29,27 @@ services:
       - -c
       - >-
         if [ ! -x node_modules/.bin/vite ]; then npm ci; fi;
-        exec npm run dev -- --host 0.0.0.0 --port 5274 --strictPort
-    ports:
-      - "127.0.0.1:5274:5274"
+        exec npm run dev -- --host 0.0.0.0 --port 5173 --strictPort
     volumes:
       - ../../..:/repo
       - ontology_editor_node_modules:/repo/platform/web/ontology-editor/node_modules
     environment:
       CHOKIDAR_USEPOLLING: "true"
+      # The browser reaches Vite through Caddy, so HMR must connect there.
+      VITE_HMR_CLIENT_PORT: "5274"
+
+  php:
+    image: php:8.3-fpm-alpine
+    # The storage volume starts root-owned; PHP-FPM workers run as www-data.
+    command:
+      - sh
+      - -c
+      - chown www-data:www-data /data/file-store && exec php-fpm
+    volumes:
+      - ../../..:/repo:ro
+      - ./envs/local-development/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
+      - file_store_data:/data/file-store
 
 volumes:
   ontology_editor_node_modules:
+  file_store_data:

@@ -21,6 +21,7 @@ import { transactionOf, transactionEffect } from '@/concepts/transactions/Transa
 import { runEffect } from '@/concepts/transactions/runEffect'
 import ConceptView from '@/concepts/concept-view/ConceptView.vue'
 import ConceptEditor from '@/concepts/editing/ConceptEditor.vue'
+import type { FileStore } from '@/concepts/files/FileStore'
 
 const props = defineProps<{
   /** The ontology to display. */
@@ -37,6 +38,8 @@ const props = defineProps<{
    * history is untouched.
    */
   history?: boolean
+  /** Where uploaded files live. Without one, image values take URLs only. */
+  fileStore?: FileStore
 }>()
 
 const emit = defineEmits<{
@@ -181,6 +184,7 @@ provideOntology({
   renameSlug,
   createConcept,
   runTransaction,
+  fileStore: () => props.fileStore,
 })
 </script>
 

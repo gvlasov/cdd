@@ -6,6 +6,7 @@ import type { Reality } from '@/concepts/reality/Reality'
 import { conceptOf, ontologyConcepts } from './Ontology'
 import { conceptLabelOf } from '@/concepts/concepts/Concept'
 import type { TransactionId } from '@/concepts/transactions/Transaction'
+import type { FileStore } from '@/concepts/files/FileStore'
 
 // Lightweight context so property-kind renderers, editors and transaction
 // triggers deep in the tree can act without prop drilling.
@@ -26,6 +27,8 @@ export interface OntologyContext {
   createConcept: (slug: Slug) => void
   /** Run a transaction's effect with `input`; emits the new reality. */
   runTransaction: (id: TransactionId, input: unknown) => void
+  /** The host's file store, if it provides one. */
+  fileStore: () => FileStore | undefined
 }
 
 const key: InjectionKey<OntologyContext> = Symbol('ontology')
@@ -38,6 +41,7 @@ export function provideOntology(ctx: {
   renameSlug: (instanceId: Identity, newSlug: Slug) => void
   createConcept: (slug: Slug) => void
   runTransaction: (id: TransactionId, input: unknown) => void
+  fileStore: () => FileStore | undefined
 }): void {
   const label = (identity: Identity) => {
     const concept = conceptOf(ctx.ontology(), identity)
@@ -51,6 +55,7 @@ export function provideOntology(ctx: {
     renameSlug: ctx.renameSlug,
     createConcept: ctx.createConcept,
     runTransaction: ctx.runTransaction,
+    fileStore: ctx.fileStore,
     conceptLabel: label,
     conceptOptions: () =>
       ontologyConcepts(ctx.ontology()).map((id) => ({ value: id, title: label(id) ?? id })),

@@ -1,5 +1,7 @@
 // An Image provides visual content for another instance. Its source is either
-// a URL or an embedded data URL kept in `blob`.
+// a URL — often of a file uploaded to the ontology's file store — or an
+// embedded data URL kept in `blob`. `originalName` remembers an uploaded
+// file's name, since its stored name is a content hash.
 export default [
   [
     { kind: 'identity', value: 'cdd.image' },
@@ -10,7 +12,7 @@ export default [
       kind: 'definition',
       value: 'a visual representation supplied by a URL or an embedded data blob.',
     },
-    { kind: 'attributes', value: ['cdd.image:url', 'cdd.image:blob'] },
+    { kind: 'attributes', value: ['cdd.image:url', 'cdd.image:blob', 'cdd.image:originalName'] },
   ],
   [
     { kind: 'identity', value: 'cdd.image:url' },
@@ -25,6 +27,14 @@ export default [
     { kind: 'concept', value: 'cdd.attribute' },
     { kind: 'slug', value: 'blob' },
     { kind: 'name', value: 'blob' },
+    { kind: 'type', value: 'cdd.string' },
+    { kind: 'cardinality', value: '0-1' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.image:originalName' },
+    { kind: 'concept', value: 'cdd.attribute' },
+    { kind: 'slug', value: 'originalName' },
+    { kind: 'name', value: 'original name' },
     { kind: 'type', value: 'cdd.string' },
     { kind: 'cardinality', value: '0-1' },
   ],

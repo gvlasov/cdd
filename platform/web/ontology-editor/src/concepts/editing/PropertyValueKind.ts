@@ -55,6 +55,7 @@ export const propertyValueKind: Record<PropertyKindName, PropertyValueKind> = {
   prototypeImage: 'concept-list',
   url: 'literal',
   blob: 'literal',
+  originalName: 'literal',
 }
 
 export const ALL_PROPERTY_KINDS: PropertyKindName[] = [
@@ -105,4 +106,5 @@ export const ALL_PROPERTY_KINDS: PropertyKindName[] = [
   'prototypeImage',
   'url',
   'blob',
+  'originalName',
 ]
