@@ -16,9 +16,9 @@ const byId = computed(() => new Map(layout.value?.boxes.map((box) => [box.id, bo
 const textById = computed(() => new Map(layout.value?.texts.map((text) => [text.id, text]) ?? []))
 
 function boxLineCount(padding: number): number {
-  // The box is 90 SVG units high; label line-height is 1.25 × 20px.
+  // The box is 135 SVG units high; label line-height is 0.9375 × 16px.
   // Clamp only after all lines that physically fit inside its content area.
-  return Math.max(1, Math.floor((90 - padding * 2) / 25))
+  return Math.max(1, Math.floor((135 - padding * 2) / 18.75))
 }
 
 function marker(head: string, position: 'start' | 'end'): string | undefined {
@@ -40,12 +40,16 @@ function point(id: string, toward: string): { x: number; y: number } | undefined
   if (!box && !text) return undefined
   if (!otherBox && !otherText) return undefined
   if (!box) return { x: text!.x, y: text!.y - 5 }
+  if (layout.value?.direction === 'bottomToTop') {
+    const otherY = otherBox?.y ?? otherText!.y
+    return { x: box.x + 110, y: box.y + (otherY < box.y ? 0 : 135) }
+  }
   const otherX = otherBox?.x ?? otherText!.x
   const toRight = otherX >= box.x
   // Every endpoint sits on the side that faces the other element. The rule is
   // identical for a source and a target; reversing it at the target sends a
   // left-to-right edge through the far side of its destination box.
-  return { x: box.x + (toRight ? 220 : 0), y: box.y + 45 }
+  return { x: box.x + (toRight ? 220 : 0), y: box.y + 67.5 }
 }
 type Point = { x: number; y: number }
 type DrawnEdge = { source: string; target: string; routing: string }
@@ -78,6 +82,7 @@ function edgeLabel(edge: DrawnEdge): { x: number; y: number; transform: string }
   })
   const x = (from.x + to.x) / 2
   const y = (from.y + to.y) / 2
+  if (layout.value?.direction === 'bottomToTop') return { x, y: y - 9, transform: '' }
   let degrees = Math.atan2(to.y - from.y, to.x - from.x) * 180 / Math.PI
   // Keep labels legible regardless of which way the edge was declared.
   if (degrees > 90 || degrees < -90) degrees += 180
@@ -106,8 +111,8 @@ function navigateTo(id?: string) { if (id) navigate(id) }
         <text v-if="edge.content && edgeLabel(edge)" class="edge-label" :x="edgeLabel(edge)!.x" :y="edgeLabel(edge)!.y" :transform="edgeLabel(edge)!.transform" text-anchor="middle">{{ edge.content }}</text>
       </g>
       <g v-for="box in layout.boxes" :key="box.id" class="box" :class="{ clickable: box.denotatum }" @click="navigateTo(box.denotatum)">
-        <rect :x="box.x" :y="box.y" width="220" height="90" rx="8" :fill="box.backgroundColor" :stroke="box.borderColor" stroke-width="2" />
-        <foreignObject :x="box.x" :y="box.y" width="220" height="90">
+        <rect :x="box.x" :y="box.y" width="220" height="135" rx="8" :fill="box.backgroundColor" :stroke="box.borderColor" stroke-width="2" />
+        <foreignObject :x="box.x" :y="box.y" width="220" height="135">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
             class="box-content"
@@ -126,8 +131,8 @@ function navigateTo(id?: string) { if (id) navigate(id) }
 .scheme { flex: 0 0 auto; width: 100%; min-width: 0; border: 1px solid rgb(var(--v-theme-outline)); border-radius: 8px; background: transparent; color: rgb(var(--v-theme-on-surface)); overflow: hidden; }
 .scheme-canvas { width: 100%; height: auto; min-height: 180px; display: block; }
 .clickable { cursor: pointer; } .clickable:hover { opacity: .72; }
-.box-content { box-sizing: border-box; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 0; font: 1.25rem/1.25 ui-sans-serif, system-ui, sans-serif; text-align: center; }
+.box-content { box-sizing: border-box; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 0; font: 0.9375rem/1.25 ui-sans-serif, system-ui, sans-serif; text-align: center; }
 .box-content-text { display: -webkit-box; min-width: 0; width: 100%; overflow: hidden; white-space: normal; text-overflow: ellipsis; -webkit-box-orient: vertical; -webkit-line-clamp: var(--box-lines); }
-.edge-label { font: 1.25rem/1.25 ui-sans-serif, system-ui, sans-serif; fill: currentColor; paint-order: stroke; stroke: rgb(var(--v-theme-surface)); stroke-width: 4px; stroke-linejoin: round; }
-.free-text { font: 1.25rem/1.25 ui-sans-serif, system-ui, sans-serif; fill: currentColor; }
+.edge-label { font: 0.9375rem/1.25 ui-sans-serif, system-ui, sans-serif; fill: currentColor; paint-order: stroke; stroke-width: 4px; stroke-linejoin: round; }
+.free-text { font: 0.9375rem/1.25 ui-sans-serif, system-ui, sans-serif; fill: currentColor; }
 </style>

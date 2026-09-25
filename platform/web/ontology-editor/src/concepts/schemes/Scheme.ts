@@ -48,9 +48,11 @@ export interface SchemeLayout {
   texts: Array<SchemeText & { x: number; y: number }>
   width: number
   height: number
+  direction: 'leftToRight' | 'bottomToTop'
 }
 
 const BOX_WIDTH = 220
+const BOX_HEIGHT = 135
 const MIN_COLUMN_GAP = 70
 
 // Labels use a 1.25rem font in the SVG. Measuring SVG text requires a live
@@ -95,6 +97,7 @@ function align(value: string): TextAlign {
 export function layoutScheme(ontology: Ontology, schemeId: Identity): SchemeLayout | undefined {
   const scheme = conceptOf(ontology, schemeId)
   if (!scheme) return undefined
+  const direction = literal(scheme, 'direction') === 'bottomToTop' ? 'bottomToTop' : 'leftToRight'
   const boxes = ids(scheme, 'boxes').flatMap((id) => {
     const instance = conceptOf(ontology, id)
     if (!instance) return []
@@ -164,24 +167,42 @@ export function layoutScheme(ontology: Ontology, schemeId: Identity): SchemeLayo
     // long edge from creating one visually disproportionate empty column.
     for (let boundary = sourceColumn; boundary < targetColumn; boundary += 1) gaps[boundary] += extra / span
   }
-  const columnX = new Map<number, number>()
-  let nextX = 48
-  for (let column = 0; column <= lastColumn; column += 1) {
-    columnX.set(column, nextX)
-    nextX += BOX_WIDTH + (gaps[column] ?? 0)
-  }
   const maxRows = Math.max(1, ...[...columns.values()].map((column) => column.length))
-  const positioned = boxes.map((box) => {
-    const column = layer.get(box.id) ?? 0
-    const columnBoxes = columns.get(column) ?? []
-    const row = columnBoxes.findIndex((candidate) => candidate.id === box.id)
-    // Flow advances horizontally. Centre each layer's stack vertically so
-    // sibling branches are justified on the axis perpendicular to the arrows.
-    const perpendicularOffset = (maxRows - columnBoxes.length) * 75
-    return { ...box, x: columnX.get(column) ?? 48, y: 48 + perpendicularOffset + row * 150 }
-  })
-  const width = Math.max(360, (columnX.get(lastColumn) ?? 48) + BOX_WIDTH + 48)
-  const height = Math.max(180, 48 + maxRows * 150)
+  const positioned = direction === 'bottomToTop'
+    ? boxes.map((box) => {
+      const column = layer.get(box.id) ?? 0
+      const columnBoxes = columns.get(column) ?? []
+      const row = columnBoxes.findIndex((candidate) => candidate.id === box.id)
+      const rowGap = BOX_WIDTH + 60
+      const perpendicularOffset = (maxRows - columnBoxes.length) * rowGap / 2
+      return {
+        ...box,
+        x: 48 + perpendicularOffset + row * rowGap,
+        y: 48 + (lastColumn - column) * (BOX_HEIGHT + 100),
+      }
+    })
+    : (() => {
+      const columnX = new Map<number, number>()
+      let nextX = 48
+      for (let column = 0; column <= lastColumn; column += 1) {
+        columnX.set(column, nextX)
+        nextX += BOX_WIDTH + (gaps[column] ?? 0)
+      }
+      return boxes.map((box) => {
+        const column = layer.get(box.id) ?? 0
+        const columnBoxes = columns.get(column) ?? []
+        const row = columnBoxes.findIndex((candidate) => candidate.id === box.id)
+        const rowGap = BOX_HEIGHT + 60
+        const perpendicularOffset = (maxRows - columnBoxes.length) * rowGap / 2
+        return { ...box, x: columnX.get(column) ?? 48, y: 48 + perpendicularOffset + row * rowGap }
+      })
+    })()
+  const width = direction === 'bottomToTop'
+    ? Math.max(360, 48 + maxRows * BOX_WIDTH + Math.max(0, maxRows - 1) * 60 + 48)
+    : Math.max(360, Math.max(...positioned.map((box) => box.x + BOX_WIDTH), 0) + 48)
+  const height = direction === 'bottomToTop'
+    ? Math.max(225, 48 + (lastColumn + 1) * BOX_HEIGHT + lastColumn * 100 + 48)
+    : Math.max(225, 48 + maxRows * (BOX_HEIGHT + 60))
   return {
     boxes: positioned,
     edges,
@@ -192,6 +213,7 @@ export function layoutScheme(ontology: Ontology, schemeId: Identity): SchemeLayo
     })),
     width,
     height,
+    direction,
   }
 }
 
@@ -220,18 +242,19 @@ export function layoutOntology(ontology: Ontology, rootId: Identity): SchemeLayo
       borderColor: index === 0 ? 'rgb(var(--v-theme-primary))' : 'rgb(var(--v-theme-outline))',
       padding: 14,
       x: startX + column * (BOX_WIDTH + gapX),
-      y: startY + row * (90 + gapY),
+      y: startY + row * (BOX_HEIGHT + gapY),
     }]
   })
   const rows = Math.max(1, Math.ceil(boxes.length / columns))
   const width = startX * 2 + columns * BOX_WIDTH + (columns - 1) * gapX
-  const height = startY + rows * 90 + Math.max(0, rows - 1) * gapY + 48
+  const height = startY + rows * BOX_HEIGHT + Math.max(0, rows - 1) * gapY + 48
   return {
     boxes,
     edges: [],
     texts: [{ id: `${rootId}:caption`, content: 'Ontology concepts', align: 'center', x: width / 2, y: 32 }],
     width,
     height,
+    direction: 'leftToRight',
   }
 }
 
