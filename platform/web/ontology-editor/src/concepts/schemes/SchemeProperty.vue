@@ -12,8 +12,49 @@ const layout = computed(() => {
   const id = schemeReference(props.property)
   return id ? layoutScheme(ontology(), id) : undefined
 })
+const isRoadmap = computed(() => props.instance.some((property) =>
+  property.kind === 'concept' && property.value === 'cdd.roadmap',
+))
+const displayEdgeLabels = computed(() => !isRoadmap.value)
 const byId = computed(() => new Map(layout.value?.boxes.map((box) => [box.id, box]) ?? []))
 const textById = computed(() => new Map(layout.value?.texts.map((text) => [text.id, text]) ?? []))
+const BOX_WIDTH = 220
+const BOX_HEIGHT = 135
+const EDGE_CLEARANCE = 16
+const MILESTONE_SIDE_PADDING = 24
+const MILESTONE_TOP_PADDING = 40
+const MILESTONE_BOTTOM_PADDING = 24
+
+const milestoneGroups = computed(() => {
+  if (!isRoadmap.value || !layout.value) return []
+  const milestoneProperty = props.instance.find((property) => (property.kind as string) === 'milestones')
+  const milestoneIds = milestoneProperty
+    ? Array.isArray(milestoneProperty.value) ? milestoneProperty.value : [milestoneProperty.value]
+    : []
+  return milestoneIds.flatMap((id) => {
+    const milestone = ontology().instances[id]
+    if (!milestone) return []
+    const stepsProperty = milestone.find((property) => (property.kind as string) === 'steps')
+    const stepIds = new Set(stepsProperty
+      ? Array.isArray(stepsProperty.value) ? stepsProperty.value : [stepsProperty.value]
+      : [])
+    const boxes = layout.value!.boxes.filter((box) => box.denotatum && stepIds.has(box.denotatum))
+    if (!boxes.length) return []
+    const minX = Math.min(...boxes.map((box) => box.x))
+    const minY = Math.min(...boxes.map((box) => box.y))
+    const maxX = Math.max(...boxes.map((box) => box.x + BOX_WIDTH))
+    const maxY = Math.max(...boxes.map((box) => box.y + BOX_HEIGHT))
+    const name = milestone.find((property) => property.kind === 'name')?.value
+    return [{
+      id,
+      name: typeof name === 'string' ? name : id,
+      x: minX - MILESTONE_SIDE_PADDING,
+      y: minY - MILESTONE_TOP_PADDING,
+      width: maxX - minX + MILESTONE_SIDE_PADDING * 2,
+      height: maxY - minY + MILESTONE_TOP_PADDING + MILESTONE_BOTTOM_PADDING,
+    }]
+  })
+})
 
 function boxLineCount(padding: number): number {
   // The box is 135 SVG units high; label line-height is 0.9375 × 16px.
@@ -42,14 +83,14 @@ function point(id: string, toward: string): { x: number; y: number } | undefined
   if (!box) return { x: text!.x, y: text!.y - 5 }
   if (layout.value?.direction === 'bottomToTop') {
     const otherY = otherBox?.y ?? otherText!.y
-    return { x: box.x + 110, y: box.y + (otherY < box.y ? 0 : 135) }
+    return { x: box.x + BOX_WIDTH / 2, y: box.y + (otherY < box.y ? 0 : BOX_HEIGHT) }
   }
   const otherX = otherBox?.x ?? otherText!.x
   const toRight = otherX >= box.x
   // Every endpoint sits on the side that faces the other element. The rule is
   // identical for a source and a target; reversing it at the target sends a
   // left-to-right edge through the far side of its destination box.
-  return { x: box.x + (toRight ? 220 : 0), y: box.y + 67.5 }
+  return { x: box.x + (toRight ? BOX_WIDTH : 0), y: box.y + BOX_HEIGHT / 2 }
 }
 type Point = { x: number; y: number }
 type DrawnEdge = { source: string; target: string; routing: string }
@@ -65,8 +106,37 @@ function edgeSegments(edge: DrawnEdge): Array<[Point, Point]> {
   const [from, to] = endpoints
   if (edge.routing !== 'orthogonal' || from.y === to.y) return [[from, to]]
   if (layout.value?.direction === 'bottomToTop') {
-    const middleY = (from.y + to.y) / 2
-    return [[from, { x: from.x, y: middleY }], [{ x: from.x, y: middleY }, { x: to.x, y: middleY }], [{ x: to.x, y: middleY }, to]]
+    const upwards = to.y < from.y
+    const sourceBendY = from.y + (upwards ? -50 : 50)
+    const targetBendY = to.y + (upwards ? 50 : -50)
+    const minY = Math.min(sourceBendY, targetBendY)
+    const maxY = Math.max(sourceBendY, targetBendY)
+    const obstacles = [...byId.value.values()].filter((box) =>
+      box.id !== edge.source
+      && box.id !== edge.target
+      && box.y < maxY
+      && box.y + BOX_HEIGHT > minY,
+    )
+    const candidates = [
+      to.x,
+      from.x,
+      ...(obstacles.flatMap((box) => [box.x - EDGE_CLEARANCE, box.x + BOX_WIDTH + EDGE_CLEARANCE])),
+      EDGE_CLEARANCE,
+      (layout.value?.width ?? 0) - EDGE_CLEARANCE,
+    ]
+    const corridorX = candidates
+      .filter((x) => obstacles.every((box) => x <= box.x - EDGE_CLEARANCE || x >= box.x + BOX_WIDTH + EDGE_CLEARANCE))
+      .sort((a, b) => Math.abs(from.x - a) + Math.abs(to.x - a) - Math.abs(from.x - b) - Math.abs(to.x - b))[0]
+      ?? from.x
+    const points = [
+      from,
+      { x: from.x, y: sourceBendY },
+      { x: corridorX, y: sourceBendY },
+      { x: corridorX, y: targetBendY },
+      { x: to.x, y: targetBendY },
+      to,
+    ]
+    return points.slice(1).map((point, index) => [points[index], point])
   }
   const middleX = (from.x + to.x) / 2
   return [[from, { x: middleX, y: from.y }], [{ x: middleX, y: from.y }, { x: middleX, y: to.y }], [{ x: middleX, y: to.y }, to]]
@@ -110,9 +180,13 @@ function navigateTo(id?: string) { if (id) navigate(id) }
         <marker v-for="position in ['start', 'end']" :id="`${position}-circle`" :key="`${position}-circle`" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7"><circle cx="5" cy="5" r="3.5" fill="white" stroke="context-stroke" /></marker>
         <marker v-for="position in ['start', 'end']" :id="`${position}-diamond`" :key="`${position}-diamond`" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="8" markerHeight="8"><path d="M 5 0 L 10 5 L 5 10 L 0 5 z" fill="white" stroke="context-stroke" /></marker>
       </defs>
+      <g v-for="milestone in milestoneGroups" :key="milestone.id" class="milestone clickable" @click="navigateTo(milestone.id)">
+        <rect class="milestone-boundary" :x="milestone.x" :y="milestone.y" :width="milestone.width" :height="milestone.height" rx="12" />
+        <text class="milestone-label" :x="milestone.x + 12" :y="milestone.y + 24">{{ milestone.name }}</text>
+      </g>
       <g v-for="edge in layout.edges" :key="edge.id" class="edge" :class="{ clickable: edge.denotatum }" @click="navigateTo(edge.denotatum)">
         <path v-if="edgePath(edge)" :d="edgePath(edge)" fill="none" :stroke="edge.color" :stroke-width="strokeWidth(edge.boldness)" :stroke-dasharray="dash(edge.lineStyle)" :marker-start="marker(edge.startHead, 'start')" :marker-end="marker(edge.endHead, 'end')" />
-        <text v-if="edge.content && edgeLabel(edge)" class="edge-label" :x="edgeLabel(edge)!.x" :y="edgeLabel(edge)!.y" :transform="edgeLabel(edge)!.transform" text-anchor="middle">{{ edge.content }}</text>
+        <text v-if="displayEdgeLabels && edge.content && edgeLabel(edge)" class="edge-label" :x="edgeLabel(edge)!.x" :y="edgeLabel(edge)!.y" :transform="edgeLabel(edge)!.transform" text-anchor="middle">{{ edge.content }}</text>
       </g>
       <g v-for="box in layout.boxes" :key="box.id" class="box" :class="{ clickable: box.denotatum }" @click="navigateTo(box.denotatum)">
         <rect :x="box.x" :y="box.y" width="220" height="135" rx="8" :fill="box.backgroundColor" :stroke="box.borderColor" stroke-width="2" />
@@ -137,6 +211,8 @@ function navigateTo(id?: string) { if (id) navigate(id) }
 .clickable { cursor: pointer; } .clickable:hover { opacity: .72; }
 .box-content { box-sizing: border-box; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 0; font: 0.9375rem/1.25 ui-sans-serif, system-ui, sans-serif; text-align: center; }
 .box-content-text { display: -webkit-box; min-width: 0; width: 100%; overflow: hidden; white-space: normal; text-overflow: ellipsis; -webkit-box-orient: vertical; -webkit-line-clamp: var(--box-lines); }
+.milestone-boundary { fill: rgb(var(--v-theme-surface-variant)); fill-opacity: .08; stroke: rgb(var(--v-theme-outline)); stroke-width: 2px; stroke-dasharray: 8 6; }
+.milestone-label { font: 0.875rem/1.25 ui-sans-serif, system-ui, sans-serif; fill: currentColor; }
 .edge-label { font: 0.9375rem/1.25 ui-sans-serif, system-ui, sans-serif; fill: currentColor; paint-order: stroke; stroke-width: 4px; stroke-linejoin: round; }
 .free-text { font: 0.9375rem/1.25 ui-sans-serif, system-ui, sans-serif; fill: currentColor; }
 </style>

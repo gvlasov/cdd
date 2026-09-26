@@ -148,6 +148,22 @@ export function layoutScheme(ontology: Ontology, schemeId: Identity): SchemeLayo
       if (incoming.get(target) === 0) queue.push(target)
     }
   }
+  if (direction === 'bottomToTop') {
+    // Roadmap-like schemes align every terminal vertex at the top. Work
+    // backwards through the topological order so shorter branches skip
+    // intermediate layers instead of leaving their terminal boxes lower.
+    const distanceToTerminal = new Map<string, number>()
+    for (let cursor = queue.length - 1; cursor >= 0; cursor -= 1) {
+      const id = queue[cursor]
+      const distance = Math.max(
+        0,
+        ...(outgoing.get(id) ?? []).map((target) => (distanceToTerminal.get(target) ?? 0) + 1),
+      )
+      distanceToTerminal.set(id, distance)
+    }
+    const depth = Math.max(0, ...distanceToTerminal.values())
+    for (const [id, distance] of distanceToTerminal) layer.set(id, depth - distance)
+  }
   const columns = new Map<number, SchemeBox[]>()
   for (const box of boxes) {
     const column = layer.get(box.id) ?? 0
@@ -169,18 +185,50 @@ export function layoutScheme(ontology: Ontology, schemeId: Identity): SchemeLayo
   }
   const maxRows = Math.max(1, ...[...columns.values()].map((column) => column.length))
   const positioned = direction === 'bottomToTop'
-    ? boxes.map((box) => {
-      const column = layer.get(box.id) ?? 0
-      const columnBoxes = columns.get(column) ?? []
-      const row = columnBoxes.findIndex((candidate) => candidate.id === box.id)
-      const rowGap = BOX_WIDTH + 60
-      const perpendicularOffset = (maxRows - columnBoxes.length) * rowGap / 2
-      return {
-        ...box,
-        x: 48 + perpendicularOffset + row * rowGap,
-        y: 48 + (lastColumn - column) * (BOX_HEIGHT + 100),
+    ? (() => {
+      const separation = BOX_WIDTH + 60
+      const centerX = new Map<Identity, number>()
+      const terminals = boxes.filter((box) => (outgoing.get(box.id) ?? []).length === 0)
+      terminals.forEach((box, index) => centerX.set(box.id, index * separation))
+
+      // Place each predecessor at the barycenter of its direct dependents.
+      // A fork therefore expands equally to either side whenever surrounding
+      // vertices leave enough room for the ideal position.
+      for (let cursor = queue.length - 1; cursor >= 0; cursor -= 1) {
+        const id = queue[cursor]
+        const dependentCenters = (outgoing.get(id) ?? []).flatMap((target) => {
+          const center = centerX.get(target)
+          return center === undefined ? [] : [center]
+        })
+        if (dependentCenters.length) {
+          centerX.set(id, dependentCenters.reduce((sum, center) => sum + center, 0) / dependentCenters.length)
+        }
       }
-    })
+
+      // Separate colliding barycenters within each layer, preserving the
+      // layer's center so collision avoidance does not bias the whole graph.
+      for (const columnBoxes of columns.values()) {
+        const ordered = columnBoxes
+          .map((box, index) => ({ box, preferred: centerX.get(box.id) ?? index * separation }))
+          .sort((a, b) => a.preferred - b.preferred)
+        const resolved: number[] = []
+        for (const entry of ordered) {
+          const previous = resolved.at(-1)
+          resolved.push(previous === undefined ? entry.preferred : Math.max(entry.preferred, previous + separation))
+        }
+        const preferredMean = ordered.reduce((sum, entry) => sum + entry.preferred, 0) / Math.max(1, ordered.length)
+        const resolvedMean = resolved.reduce((sum, center) => sum + center, 0) / Math.max(1, resolved.length)
+        ordered.forEach((entry, index) => centerX.set(entry.box.id, resolved[index] - resolvedMean + preferredMean))
+      }
+
+      const minimumCenter = Math.min(0, ...centerX.values())
+      const offset = 48 + BOX_WIDTH / 2 - minimumCenter
+      return boxes.map((box) => ({
+        ...box,
+        x: (centerX.get(box.id) ?? 0) + offset - BOX_WIDTH / 2,
+        y: 48 + (lastColumn - (layer.get(box.id) ?? 0)) * (BOX_HEIGHT + 100),
+      }))
+    })()
     : (() => {
       const columnX = new Map<number, number>()
       let nextX = 48
@@ -198,7 +246,7 @@ export function layoutScheme(ontology: Ontology, schemeId: Identity): SchemeLayo
       })
     })()
   const width = direction === 'bottomToTop'
-    ? Math.max(360, 48 + maxRows * BOX_WIDTH + Math.max(0, maxRows - 1) * 60 + 48)
+    ? Math.max(360, Math.max(...positioned.map((box) => box.x + BOX_WIDTH), 0) + 48)
     : Math.max(360, Math.max(...positioned.map((box) => box.x + BOX_WIDTH), 0) + 48)
   const height = direction === 'bottomToTop'
     ? Math.max(225, 48 + (lastColumn + 1) * BOX_HEIGHT + lastColumn * 100 + 48)

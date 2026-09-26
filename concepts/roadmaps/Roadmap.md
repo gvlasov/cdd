@@ -20,8 +20,8 @@ For the CDD project, the roadmap is the rooted tree
 - T2 — task: document installation.
 - T3 — task: publish the first release.
 
-The **Foundation** milestone is the subtree `P → G → T1`; the **Public
-release** milestone is `G → T2 → T3`. The shared `G` step roots both
-milestones without introducing a cycle. The ontology includes this
-as the navigable `cdd.roadmap:examples:cddPublicRelease:roadmap` instance,
-whose diagram renders the DAG from bottom to top.
+The **Foundation** milestone contains `P → G`; the **Public release**
+milestone contains `T1` and `T2 → T3`. The dependencies from `G` cross the
+milestone boundary into both release tasks. The ontology includes this as the
+navigable `cdd.roadmap:examples:cddPublicRelease:roadmap` instance, whose
+diagram renders the DAG from bottom to top.

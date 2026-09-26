@@ -153,7 +153,6 @@ export default [
     { kind: 'steps', value: [
       'cdd.roadmap:examples:cddPublicRelease:problem',
       'cdd.roadmap:examples:cddPublicRelease:goal',
-      'cdd.roadmap:examples:cddPublicRelease:writeInstaller',
     ] },
   ],
   [
@@ -182,10 +181,6 @@ export default [
       'cdd.roadmap:examples:cddPublicRelease:diagram:goalToInstaller',
       'cdd.roadmap:examples:cddPublicRelease:diagram:goalToDocumentation',
       'cdd.roadmap:examples:cddPublicRelease:diagram:documentationToRelease',
-    ] },
-    { kind: 'texts', value: [
-      'cdd.roadmap:examples:cddPublicRelease:diagram:foundationCaption',
-      'cdd.roadmap:examples:cddPublicRelease:diagram:releaseCaption',
     ] },
   ],
   ...[
@@ -218,16 +213,4 @@ export default [
     { kind: 'startHead', value: 'none' },
     { kind: 'endHead', value: 'arrow' },
   ]),
-  [
-    { kind: 'identity', value: 'cdd.roadmap:examples:cddPublicRelease:diagram:foundationCaption' },
-    { kind: 'concept', value: 'cdd.schemeText' },
-    { kind: 'content', value: 'Foundation milestone: problem → goal → installer' },
-    { kind: 'align', value: 'left' },
-  ],
-  [
-    { kind: 'identity', value: 'cdd.roadmap:examples:cddPublicRelease:diagram:releaseCaption' },
-    { kind: 'concept', value: 'cdd.schemeText' },
-    { kind: 'content', value: 'Public-release milestone: goal → documentation → release' },
-    { kind: 'align', value: 'right' },
-  ],
 ]
