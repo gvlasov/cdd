@@ -64,6 +64,10 @@ function edgeSegments(edge: DrawnEdge): Array<[Point, Point]> {
   if (!endpoints) return []
   const [from, to] = endpoints
   if (edge.routing !== 'orthogonal' || from.y === to.y) return [[from, to]]
+  if (layout.value?.direction === 'bottomToTop') {
+    const middleY = (from.y + to.y) / 2
+    return [[from, { x: from.x, y: middleY }], [{ x: from.x, y: middleY }, { x: to.x, y: middleY }], [{ x: to.x, y: middleY }, to]]
+  }
   const middleX = (from.x + to.x) / 2
   return [[from, { x: middleX, y: from.y }], [{ x: middleX, y: from.y }, { x: middleX, y: to.y }], [{ x: middleX, y: to.y }, to]]
 }
