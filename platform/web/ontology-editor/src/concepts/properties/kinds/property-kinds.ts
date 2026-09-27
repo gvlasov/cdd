@@ -98,6 +98,11 @@ export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   url: { name: 'url', position: 7 },
   blob: { name: 'blob', position: 7 },
   originalName: { name: 'originalName', position: 7 },
+  purpose: { name: 'purpose', position: 3 },
+  kind: { name: 'kind', position: 7 },
+  steps: { name: 'steps', position: 7 },
+  milestones: { name: 'milestones', position: 7 },
+  dependsOn: { name: 'dependsOn', position: 7 },
 }
 
 export function propertyKind(name: PropertyKindName): PropertyKind {

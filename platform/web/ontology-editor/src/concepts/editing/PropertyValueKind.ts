@@ -56,6 +56,11 @@ export const propertyValueKind: Record<PropertyKindName, PropertyValueKind> = {
   url: 'literal',
   blob: 'literal',
   originalName: 'literal',
+  purpose: 'literal',
+  kind: 'literal',
+  steps: 'concept-list',
+  milestones: 'concept-list',
+  dependsOn: 'concept-list',
 }
 
 export const ALL_PROPERTY_KINDS: PropertyKindName[] = [
@@ -107,4 +112,9 @@ export const ALL_PROPERTY_KINDS: PropertyKindName[] = [
   'url',
   'blob',
   'originalName',
+  'purpose',
+  'kind',
+  'steps',
+  'milestones',
+  'dependsOn',
 ]

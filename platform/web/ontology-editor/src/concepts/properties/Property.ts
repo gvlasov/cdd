@@ -85,6 +85,11 @@ export type PropertyKindName =
   | 'url'
   | 'blob'
   | 'originalName'
+  | 'purpose'
+  | 'kind'
+  | 'steps'
+  | 'milestones'
+  | 'dependsOn'
 
 export function propertiesOfKind(
   properties: Property[],

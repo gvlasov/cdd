@@ -2,9 +2,7 @@
 import { computed } from 'vue'
 import type { Ontology } from '@/concepts/ontology/Ontology'
 import type { Identity } from '@/concepts/identity/Identity'
-import { conceptOf, parentIdentities } from '@/concepts/ontology/Ontology'
-import { attributeTypeParents } from '@/concepts/attributes/Attribute'
-import { useOntology } from '@/concepts/ontology/useOntology'
+import { conceptOf } from '@/concepts/ontology/Ontology'
 import Instance from '@/concepts/instances/Instance.vue'
 import RealityPanel from '@/concepts/reality/RealityPanel.vue'
 
@@ -13,41 +11,11 @@ const props = defineProps<{
   conceptId: Identity
 }>()
 
-const { conceptLabel, navigate } = useOntology()
-
 const concept = computed(() => conceptOf(props.ontology, props.conceptId))
-// Parents: concepts that reference this one directly (attributes/concepts
-// lists), plus concepts whose declared attributes are typed by this one — a
-// concept with an attribute of type Attribute makes Concept a parent of
-// Attribute, for example.
-const parents = computed(() => {
-  const direct = parentIdentities(props.ontology, props.conceptId)
-  const viaAttributeType = attributeTypeParents(props.ontology, props.conceptId)
-  return [...new Set([...direct, ...viaAttributeType])]
-})
-
 </script>
 
 <template>
   <div class="d-flex flex-column ga-4 concept-view">
-    <nav aria-label="Parent concepts">
-      <div class="d-flex flex-wrap ga-3 align-center justify-center">
-        <v-chip
-          v-for="pid in parents"
-          :key="pid"
-          prepend-icon="mdi-arrow-up"
-          color="concept"
-          variant="outlined"
-          size="large"
-          link
-          @click="navigate(pid)"
-        >
-          {{ conceptLabel(pid) ?? pid }}
-        </v-chip>
-        <span v-if="!parents.length" class="text-medium-emphasis text-caption">&nbsp;</span>
-      </div>
-    </nav>
-
     <Instance v-if="concept" :instance="concept" />
     <v-card v-else variant="outlined" class="flex-grow-1 d-flex align-center">
       <v-card-text class="text-medium-emphasis">Unknown concept: {{ conceptId }}</v-card-text>

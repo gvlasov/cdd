@@ -43,6 +43,13 @@ export function setPropertyValue(
 }
 
 /** Add an empty property of `kind` to an instance if it doesn't already have one. */
+export function isListPropertyKind(kind: PropertyKindName): boolean {
+  return [
+    'examples', 'concept', 'concepts', 'attributes', 'transactions', 'params',
+    'layers', 'concerns', 'boxes', 'edges', 'texts', 'steps', 'milestones', 'dependsOn',
+  ].includes(kind)
+}
+
 export function addProperty(
   ontology: Ontology,
   instanceId: Identity,
@@ -53,17 +60,7 @@ export function addProperty(
   const instance = instances[instanceId]
   if (!instance || instance.some((p) => p.kind === kind)) return ontology
 
-  const listKinds: PropertyKindName[] = [
-    'examples',
-    'concept',
-    'concepts',
-    'attributes',
-    'transactions',
-    'params',
-    'layers',
-    'concerns',
-  ]
-  instance.push({ kind, value: listKinds.includes(kind) ? [] : '' })
+  instance.push({ kind, value: isListPropertyKind(kind) ? [] : '' })
   return { ...ontology, instances }
 }
 

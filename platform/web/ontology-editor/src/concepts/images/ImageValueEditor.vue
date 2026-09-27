@@ -9,9 +9,8 @@ import { spawnValue, removeValue } from '@/concepts/attributes/spawnValue'
 import type { StoredFile } from '@/concepts/files/FileStore'
 import { IMAGE_CONCEPT, imageSource, imageAlt } from './Image'
 
-// Edits an attribute typed `cdd.image`: each value is an owned Image instance
-// whose `url` points at an uploaded file (via the host's FileStore) or any
-// other address typed in by hand.
+// Edits an image-valued property. A host FileStore is optional: local uploads
+// and pasted images remain portable by being stored as the Image's data URL.
 const props = defineProps<{ ownerId: Identity; slug: string; name: string; list: boolean }>()
 const { ontology, apply, fileStore } = useOntology()
 
@@ -49,25 +48,88 @@ function valueIdsOf(o: Ontology): Identity[] {
   const value = conceptOf(o, props.ownerId)?.find((p) => p.kind === props.slug)?.value
   return Array.isArray(value) ? value : value ? [value] : []
 }
-function addFile(file: StoredFile) {
-  addImage((o, id) =>
-    setPropertyValue(setPropertyValue(o, id, 'url', file.url), id, 'originalName', file.originalName),
-  )
+function setImage(fill: (o: Ontology, id: Identity) => Ontology, replaceId?: Identity) {
+  const existing = replaceId ?? (!props.list ? valueIds.value[0] : undefined)
+  if (existing) apply((o) => fill(o, existing))
+  else addImage(fill)
+}
+function addFile(file: StoredFile, replaceId?: Identity) {
+  setImage((o, id) =>
+    setPropertyValue(
+      setPropertyValue(setPropertyValue(o, id, 'url', file.url), id, 'blob', ''),
+      id,
+      'originalName',
+      file.originalName,
+    ),
+  replaceId)
+}
+
+function readFile(file: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onerror = () => reject(reader.error ?? new Error('Could not read image'))
+    reader.onload = () => resolve(String(reader.result))
+    reader.readAsDataURL(file)
+  })
+}
+async function addEmbeddedImage(file: Blob, name: string, replaceId?: Identity) {
+  const blob = await readFile(file)
+  setImage((o, id) =>
+    setPropertyValue(
+      setPropertyValue(setPropertyValue(o, id, 'url', ''), id, 'blob', blob),
+      id,
+      'originalName',
+      name,
+    ),
+  replaceId)
 }
 
 // --- upload ---
 const fileInput = ref<HTMLInputElement>()
 const busy = ref(false)
 const error = ref('')
+const uploadImageId = ref<Identity>()
+function openUpload(id?: Identity) {
+  uploadImageId.value = id
+  fileInput.value?.click()
+}
 async function onUpload(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
   input.value = ''
-  if (!file || !store.value) return
+  if (!file) return
+  const targetId = uploadImageId.value
+  uploadImageId.value = undefined
   busy.value = true
   error.value = ''
   try {
-    addFile(await store.value.upload(file))
+    if (store.value) addFile(await store.value.upload(file), targetId)
+    else await addEmbeddedImage(file, file.name, targetId)
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : String(e)
+  } finally {
+    busy.value = false
+  }
+}
+
+// Clipboard image data has no durable URL, so retain it in the Image's `blob`
+// property. This makes pasted images work in the standalone editor too.
+async function pasteImage(replaceId?: Identity) {
+  error.value = ''
+  if (!navigator.clipboard?.read) {
+    error.value = 'Pasting images is not supported by this browser.'
+    return
+  }
+  busy.value = true
+  try {
+    const items = await navigator.clipboard.read()
+    for (const item of items) {
+      const type = item.types.find((candidate) => candidate.startsWith('image/'))
+      if (!type) continue
+      await addEmbeddedImage(await item.getType(type), `Pasted image.${type.split('/')[1] ?? 'png'}`, replaceId)
+      return
+    }
+    error.value = 'The clipboard does not contain an image.'
   } catch (e) {
     error.value = e instanceof Error ? e.message : String(e)
   } finally {
@@ -77,6 +139,7 @@ async function onUpload(event: Event) {
 
 // --- choose from uploaded ---
 const choosing = ref(false)
+const choosingImageId = ref<Identity>()
 const files = ref<StoredFile[]>([])
 async function refresh() {
   if (!store.value) return
@@ -87,12 +150,14 @@ async function refresh() {
     error.value = e instanceof Error ? e.message : String(e)
   }
 }
-function openChooser() {
+function openChooser(id?: Identity) {
+  choosingImageId.value = id
   choosing.value = true
   void refresh()
 }
 function choose(file: StoredFile) {
-  addFile(file)
+  addFile(file, choosingImageId.value)
+  choosingImageId.value = undefined
   choosing.value = false
 }
 // Deleting a file another Image still points at would leave it broken, so
@@ -138,20 +203,22 @@ async function removeFile(file: StoredFile) {
         />
         <v-btn icon="mdi-close" variant="text" size="x-small" density="comfortable" @click="remove(id)" />
       </div>
+      <div class="d-flex justify-center flex-wrap ga-2 mt-2">
+        <v-btn prepend-icon="mdi-upload" variant="tonal" size="small" :loading="busy" @click="openUpload(id)">Upload</v-btn>
+        <v-btn prepend-icon="mdi-content-paste" variant="tonal" size="small" :loading="busy" @click="pasteImage(id)">Paste</v-btn>
+        <v-btn v-if="store" prepend-icon="mdi-image-multiple-outline" variant="tonal" size="small" @click="openChooser(id)">Choose uploaded</v-btn>
+      </div>
     </v-card>
 
-    <div v-if="canAdd" class="d-flex justify-center flex-wrap ga-2">
-      <template v-if="store">
-        <v-btn prepend-icon="mdi-upload" variant="tonal" size="small" :loading="busy" @click="fileInput?.click()">
-          Upload
-        </v-btn>
-        <input ref="fileInput" type="file" accept="image/*" class="d-none" @change="onUpload" />
-        <v-btn prepend-icon="mdi-image-multiple-outline" variant="tonal" size="small" @click="openChooser">
-          Choose uploaded
-        </v-btn>
-      </template>
-      <v-btn prepend-icon="mdi-link-variant" variant="tonal" size="small" @click="addImage()">URL</v-btn>
-    </div>
+    <v-card v-if="canAdd" variant="tonal" color="instance" class="pa-2">
+      <div class="d-flex justify-center flex-wrap ga-2">
+        <v-btn prepend-icon="mdi-upload" variant="tonal" size="small" :loading="busy" @click="openUpload()">Upload</v-btn>
+        <v-btn prepend-icon="mdi-content-paste" variant="tonal" size="small" :loading="busy" @click="pasteImage()">Paste</v-btn>
+        <v-btn v-if="store" prepend-icon="mdi-image-multiple-outline" variant="tonal" size="small" @click="openChooser()">Choose uploaded</v-btn>
+        <v-btn prepend-icon="mdi-link-variant" variant="tonal" size="small" @click="addImage()">URL</v-btn>
+      </div>
+    </v-card>
+    <input ref="fileInput" type="file" accept="image/*" class="d-none" @change="onUpload" />
     <div v-if="error" class="text-caption text-error text-center">{{ error }}</div>
 
     <v-dialog v-model="choosing" max-width="720">
