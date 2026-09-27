@@ -54,6 +54,7 @@ export interface SchemeLayout {
 const BOX_WIDTH = 220
 const BOX_HEIGHT = 135
 const MIN_COLUMN_GAP = 70
+const UNATTACHED_ROW_COLUMNS = 4
 
 // Labels use a 1.25rem font in the SVG. Measuring SVG text requires a live
 // DOM; this conservative average glyph width reserves enough layout space
@@ -138,8 +139,16 @@ export function layoutScheme(ontology: Ontology, schemeId: Identity): SchemeLayo
     outgoing.get(edge.source)?.push(edge.target)
     incoming.set(edge.target, (incoming.get(edge.target) ?? 0) + 1)
   }
-  const queue = boxes.filter((box) => incoming.get(box.id) === 0).map((box) => box.id)
-  const layer = new Map(boxes.map((box) => [box.id, 0]))
+  // Isolated vertices do not contribute to the dependency graph. Keep them
+  // out of its ranks and pack them below the connected graph instead, so a
+  // broad set of independent tasks never shrinks the whole SVG to one row.
+  const unattached = direction === 'bottomToTop'
+    ? boxes.filter((box) => incoming.get(box.id) === 0 && (outgoing.get(box.id) ?? []).length === 0)
+    : []
+  const unattachedIds = new Set(unattached.map((box) => box.id))
+  const connected = boxes.filter((box) => !unattachedIds.has(box.id))
+  const queue = connected.filter((box) => incoming.get(box.id) === 0).map((box) => box.id)
+  const layer = new Map(connected.map((box) => [box.id, 0]))
   for (let cursor = 0; cursor < queue.length; cursor += 1) {
     const id = queue[cursor]
     for (const target of outgoing.get(id) ?? []) {
@@ -165,7 +174,7 @@ export function layoutScheme(ontology: Ontology, schemeId: Identity): SchemeLayo
     for (const [id, distance] of distanceToTerminal) layer.set(id, depth - distance)
   }
   const columns = new Map<number, SchemeBox[]>()
-  for (const box of boxes) {
+  for (const box of connected) {
     const column = layer.get(box.id) ?? 0
     columns.set(column, [...(columns.get(column) ?? []), box])
   }
@@ -188,7 +197,7 @@ export function layoutScheme(ontology: Ontology, schemeId: Identity): SchemeLayo
     ? (() => {
       const separation = BOX_WIDTH + 60
       const centerX = new Map<Identity, number>()
-      const terminals = boxes.filter((box) => (outgoing.get(box.id) ?? []).length === 0)
+      const terminals = connected.filter((box) => (outgoing.get(box.id) ?? []).length === 0)
       terminals.forEach((box, index) => centerX.set(box.id, index * separation))
 
       // Place each predecessor at the barycenter of its direct dependents.
@@ -223,7 +232,7 @@ export function layoutScheme(ontology: Ontology, schemeId: Identity): SchemeLayo
 
       const minimumCenter = Math.min(0, ...centerX.values())
       const offset = 48 + BOX_WIDTH / 2 - minimumCenter
-      return boxes.map((box) => ({
+      return connected.map((box) => ({
         ...box,
         x: (centerX.get(box.id) ?? 0) + offset - BOX_WIDTH / 2,
         y: 48 + (lastColumn - (layer.get(box.id) ?? 0)) * (BOX_HEIGHT + 100),
@@ -236,7 +245,7 @@ export function layoutScheme(ontology: Ontology, schemeId: Identity): SchemeLayo
         columnX.set(column, nextX)
         nextX += BOX_WIDTH + (gaps[column] ?? 0)
       }
-      return boxes.map((box) => {
+      return connected.map((box) => {
         const column = layer.get(box.id) ?? 0
         const columnBoxes = columns.get(column) ?? []
         const row = columnBoxes.findIndex((candidate) => candidate.id === box.id)
@@ -245,14 +254,34 @@ export function layoutScheme(ontology: Ontology, schemeId: Identity): SchemeLayo
         return { ...box, x: columnX.get(column) ?? 48, y: 48 + perpendicularOffset + row * rowGap }
       })
     })()
-  const width = direction === 'bottomToTop'
+  const connectedWidth = direction === 'bottomToTop'
     ? Math.max(360, Math.max(...positioned.map((box) => box.x + BOX_WIDTH), 0) + 48)
     : Math.max(360, Math.max(...positioned.map((box) => box.x + BOX_WIDTH), 0) + 48)
-  const height = direction === 'bottomToTop'
+  const connectedHeight = direction === 'bottomToTop' && connected.length
     ? Math.max(225, 48 + (lastColumn + 1) * BOX_HEIGHT + lastColumn * 100 + 48)
     : Math.max(225, 48 + maxRows * (BOX_HEIGHT + 60))
+  const unattachedColumns = Math.min(UNATTACHED_ROW_COLUMNS, unattached.length)
+  const unattachedWidth = unattachedColumns
+    ? 96 + unattachedColumns * BOX_WIDTH + Math.max(0, unattachedColumns - 1) * 60
+    : 0
+  const width = Math.max(connectedWidth, unattachedWidth)
+  const connectedOffset = (width - connectedWidth) / 2
+  const unattachedStartY = connected.length ? connectedHeight + 100 : 48
+  const unattachedBoxes = unattached.map((box, index) => {
+    const column = index % unattachedColumns
+    const row = Math.floor(index / unattachedColumns)
+    const rowWidth = unattachedColumns * BOX_WIDTH + Math.max(0, unattachedColumns - 1) * 60
+    return {
+      ...box,
+      x: (width - rowWidth) / 2 + column * (BOX_WIDTH + 60),
+      y: unattachedStartY + row * (BOX_HEIGHT + 60),
+    }
+  })
+  const height = unattachedBoxes.length
+    ? Math.max(connected.length ? connectedHeight : 0, unattachedBoxes.at(-1)!.y + BOX_HEIGHT + 48)
+    : connectedHeight
   return {
-    boxes: positioned,
+    boxes: [...positioned.map((box) => ({ ...box, x: box.x + connectedOffset })), ...unattachedBoxes],
     edges,
     texts: texts.map((text, index) => ({
       ...text,

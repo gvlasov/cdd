@@ -126,6 +126,7 @@ const drawn = computed(() =>
   color: rgb(var(--v-theme-on-surface));
 }
 .scroll-region {
+  position: relative;
   min-height: 0;
   overflow-y: auto;
 }
