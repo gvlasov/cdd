@@ -49,8 +49,17 @@ const typeId = computed(() => {
 const cardinality = computed(() => attributeCardinality(props.instance))
 const label = computed(() => {
   const value = Array.isArray(props.property.value) ? props.property.value[0] : props.property.value
-  return nameText(ontology(), value, language()) ?? value
+  const name = nameText(ontology(), value, language()) ?? value
+  const type = attributeType(props.instance)
+  const myId = instanceIdentity(props.instance)
+  return isAttribute.value && type && myId && soleOwningAttribute(ontology(), type) === myId
+    ? ucfirst(name)
+    : name
 })
+
+function ucfirst(value: string): string {
+  return value.charAt(0).toUpperCase() + value.slice(1)
+}
 </script>
 
 <template>
@@ -58,7 +67,7 @@ const label = computed(() => {
     <template v-if="isAttribute && owner"
       ><a class="link" href="#" @click.prevent="navigate(owner.id)">{{
         owner.label
-      }}</a><span class="text-medium-emphasis">.</span></template
+      }}</a><span class="text-medium-emphasis owner-separator">&middot;</span></template
     >{{ label
     }}<template v-if="typeId"
       ><span class="text-medium-emphasis">:&nbsp;</span
@@ -82,6 +91,10 @@ const label = computed(() => {
 .type-link {
   font-size: 1rem;
   border-bottom-width: 1px;
+}
+.owner-separator {
+  display: inline-block;
+  margin: 0 8px;
 }
 .cardinality {
   font-size: 0.75rem;
