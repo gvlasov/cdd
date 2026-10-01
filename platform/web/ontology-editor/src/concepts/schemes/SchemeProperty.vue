@@ -2,6 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import type { Property } from '@/concepts/properties/Property'
 import type { Instance } from '@/concepts/instances/Instance'
+import { nameText } from '@/concepts/ontology/Ontology'
 import { useOntology } from '@/concepts/ontology/useOntology'
 import { layoutOntology, layoutScheme, schemeReference, type SchemeLayout } from './Scheme'
 
@@ -10,9 +11,11 @@ const { ontology, navigate } = useOntology()
 const hoveredBoxId = ref<string>()
 const hoveredMilestoneId = ref<string>()
 const schemeCanvas = ref<SVGSVGElement>()
+const scheme = ref<HTMLElement>()
 const scrollContainer = ref<HTMLElement>()
 const scrollContainerOverlay = ref({ left: 0, bottom: 0 })
 const focusedTaskId = ref<string>()
+const roadmapFullscreen = ref(false)
 const boxOffsets = ref(new Map<string, Point>())
 const boxTransitioning = ref(false)
 let longPressTimer: ReturnType<typeof setTimeout> | undefined
@@ -70,7 +73,8 @@ const roadmapMilestones = computed(() => {
       return true
     })
     const name = milestone.find((property) => property.kind === 'name')?.value
-    return [{ id, name: typeof name === 'string' ? name : id, stepIds }]
+    const label = typeof name === 'string' ? nameText(ontology(), name) ?? name : id
+    return [{ id, name: label, stepIds }]
   })
 })
 
@@ -266,16 +270,32 @@ onMounted(() => nextTick(() => {
   scrollParent?.addEventListener('scroll', updateVisibleViewport, { passive: true })
   window.addEventListener('resize', updateVisibleViewport, { passive: true })
   window.addEventListener('keydown', handleKeydown)
+  document.addEventListener('fullscreenchange', syncRoadmapFullscreen)
   resizeObserver = new ResizeObserver(updateVisibleViewport)
   if (schemeCanvas.value) resizeObserver.observe(schemeCanvas.value)
   if (scrollParent) resizeObserver.observe(scrollParent)
   updateVisibleViewport()
 }))
 
+function syncRoadmapFullscreen(): void {
+  roadmapFullscreen.value = document.fullscreenElement === scheme.value
+  void nextTick(updateVisibleViewport)
+}
+
+async function toggleRoadmapFullscreen(): Promise<void> {
+  if (!isRoadmap.value || !scheme.value) return
+  if (document.fullscreenElement === scheme.value) {
+    await document.exitFullscreen()
+    return
+  }
+  await scheme.value.requestFullscreen()
+}
+
 onBeforeUnmount(() => {
   scrollParent?.removeEventListener('scroll', updateVisibleViewport)
   window.removeEventListener('resize', updateVisibleViewport)
   window.removeEventListener('keydown', handleKeydown)
+  document.removeEventListener('fullscreenchange', syncRoadmapFullscreen)
   resizeObserver?.disconnect()
   if (longPressTimer) clearTimeout(longPressTimer)
   if (boxTransitionTimer) clearTimeout(boxTransitionTimer)
@@ -707,7 +727,18 @@ function navigateTo(id?: string) { if (id) navigate(id) }
 </script>
 
 <template>
-  <section v-if="layout" class="scheme" :aria-label="`${property.kind} scheme`">
+  <section ref="scheme" v-if="layout" class="scheme" :aria-label="`${property.kind} scheme`">
+    <v-btn
+      v-if="isRoadmap"
+      class="roadmap-fullscreen-button"
+      :aria-label="roadmapFullscreen ? 'Exit roadmap fullscreen' : 'Show roadmap fullscreen'"
+      :title="roadmapFullscreen ? 'Exit fullscreen' : 'Fullscreen'"
+      icon
+      variant="text"
+      @click.stop="toggleRoadmapFullscreen"
+    >
+      <v-icon :icon="roadmapFullscreen ? 'mdi-fullscreen-exit' : 'mdi-fullscreen'" />
+    </v-btn>
     <svg
       ref="schemeCanvas"
       class="scheme-canvas"
@@ -819,8 +850,10 @@ function navigateTo(id?: string) { if (id) navigate(id) }
 </template>
 
 <style scoped>
-.scheme { flex: 0 0 auto; width: 100%; min-width: 0; border: 1px solid rgb(var(--v-theme-outline)); border-radius: 8px; background: transparent; color: rgb(var(--v-theme-on-surface)); overflow: hidden; }
+.scheme { position: relative; flex: 0 0 auto; width: 100%; min-width: 0; border: 1px solid rgb(var(--v-theme-outline)); border-radius: 8px; background: transparent; color: rgb(var(--v-theme-on-surface)); overflow: hidden; }
 .scheme-canvas { width: 100%; height: auto; min-height: 180px; display: block; }
+.scheme:fullscreen { width: 100vw; height: 100vh; border: 0; border-radius: 0; background: rgb(var(--v-theme-surface)); overflow: auto; }
+.roadmap-fullscreen-button { position: absolute; z-index: 1; top: 8px; right: 8px; background: color-mix(in srgb, rgb(var(--v-theme-surface)) 86%, transparent); }
 .clickable { cursor: pointer; } .clickable:hover { opacity: .72; }
 .edge-base { transition: stroke .18s ease, stroke-width .18s ease; }
 .edge-flow { pointer-events: none; stroke-linecap: round; stroke-dasharray: 18 12; opacity: .52; filter: drop-shadow(0 0 1px rgb(var(--v-theme-primary))) drop-shadow(0 0 3px rgb(var(--v-theme-primary))); animation: edge-flow 4s linear infinite; transition: opacity .18s ease; }
