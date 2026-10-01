@@ -30,15 +30,16 @@ export function conceptOf(ontology: Ontology, identity: Identity): Instance | un
   return ontology.instances[identity]
 }
 
-/** Text of a Name instance in `languageId`, with English then any translation as fallbacks. */
-export function nameText(
+/** All synonym texts of a Name instance in `languageId`, with English then any translation as fallbacks. */
+export function nameSynonymTexts(
   ontology: Ontology,
   nameId: Identity,
   languageId: Identity = 'cdd.language:en',
-): string | undefined {
+): string[] {
   const name = conceptOf(ontology, nameId)
   const synonyms = name ? firstOfKind(name, 'synonyms') : undefined
   const wordIds = synonyms ? (Array.isArray(synonyms.value) ? synonyms.value : [synonyms.value]) : []
+  const texts: string[] = []
   for (const wordId of wordIds) {
     const word = conceptOf(ontology, wordId)
     const translations = word ? firstOfKind(word, 'translations') : undefined
@@ -59,9 +60,18 @@ export function nameText(
     })
     const translation = inLanguage ?? english ?? candidates[0]
     const value = translation && firstOfKind(translation, 'value')
-    if (value) return Array.isArray(value.value) ? value.value[0] : value.value
+    if (value) texts.push(Array.isArray(value.value) ? value.value[0] : value.value)
   }
-  return undefined
+  return texts
+}
+
+/** First synonym text of a Name instance in `languageId`. */
+export function nameText(
+  ontology: Ontology,
+  nameId: Identity,
+  languageId: Identity = 'cdd.language:en',
+): string | undefined {
+  return nameSynonymTexts(ontology, nameId, languageId)[0]
 }
 
 /** Text of a Text instance in `languageId`, falling back to English then any translation. */
