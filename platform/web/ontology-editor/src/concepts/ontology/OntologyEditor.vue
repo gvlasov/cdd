@@ -210,11 +210,30 @@ const currentConcept = computed(() => conceptOf(props.modelValue, currentId.valu
 function ucfirst(value: string) {
   return value ? value.slice(0, 1).toLocaleUpperCase() + value.slice(1) : value
 }
+const currentAttributeConceptTitle = computed(() => {
+  const instance = currentConcept.value
+  if (!instance || instanceType(instance) !== 'cdd.attribute') return undefined
+  const attribute = attributeSpec(props.modelValue, currentId.value, selectedLanguage.value)
+  if (!attribute?.type || soleOwningAttribute(props.modelValue, attribute.type) !== currentId.value) {
+    return undefined
+  }
+  const owner = Object.values(props.modelValue.instances).find((candidate) =>
+    conceptAttributeSpecs(props.modelValue, candidate, selectedLanguage.value)
+      .some((spec) => spec.attribute === currentId.value),
+  )
+  const ownerName = owner && conceptLabelOf(props.modelValue, owner, selectedLanguage.value)
+  if (!ownerName) return undefined
+  return { ownerName: ucfirst(ownerName), attributeName: ucfirst(attribute.name) }
+})
 const currentTitle = computed(() => {
   const instance = currentConcept.value
   if (!instance) return currentId.value
   if (instanceType(instance) !== 'cdd.attribute') {
     return conceptLabelOf(props.modelValue, instance, selectedLanguage.value) || currentId.value
+  }
+  if (currentAttributeConceptTitle.value) {
+    const { ownerName, attributeName } = currentAttributeConceptTitle.value
+    return `${ownerName}.${attributeName}`
   }
   const owner = Object.values(props.modelValue.instances).find((candidate) =>
     conceptAttributeSpecs(props.modelValue, candidate, selectedLanguage.value)
@@ -232,6 +251,7 @@ const currentAttributeType = computed(() => {
   const type = instance.find((property) => property.kind === 'type')?.value
   const typeId = type && (Array.isArray(type) ? type[0] : type)
   if (!typeId) return undefined
+  if (soleOwningAttribute(props.modelValue, typeId) === currentId.value) return undefined
   const cardinality = instance.find((property) => property.kind === 'cardinality')?.value
   const cardinalityValue = cardinality && (Array.isArray(cardinality) ? cardinality[0] : cardinality)
   const typeConcept = conceptOf(props.modelValue, typeId)
@@ -336,7 +356,13 @@ provideOntology({
 
       <main class="selected-instance">
         <div class="instance-heading">
-          <h1 :id="`instance-name-${currentId}`">{{ currentTitle }}</h1>
+          <h1 :id="`instance-name-${currentId}`">
+            <template v-if="currentAttributeConceptTitle">
+              {{ currentAttributeConceptTitle.ownerName
+              }}<span class="attribute-concept-separator">&middot;</span>{{ currentAttributeConceptTitle.attributeName }}
+            </template>
+            <template v-else>{{ currentTitle }}</template>
+          </h1>
           <template v-if="currentAttributeType">
             <span class="attribute-separator">·</span>
             <span class="attribute-type-summary">
@@ -527,6 +553,10 @@ provideOntology({
 }
 .attribute-type-summary {
   align-self: flex-end;
+}
+.attribute-concept-separator {
+  display: inline-block;
+  margin: 0 8px;
 }
 .attribute-separator {
   align-self: flex-end;
