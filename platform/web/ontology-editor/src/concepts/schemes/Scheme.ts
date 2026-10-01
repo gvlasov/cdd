@@ -53,6 +53,7 @@ export interface SchemeLayout {
 
 const BOX_WIDTH = 220
 const BOX_HEIGHT = 135
+const ROADMAP_BOX_MAX_WIDTH = 340
 const MIN_COLUMN_GAP = 70
 const UNATTACHED_ROW_COLUMNS = 4
 
@@ -195,7 +196,9 @@ export function layoutScheme(ontology: Ontology, schemeId: Identity): SchemeLayo
   const maxRows = Math.max(1, ...[...columns.values()].map((column) => column.length))
   const positioned = direction === 'bottomToTop'
     ? (() => {
-      const separation = BOX_WIDTH + 60
+      // Roadmap cards can grow to their label's max width in the renderer.
+      // Leave that wider footprint between terminals while laying out the DAG.
+      const separation = 400
       const centerX = new Map<Identity, number>()
       const terminals = connected.filter((box) => (outgoing.get(box.id) ?? []).length === 0)
       terminals.forEach((box, index) => centerX.set(box.id, index * separation))
@@ -231,7 +234,9 @@ export function layoutScheme(ontology: Ontology, schemeId: Identity): SchemeLayo
       }
 
       const minimumCenter = Math.min(0, ...centerX.values())
-      const offset = 48 + BOX_WIDTH / 2 - minimumCenter
+      // The renderer centers variable-width roadmap cards on these points.
+      // Reserve half of their extra max width on the canvas's left edge.
+      const offset = 48 + (ROADMAP_BOX_MAX_WIDTH - BOX_WIDTH) / 2 + BOX_WIDTH / 2 - minimumCenter
       return connected.map((box) => ({
         ...box,
         x: (centerX.get(box.id) ?? 0) + offset - BOX_WIDTH / 2,
@@ -255,14 +260,16 @@ export function layoutScheme(ontology: Ontology, schemeId: Identity): SchemeLayo
       })
     })()
   const connectedWidth = direction === 'bottomToTop'
-    ? Math.max(360, Math.max(...positioned.map((box) => box.x + BOX_WIDTH), 0) + 48)
+    ? Math.max(360, Math.max(...positioned.map((box) => box.x + BOX_WIDTH), 0) + 288)
     : Math.max(360, Math.max(...positioned.map((box) => box.x + BOX_WIDTH), 0) + 48)
   const connectedHeight = direction === 'bottomToTop' && connected.length
     ? Math.max(225, 48 + (lastColumn + 1) * BOX_HEIGHT + lastColumn * 100 + 48)
     : Math.max(225, 48 + maxRows * (BOX_HEIGHT + 60))
   const unattachedColumns = Math.min(UNATTACHED_ROW_COLUMNS, unattached.length)
+  const unattachedBoxWidth = direction === 'bottomToTop' ? ROADMAP_BOX_MAX_WIDTH : BOX_WIDTH
+  const unattachedGap = direction === 'bottomToTop' ? 60 : 60
   const unattachedWidth = unattachedColumns
-    ? 96 + unattachedColumns * BOX_WIDTH + Math.max(0, unattachedColumns - 1) * 60
+    ? 96 + unattachedColumns * unattachedBoxWidth + Math.max(0, unattachedColumns - 1) * unattachedGap
     : 0
   const width = Math.max(connectedWidth, unattachedWidth)
   const connectedOffset = (width - connectedWidth) / 2
@@ -270,10 +277,10 @@ export function layoutScheme(ontology: Ontology, schemeId: Identity): SchemeLayo
   const unattachedBoxes = unattached.map((box, index) => {
     const column = index % unattachedColumns
     const row = Math.floor(index / unattachedColumns)
-    const rowWidth = unattachedColumns * BOX_WIDTH + Math.max(0, unattachedColumns - 1) * 60
+    const rowWidth = unattachedColumns * unattachedBoxWidth + Math.max(0, unattachedColumns - 1) * unattachedGap
     return {
       ...box,
-      x: (width - rowWidth) / 2 + column * (BOX_WIDTH + 60),
+      x: (width - rowWidth) / 2 + column * (unattachedBoxWidth + unattachedGap) + (unattachedBoxWidth - BOX_WIDTH) / 2,
       y: unattachedStartY + row * (BOX_HEIGHT + 60),
     }
   })

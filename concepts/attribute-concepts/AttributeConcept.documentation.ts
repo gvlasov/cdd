@@ -15,7 +15,7 @@ export default [
     },
     {
       "kind": "name",
-      "value": "AttributeConcept"
+      "value": "Attribute-concept"
     },
     {
       "kind": "definition",

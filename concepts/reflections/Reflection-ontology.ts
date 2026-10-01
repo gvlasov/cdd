@@ -49,4 +49,63 @@ export default [
     { kind: 'cardinality', value: '1' },
     { kind: 'description', value: 'the concept this reflection represents.' },
   ],
+  // Reflection has several synonymous Words. They are first-class Name data,
+  // so the editor can present them alongside the definition in every language.
+  [
+    { kind: 'identity', value: 'cdd.name:cdd.reflection' },
+    { kind: 'concept', value: 'cdd.name' },
+    {
+      kind: 'synonyms',
+      value: [
+        'cdd.name:cdd.reflection:reflection',
+        'cdd.name:cdd.reflection:manifestation',
+        'cdd.name:cdd.reflection:representation',
+        'cdd.name:cdd.reflection:phenomenon',
+      ],
+    },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.name:cdd.reflection:reflection' },
+    { kind: 'concept', value: 'cdd.word' },
+    { kind: 'translations', value: ['cdd.name:cdd.reflection:reflection:translation:en'] },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.name:cdd.reflection:reflection:translation:en' },
+    { kind: 'concept', value: 'cdd.translation' },
+    { kind: 'language', value: 'cdd.language:en' },
+    { kind: 'value', value: 'Reflection' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.name:cdd.reflection:manifestation' },
+    { kind: 'concept', value: 'cdd.word' },
+    { kind: 'translations', value: ['cdd.name:cdd.reflection:manifestation:translation:en'] },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.name:cdd.reflection:manifestation:translation:en' },
+    { kind: 'concept', value: 'cdd.translation' },
+    { kind: 'language', value: 'cdd.language:en' },
+    { kind: 'value', value: 'Manifestation' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.name:cdd.reflection:representation' },
+    { kind: 'concept', value: 'cdd.word' },
+    { kind: 'translations', value: ['cdd.name:cdd.reflection:representation:translation:en'] },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.name:cdd.reflection:representation:translation:en' },
+    { kind: 'concept', value: 'cdd.translation' },
+    { kind: 'language', value: 'cdd.language:en' },
+    { kind: 'value', value: 'Representation' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.name:cdd.reflection:phenomenon' },
+    { kind: 'concept', value: 'cdd.word' },
+    { kind: 'translations', value: ['cdd.name:cdd.reflection:phenomenon:translation:en'] },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.name:cdd.reflection:phenomenon:translation:en' },
+    { kind: 'concept', value: 'cdd.translation' },
+    { kind: 'language', value: 'cdd.language:en' },
+    { kind: 'value', value: 'Phenomenon' },
+  ],
 ]

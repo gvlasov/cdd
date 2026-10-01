@@ -1,3 +1,3 @@
-A [reflection](/concepts/reflections/Reflection.md) in a [reality](/concepts/reality/Reality.md)
+A fact of presence in a reality
 
 Something exists if it is reflected in reality

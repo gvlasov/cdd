@@ -23,16 +23,25 @@ let boxTransitionTimer: ReturnType<typeof setTimeout> | undefined
 let suppressNextBoxClick = false
 const BOX_WIDTH = 220
 const BOX_HEIGHT = 135
+const ROADMAP_MAX_BOX_WIDTH = 340
+const ROADMAP_FONT_SIZE = 30
+const ROADMAP_LINE_HEIGHT = 40
+const roadmapTextWidths = new Map<string, number>()
+const roadmapBoxSizes = new Map<string, { width: number; height: number }>()
+let roadmapTextContext: CanvasRenderingContext2D | undefined
 const ITEM_LAYER_GAP = 100
 const MILESTONE_GAP = 160
 const EDGE_CLEARANCE = 16
 const MILESTONE_SIDE_PADDING = 24
 const MILESTONE_TOP_PADDING = 40
 const MILESTONE_BOTTOM_PADDING = 24
-const MILESTONE_EDGE_CLEARANCE = 28
+// Milestone bands leave 96 SVG units between their visible boundaries:
+// 160px row gap minus their 40px top and 24px bottom padding. Route an edge
+// halfway through that space, matching the centered inter-level lanes.
+const MILESTONE_EDGE_CLEARANCE = (MILESTONE_GAP - MILESTONE_TOP_PADDING - MILESTONE_BOTTOM_PADDING) / 2
 const FOCUSED_MILESTONE_GAP = 64
 const FOCUSED_ROW_GAP = 160
-const MILESTONE_LABEL_HEIGHT = 30
+const MILESTONE_LABEL_HEIGHT = 56
 const MILESTONE_LABEL_INSET = 12
 const VIEWPORT_MARGIN = 24
 const ROADMAP_TOP_PADDING = MILESTONE_TOP_PADDING + VIEWPORT_MARGIN + MILESTONE_LABEL_HEIGHT / 2
@@ -51,6 +60,61 @@ let resizeObserver: ResizeObserver | undefined
 const isRoadmap = computed(() => props.instance.some((property) =>
   property.kind === 'concept' && property.value === 'cdd.roadmap',
 ))
+
+function boxContent(box: { content: string; denotatum?: string }): string {
+  if (!isRoadmap.value || !box.denotatum) return box.content
+  const step = ontology().instances[box.denotatum]
+  const kind = step?.find((property) => property.kind === 'kind')?.value
+  const emoji = typeof kind === 'string' ? ({ task: '📝', goal: '🎯', problem: '🤔' }[kind]) : undefined
+  if (!emoji) return box.content
+  return `${emoji} ${box.content.replace(/^(Task|Goal|Problem)\s+/, '')}`
+}
+
+function measureRoadmapText(value: string): number {
+  const cached = roadmapTextWidths.get(value)
+  if (cached !== undefined) return cached
+  roadmapTextContext ??= document.createElement('canvas').getContext('2d') ?? undefined
+  if (!roadmapTextContext) return value.length * ROADMAP_FONT_SIZE * .55
+  roadmapTextContext.font = `${ROADMAP_FONT_SIZE}px ui-sans-serif, system-ui, sans-serif`
+  const width = roadmapTextContext.measureText(value).width
+  roadmapTextWidths.set(value, width)
+  return width
+}
+
+function roadmapBoxSize(box: { content: string; padding: number; denotatum?: string }): { width: number; height: number } {
+  const content = boxContent(box)
+  const key = `${box.padding}:${content}`
+  const cached = roadmapBoxSizes.get(key)
+  if (cached) return cached
+  const width = Math.min(ROADMAP_MAX_BOX_WIDTH, Math.max(1, measureRoadmapText(content)) + box.padding * 2)
+  const textWidth = Math.max(1, width - box.padding * 2)
+  let lines = 1
+  let line = ''
+  for (const word of content.split(/\s+/)) {
+    const candidate = line ? `${line} ${word}` : word
+    if (line && measureRoadmapText(candidate) > textWidth) {
+      lines += 1
+      line = word
+    } else {
+      line = candidate
+    }
+  }
+  const size = { width, height: lines * ROADMAP_LINE_HEIGHT + box.padding * 2 }
+  roadmapBoxSizes.set(key, size)
+  return size
+}
+
+function boxWidth(box: { content: string; padding: number; denotatum?: string }): number {
+  return isRoadmap.value ? roadmapBoxSize(box).width : BOX_WIDTH
+}
+
+function boxHeight(box: { content: string; padding: number; denotatum?: string }): number {
+  return isRoadmap.value ? roadmapBoxSize(box).height : BOX_HEIGHT
+}
+
+function boxX(box: { x: number; content: string; padding: number }): number {
+  return box.x + (BOX_WIDTH - boxWidth(box)) / 2
+}
 const roadmapMilestones = computed(() => {
   if (!isRoadmap.value) return []
   const milestoneProperty = props.instance.find((property) => (property.kind as string) === 'milestones')
@@ -87,21 +151,29 @@ function separateMilestoneBands(base: SchemeLayout): SchemeLayout {
     const stepIds = new Set(milestone.stepIds)
     const boxes = base.boxes.filter((box) => box.denotatum && stepIds.has(box.denotatum))
     const levels = [...new Set(boxes.map((box) => box.y))].sort((a, b) => a - b)
-    const levelIndex = new Map(levels.map((y, index) => [y, index]))
-    for (const box of boxes) yByBox.set(box.id, nextY + (levelIndex.get(box.y) ?? 0) * (BOX_HEIGHT + ITEM_LAYER_GAP))
+    let bandHeight = 0
+    for (const level of levels) {
+      const levelBoxes = boxes.filter((box) => box.y === level)
+      for (const box of levelBoxes) yByBox.set(box.id, nextY + bandHeight)
+      bandHeight += Math.max(...levelBoxes.map(boxHeight)) + ITEM_LAYER_GAP
+    }
     if (levels.length) {
-      nextY += (levels.length - 1) * (BOX_HEIGHT + ITEM_LAYER_GAP) + BOX_HEIGHT + MILESTONE_GAP
+      nextY += bandHeight - ITEM_LAYER_GAP + MILESTONE_GAP
     }
   }
   const unassigned = base.boxes.filter((box) => !yByBox.has(box.id))
   const unassignedLevels = [...new Set(unassigned.map((box) => box.y))].sort((a, b) => a - b)
-  const unassignedLevelIndex = new Map(unassignedLevels.map((y, index) => [y, index]))
-  for (const box of unassigned) yByBox.set(box.id, nextY + (unassignedLevelIndex.get(box.y) ?? 0) * (BOX_HEIGHT + ITEM_LAYER_GAP))
+  let unassignedHeight = 0
+  for (const level of unassignedLevels) {
+    const levelBoxes = unassigned.filter((box) => box.y === level)
+    for (const box of levelBoxes) yByBox.set(box.id, nextY + unassignedHeight)
+    unassignedHeight += Math.max(...levelBoxes.map(boxHeight)) + ITEM_LAYER_GAP
+  }
   const boxes = base.boxes.map((box) => ({ ...box, y: yByBox.get(box.id) ?? box.y }))
   return {
     ...base,
     boxes,
-    height: Math.max(225, Math.max(...boxes.map((box) => box.y + BOX_HEIGHT), 0) + 48),
+    height: Math.max(225, Math.max(...boxes.map((box) => box.y + boxHeight(box)), 0) + 48),
   }
 }
 
@@ -134,10 +206,10 @@ function groupsForBoxes(boxes: SchemeLayout['boxes'], prefix = ''): MilestoneGro
     const stepIds = new Set(milestone.stepIds)
     const boxes = layout.value!.boxes.filter((box) => box.denotatum && stepIds.has(box.denotatum))
     if (!boxes.length) return []
-    const minX = Math.min(...boxes.map((box) => box.x))
     const minY = Math.min(...boxes.map((box) => box.y))
-    const maxX = Math.max(...boxes.map((box) => box.x + BOX_WIDTH))
-    const maxY = Math.max(...boxes.map((box) => box.y + BOX_HEIGHT))
+    const minX = Math.min(...boxes.map((box) => boxX(box)))
+    const maxX = Math.max(...boxes.map((box) => boxX(box) + boxWidth(box)))
+    const maxY = Math.max(...boxes.map((box) => box.y + boxHeight(box)))
     return [{
       id: `${prefix}${milestone.id}`,
       milestoneId: milestone.id,
@@ -199,7 +271,10 @@ function focusedRoadmapLayout(base: SchemeLayout, taskId: string): { layout: Sch
       .map(([, group]) => [...group].sort((left, right) => left.x - right.x))
   }
   const groupedRows = rowBoxes.map(groupsForRow)
-  const groupWidth = (group: typeof base.boxes) => group.length * BOX_WIDTH + Math.max(0, group.length - 1) * 24 + MILESTONE_SIDE_PADDING * 2
+  const groupWidth = (group: typeof base.boxes) =>
+    group.reduce((width, box) => width + boxWidth(box), 0)
+    + Math.max(0, group.length - 1) * 24
+    + MILESTONE_SIDE_PADDING * 2
   const rowWidths = groupedRows.map((groups) => Math.max(0, groups.reduce((sum, group) => sum + groupWidth(group), 0) + Math.max(0, groups.length - 1) * FOCUSED_MILESTONE_GAP))
   const width = Math.max(360, base.width, ...rowWidths.map((rowWidth) => rowWidth + 96))
   const yByRow = [
@@ -211,8 +286,13 @@ function focusedRoadmapLayout(base: SchemeLayout, taskId: string): { layout: Sch
     const rowWidth = groups.reduce((sum, group) => sum + groupWidth(group), 0) + Math.max(0, groups.length - 1) * FOCUSED_MILESTONE_GAP
     let x = (width - rowWidth) / 2
     return groups.flatMap((group) => {
-      const positioned = group.map((box, index) => ({ ...box, x: x + MILESTONE_SIDE_PADDING + index * (BOX_WIDTH + 24), y }))
-      x += groupWidth(group) + FOCUSED_MILESTONE_GAP
+      const positioned = group.map((box) => {
+        const width = boxWidth(box)
+        const positionedBox = { ...box, x: x + MILESTONE_SIDE_PADDING + width / 2 - BOX_WIDTH / 2, y }
+        x += width + 24
+        return positionedBox
+      })
+      x += MILESTONE_SIDE_PADDING * 2 - 24 + FOCUSED_MILESTONE_GAP
       return positioned
     })
   }
@@ -234,7 +314,8 @@ function updateVisibleViewport(): void {
   const canvas = schemeCanvas.value
   if (!canvas || !layout.value) return
   const canvasRect = canvas.getBoundingClientRect()
-  const viewportRect = scrollParent?.getBoundingClientRect() ?? canvasRect
+  const fullscreen = document.fullscreenElement === scheme.value
+  const viewportRect = (fullscreen ? scheme.value : scrollParent)?.getBoundingClientRect() ?? canvasRect
   if (scrollParent) {
     scrollContainerOverlay.value = {
       left: viewportRect.left,
@@ -268,6 +349,7 @@ onMounted(() => nextTick(() => {
   scrollParent = schemeCanvas.value?.closest<HTMLElement>('.scroll-region') ?? undefined
   scrollContainer.value = scrollParent
   scrollParent?.addEventListener('scroll', updateVisibleViewport, { passive: true })
+  scheme.value?.addEventListener('scroll', updateVisibleViewport, { passive: true })
   window.addEventListener('resize', updateVisibleViewport, { passive: true })
   window.addEventListener('keydown', handleKeydown)
   document.addEventListener('fullscreenchange', syncRoadmapFullscreen)
@@ -293,6 +375,7 @@ async function toggleRoadmapFullscreen(): Promise<void> {
 
 onBeforeUnmount(() => {
   scrollParent?.removeEventListener('scroll', updateVisibleViewport)
+  scheme.value?.removeEventListener('scroll', updateVisibleViewport)
   window.removeEventListener('resize', updateVisibleViewport)
   window.removeEventListener('keydown', handleKeydown)
   document.removeEventListener('fullscreenchange', syncRoadmapFullscreen)
@@ -439,14 +522,14 @@ function point(id: string, toward: string): { x: number; y: number } | undefined
   if (!box) return { x: text!.x, y: text!.y - 5 }
   if (layout.value?.direction === 'bottomToTop') {
     const otherY = otherBox?.y ?? otherText!.y
-    return { x: box.x + BOX_WIDTH / 2, y: box.y + (otherY < box.y ? 0 : BOX_HEIGHT) }
+    return { x: boxX(box) + boxWidth(box) / 2, y: box.y + (otherY < box.y ? 0 : boxHeight(box)) }
   }
   const otherX = otherBox?.x ?? otherText!.x
   const toRight = otherX >= box.x
   // Every endpoint sits on the side that faces the other element. The rule is
   // identical for a source and a target; reversing it at the target sends a
   // left-to-right edge through the far side of its destination box.
-  return { x: box.x + (toRight ? BOX_WIDTH : 0), y: box.y + BOX_HEIGHT / 2 }
+  return { x: boxX(box) + (toRight ? boxWidth(box) : 0), y: box.y + boxHeight(box) / 2 }
 }
 type Point = { x: number; y: number }
 type DrawnEdge = { source: string; target: string; routing: string }
@@ -455,8 +538,8 @@ function edgeGradientId(edge: { id: string }): string {
   return `edge-flow-${edge.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`
 }
 
-function gradientPoint(edge: DrawnEdge, position: 0 | 1): Point {
-  return edgeEndpoints(edge)?.[position] ?? { x: 0, y: 0 }
+function gradientPoint(edge: DrawnEdge & { id: string }, position: 0 | 1): Point {
+  return renderedEdge(edge)?.endpoints?.[position] ?? { x: 0, y: 0 }
 }
 
 function gradientColor(edge: DrawnEdge & { color: string }, peak = false): string {
@@ -481,11 +564,11 @@ function edgeIsHighlighted(edge: DrawnEdge): boolean {
 
 const orderedEdges = computed(() => {
   const edges = layout.value?.edges ?? []
-  if (!hoveredBoxId.value) return edges
-  return [
+  const ordered = !hoveredBoxId.value ? edges : [
     ...edges.filter((edge) => !edgeIsHighlighted(edge)),
     ...edges.filter(edgeIsHighlighted),
   ]
+  return ordered.map((edge) => ({ ...edge, rendering: edgeRenderings.value.get(edge.id) }))
 })
 
 function edgeEndpoints(edge: DrawnEdge): [Point, Point] | undefined {
@@ -516,7 +599,7 @@ function horizontalY(preferred: number, x1: number, x2: number, edge: DrawnEdge)
     .filter((y) => [...byId.value.values()].every((box) =>
       box.id === edge.source
       || box.id === edge.target
-      || !overlaps(x1, x2, box.x - EDGE_CLEARANCE, box.x + BOX_WIDTH + EDGE_CLEARANCE)
+      || !overlaps(x1, x2, boxX(box) - EDGE_CLEARANCE, boxX(box) + boxWidth(box) + EDGE_CLEARANCE)
       || y <= box.y - EDGE_CLEARANCE
       || y >= box.y + BOX_HEIGHT + EDGE_CLEARANCE,
     ))
@@ -581,13 +664,13 @@ function edgeSegments(edge: DrawnEdge): Array<[Point, Point]> {
     const candidates = [
       to.x,
       from.x,
-      ...(obstacles.flatMap((box) => [box.x - EDGE_CLEARANCE, box.x + BOX_WIDTH + EDGE_CLEARANCE])),
+      ...(obstacles.flatMap((box) => [boxX(box) - EDGE_CLEARANCE, boxX(box) + boxWidth(box) + EDGE_CLEARANCE])),
       ...(milestoneSides.flatMap((x) => [x - MILESTONE_EDGE_CLEARANCE, x + MILESTONE_EDGE_CLEARANCE])),
       EDGE_CLEARANCE,
       (layout.value?.width ?? 0) - EDGE_CLEARANCE,
     ]
     const corridorX = candidates
-      .filter((x) => obstacles.every((box) => x <= box.x - EDGE_CLEARANCE || x >= box.x + BOX_WIDTH + EDGE_CLEARANCE))
+      .filter((x) => obstacles.every((box) => x <= boxX(box) - EDGE_CLEARANCE || x >= boxX(box) + boxWidth(box) + EDGE_CLEARANCE))
       .filter((x) => milestoneSides.every((side) => Math.abs(x - side) >= MILESTONE_EDGE_CLEARANCE))
       .sort((a, b) => Math.abs(from.x - a) + Math.abs(to.x - a) - Math.abs(from.x - b) - Math.abs(to.x - b))[0]
       ?? from.x
@@ -654,7 +737,7 @@ const milestoneLabels = computed(() => {
       && milestone.y + milestone.height > viewport.top,
     )
     .map((milestone): LabelPlacement & { id: string; name: string } => {
-      const width = Math.max(64, milestone.name.length * 8 + 24)
+      const width = Math.max(96, measureRoadmapText(milestone.name) + 32)
       const horizontal = (side: 0 | 1, margin: boolean, avoidEdges: boolean): LabelPlacement | undefined => {
         const marginLeft = margin ? viewport.marginLeft : 0
         const marginTop = margin ? viewport.marginTop : 0
@@ -723,11 +806,24 @@ function edgeLabel(edge: DrawnEdge): { x: number; y: number; transform: string }
   if (degrees > 90 || degrees < -90) degrees += 180
   return { x, y: y - 9, transform: `rotate(${degrees} ${x} ${y})` }
 }
+type EdgeRendering = {
+  path: string | undefined
+  label: { x: number; y: number; transform: string } | undefined
+  endpoints: [Point, Point] | undefined
+}
+const edgeRenderings = computed(() => new Map<string, EdgeRendering>((layout.value?.edges ?? []).map((edge) => [
+  edge.id,
+  { path: edgePath(edge), label: edgeLabel(edge), endpoints: edgeEndpoints(edge) },
+])))
+
+function renderedEdge(edge: { id: string }): EdgeRendering | undefined {
+  return edgeRenderings.value.get(edge.id)
+}
 function navigateTo(id?: string) { if (id) navigate(id) }
 </script>
 
 <template>
-  <section ref="scheme" v-if="layout" class="scheme" :aria-label="`${property.kind} scheme`">
+  <section ref="scheme" v-if="layout" class="scheme" :class="{ roadmap: isRoadmap }" :aria-label="`${property.kind} scheme`">
     <v-btn
       v-if="isRoadmap"
       class="roadmap-fullscreen-button"
@@ -782,9 +878,9 @@ function navigateTo(id?: string) { if (id) navigate(id) }
         <rect class="milestone-boundary" :x="milestone.x" :y="milestone.y" :width="milestone.width" :height="milestone.height" rx="12" />
       </g>
       <g v-for="edge in orderedEdges" :key="edge.id" class="edge" :class="{ clickable: edge.denotatum, highlighted: edgeIsHighlighted(edge) }" @click="navigateTo(edge.denotatum)">
-        <path v-if="edgePath(edge)" class="edge-base" :d="edgePath(edge)" fill="none" :stroke="edge.color" :stroke-width="strokeWidth(edge.boldness)" :stroke-dasharray="dash(edge.lineStyle)" />
-        <path v-if="edgePath(edge)" class="edge-flow" :d="edgePath(edge)" pathLength="100" fill="none" :stroke="`url(#${edgeGradientId(edge)})`" :stroke-width="strokeWidth(edge.boldness)" />
-        <text v-if="displayEdgeLabels && edge.content && edgeLabel(edge)" class="edge-label" :x="edgeLabel(edge)!.x" :y="edgeLabel(edge)!.y" :transform="edgeLabel(edge)!.transform" text-anchor="middle">{{ edge.content }}</text>
+        <path v-if="edge.rendering?.path" class="edge-base" :d="edge.rendering.path" fill="none" :stroke="edge.color" :stroke-width="strokeWidth(edge.boldness)" :stroke-dasharray="dash(edge.lineStyle)" />
+        <path v-if="edge.rendering?.path" class="edge-flow" :d="edge.rendering.path" pathLength="100" fill="none" :stroke="`url(#${edgeGradientId(edge)})`" :stroke-width="strokeWidth(edge.boldness)" />
+        <text v-if="displayEdgeLabels && edge.content && edge.rendering?.label" class="edge-label" :x="edge.rendering.label.x" :y="edge.rendering.label.y" :transform="edge.rendering.label.transform" text-anchor="middle">{{ edge.content }}</text>
       </g>
       <g
         v-for="box in layout.boxes"
@@ -801,21 +897,22 @@ function navigateTo(id?: string) { if (id) navigate(id) }
         @contextmenu.prevent
         @click="clickBox(box.denotatum)"
       >
-        <rect class="box-underlay" :x="box.x" :y="box.y" width="220" height="135" rx="8" />
-        <rect class="box-face" :x="box.x" :y="box.y" width="220" height="135" rx="8" :fill="boxBackground(box.backgroundColor, box.borderColor)" :stroke="box.borderColor" stroke-width="2" />
-        <foreignObject :x="box.x" :y="box.y" width="220" height="135">
+        <rect class="box-underlay" :x="boxX(box)" :y="box.y" :width="boxWidth(box)" :height="boxHeight(box)" rx="8" />
+        <rect class="box-face" :x="boxX(box)" :y="box.y" :width="boxWidth(box)" :height="boxHeight(box)" rx="8" :fill="boxBackground(box.backgroundColor, box.borderColor)" :stroke="box.borderColor" stroke-width="2" />
+        <foreignObject :x="boxX(box)" :y="box.y" :width="boxWidth(box)" :height="boxHeight(box)">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
             class="box-content"
+            :class="{ 'roadmap-box-content': isRoadmap }"
             :style="{ color: box.color, padding: `${box.padding}px`, '--box-lines': boxLineCount(box.padding) }"
-          ><span class="box-content-text">{{ box.content }}</span></div>
+          ><span class="box-content-text">{{ boxContent(box) }}</span></div>
         </foreignObject>
       </g>
       <template v-for="edge in orderedEdges" :key="`${edge.id}:heads`">
         <path
-          v-if="edgePath(edge)"
+          v-if="edge.rendering?.path"
           class="edge-heads"
-          :d="edgePath(edge)!"
+          :d="edge.rendering.path"
           pathLength="100"
           fill="none"
           :stroke="edge.color"
@@ -851,6 +948,7 @@ function navigateTo(id?: string) { if (id) navigate(id) }
 
 <style scoped>
 .scheme { position: relative; flex: 0 0 auto; width: 100%; min-width: 0; border: 1px solid rgb(var(--v-theme-outline)); border-radius: 8px; background: transparent; color: rgb(var(--v-theme-on-surface)); overflow: hidden; }
+.scheme.roadmap { align-self: stretch; }
 .scheme-canvas { width: 100%; height: auto; min-height: 180px; display: block; }
 .scheme:fullscreen { width: 100vw; height: 100vh; border: 0; border-radius: 0; background: rgb(var(--v-theme-surface)); overflow: auto; }
 .roadmap-fullscreen-button { position: absolute; z-index: 1; top: 8px; right: 8px; background: color-mix(in srgb, rgb(var(--v-theme-surface)) 86%, transparent); }
@@ -867,10 +965,13 @@ function navigateTo(id?: string) { if (id) navigate(id) }
 .box.highlighted .box-face { stroke-width: 4px; filter: drop-shadow(0 0 5px rgb(var(--v-theme-primary))); }
 .box.focused .box-face { stroke-width: 4px; filter: drop-shadow(0 0 7px rgb(var(--v-theme-primary))); }
 .box-content { box-sizing: border-box; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 0; font: 0.9375rem/1.25 ui-sans-serif, system-ui, sans-serif; text-align: center; }
+.roadmap-box-content { font-size: 1.875rem; line-height: 1.333; }
 .box-content-text { display: -webkit-box; min-width: 0; width: 100%; overflow: hidden; white-space: normal; text-overflow: ellipsis; -webkit-box-orient: vertical; -webkit-line-clamp: var(--box-lines); }
-.milestone-boundary { fill: color-mix(in srgb, rgb(var(--v-theme-surface-variant)) 8%, rgb(var(--v-theme-surface))); stroke: rgb(var(--v-theme-outline)); stroke-width: 2px; stroke-dasharray: 8 6; }
-.milestone-label rect { fill: color-mix(in srgb, rgb(var(--v-theme-surface-variant)) 8%, rgb(var(--v-theme-surface))); stroke: rgb(var(--v-theme-outline)); stroke-width: 2px; }
-.milestone-label text { font: 700 1rem/1.25 ui-sans-serif, system-ui, sans-serif; fill: currentColor; }
+.milestone-boundary, .milestone-label rect { fill: color-mix(in srgb, rgb(var(--v-theme-surface-variant)) 8%, rgb(var(--v-theme-surface))); stroke: rgb(var(--v-theme-outline)); stroke-width: 2px; }
+.milestone-boundary { stroke-dasharray: 8 6; }
+.milestone-label text { font: 700 1.875rem/1.333 ui-sans-serif, system-ui, sans-serif; fill: currentColor; }
+.milestone.highlighted .milestone-boundary, .milestone-label.highlighted rect { fill: color-mix(in srgb, rgb(var(--v-theme-primary)) 12%, rgb(var(--v-theme-surface))); }
+.milestone.clickable:hover, .milestone-label.clickable:hover { opacity: 1; }
 .edge-label { font: 0.9375rem/1.25 ui-sans-serif, system-ui, sans-serif; fill: currentColor; paint-order: stroke; stroke-width: 4px; stroke-linejoin: round; }
 .free-text { font: 0.9375rem/1.25 ui-sans-serif, system-ui, sans-serif; fill: currentColor; }
 .unlinked-items-button { position: fixed; z-index: 1; min-width: 0; border: 0; border-radius: 0 8px 0 0; background: rgb(var(--v-theme-surface)); color: inherit; padding: 8px 12px; font: .875rem/1.25 ui-sans-serif, system-ui, sans-serif; text-transform: none; cursor: pointer; }

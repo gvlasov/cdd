@@ -5,7 +5,7 @@ import type { Identity } from '@/concepts/identity/Identity'
 import type { Slug } from '@/concepts/identity/Slug'
 import { isSlug } from '@/concepts/identity/Slug'
 import { provideOntology } from './useOntology'
-import { ontologyConcepts, conceptOf } from './Ontology'
+import { ontologyConcepts, conceptOf, nameSynonymTexts } from './Ontology'
 import { conceptLabelOf } from '@/concepts/concepts/Concept'
 import { attributeSpec, conceptAttributeSpecs, soleOwningAttribute } from '@/concepts/attributes/Attribute'
 import { instanceType } from '@/concepts/instances/Instance'
@@ -142,6 +142,9 @@ function navigate(identity: Identity) {
   editing.value = false
   if (props.history) pushHash(target)
 }
+function navigateToRoot() {
+  navigate(props.modelValue.root)
+}
 
 function apply(mutate: (ontology: Ontology) => Ontology) {
   emit('update:modelValue', mutate(props.modelValue))
@@ -190,14 +193,26 @@ function runTransaction(id: TransactionId, input: unknown) {
   }
 }
 
-// Search includes the ontology root as well as its concepts: the root is a
-// navigable instance in its own right and may carry an overview Scheme.
+// Search includes the ontology root, first-class concepts, and attribute-
+// concepts. Selecting an attribute-concept still routes to its sole owning
+// attribute, so it opens as the inline concept it represents.
 const conceptSearchItems = computed(() =>
-  [props.modelValue.root, ...ontologyConcepts(props.modelValue)]
+  [
+    props.modelValue.root,
+    ...ontologyConcepts(props.modelValue),
+    ...Object.entries(props.modelValue.instances)
+      .filter(([id, instance]) => instanceType(instance) === 'cdd.concept' && soleOwningAttribute(props.modelValue, id))
+      .map(([id]) => id),
+  ]
     .filter((id, index, all) => all.indexOf(id) === index)
-    .map((id) => {
+    .flatMap((id) => {
     const c = conceptOf(props.modelValue, id)
-    return { value: id, title: (c && conceptLabelOf(props.modelValue, c, selectedLanguage.value)) || id }
+    const label = (c && conceptLabelOf(props.modelValue, c, selectedLanguage.value)) || id
+    const name = c?.find((property) => property.kind === 'name')
+    const synonyms = name && !Array.isArray(name.value)
+      ? nameSynonymTexts(props.modelValue, name.value, selectedLanguage.value).filter((text) => text !== label)
+      : []
+    return [label, ...synonyms].map((title) => ({ value: id, title }))
     }),
 )
 const search = ref<Identity | null>(null)
@@ -275,23 +290,49 @@ function scrollToInstanceName() {
     .getElementById(`instance-name-${currentId.value}`)
     ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
-const PROPERTY_TREE_SKIP = new Set(['concept', 'identity', 'name', 'slug'])
+const PROPERTY_TREE_SKIP = new Set(['concept', 'definition', 'identity', 'name', 'prototypeImage', 'slug'])
+const ATTRIBUTE_PROPERTY_TREE_SKIP = new Set(['type', 'cardinality'])
 const currentPropertyAttributes = computed(() => {
   const instance = currentConcept.value
   if (!instance) return []
   const typeId = instanceType(instance)
-  const type = typeId ? conceptOf(props.modelValue, typeId) : undefined
-  const attributesBySlug = new Map(
-    (type ? conceptAttributeSpecs(props.modelValue, type, selectedLanguage.value) : []).map((attribute) => [attribute.slug, attribute]),
-  )
-  return instance
-    .map((property, index) => ({
+  const mergedConceptId =
+    instanceType(instance) === 'cdd.attribute'
+      ? attributeSpec(props.modelValue, currentId.value, selectedLanguage.value)?.type
+      : undefined
+  const mergedConcept =
+    mergedConceptId && soleOwningAttribute(props.modelValue, mergedConceptId) === currentId.value
+      ? conceptOf(props.modelValue, mergedConceptId)
+      : undefined
+  const properties = [
+    ...instance.map((property, index) => ({ property, index, typeId })),
+    ...(mergedConcept ?? []).map((property, index) => ({
+      property,
+      index: instance.length + index,
+      typeId: mergedConceptId,
+    })),
+  ]
+  const attributeName = (propertyKind: string, ownerTypeId: Identity | undefined) => {
+    const type = ownerTypeId ? conceptOf(props.modelValue, ownerTypeId) : undefined
+    const attribute = type
+      ? conceptAttributeSpecs(props.modelValue, type, selectedLanguage.value).find(
+          (candidate) => candidate.slug === propertyKind,
+        )
+      : undefined
+    return ucfirst(attribute?.name ?? propertyKind)
+  }
+  return properties
+    .map(({ property, index, typeId: ownerTypeId }) => ({
       key: `${property.kind}-${index}`,
       index,
-      name: ucfirst(attributesBySlug.get(property.kind)?.name ?? property.kind),
+      name: attributeName(property.kind, ownerTypeId),
       kind: property.kind,
     }))
-    .filter((attribute) => !PROPERTY_TREE_SKIP.has(attribute.kind))
+    .filter(
+      (attribute) =>
+        !PROPERTY_TREE_SKIP.has(attribute.kind) &&
+        (instanceType(instance) !== 'cdd.attribute' || !ATTRIBUTE_PROPERTY_TREE_SKIP.has(attribute.kind)),
+    )
 })
 
 provideOntology({
@@ -310,15 +351,15 @@ provideOntology({
 <template>
   <div class="ontology-editor">
     <header class="editor-header">
-      <div class="editor-brand">
+      <button type="button" class="editor-brand" @click="navigateToRoot">
         <v-icon icon="mdi-vector-triangle" size="24" />
         <span>CDD</span>
-      </div>
+      </button>
 
       <v-autocomplete
         :model-value="search"
         :items="conceptSearchItems"
-        placeholder="Search concepts…"
+          placeholder="Concepts"
         prepend-inner-icon="mdi-magnify"
         variant="plain"
         density="comfortable"
@@ -354,7 +395,7 @@ provideOntology({
         </v-list>
       </aside>
 
-      <main class="selected-instance">
+      <main class="selected-instance" :class="{ 'roadmap-instance': currentConcept && instanceType(currentConcept) === 'cdd.roadmap' }">
         <div class="instance-heading">
           <h1 :id="`instance-name-${currentId}`">
             <template v-if="currentAttributeConceptTitle">
@@ -473,12 +514,16 @@ provideOntology({
   align-items: center;
   gap: 1.25rem;
   padding: 0 2rem;
-  border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.1);
 }
 .editor-brand {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: none;
+  cursor: pointer;
   min-width: 10rem;
   font-size: 1.45rem;
   font-weight: 700;
@@ -489,8 +534,8 @@ provideOntology({
 }
 .editor-search {
   max-width: 32rem;
-  border-left: 1px solid rgba(var(--v-theme-on-surface), 0.1);
   padding-left: 1rem;
+  transform: translateY(-0.5rem);
 }
 .editor-layout {
   display: grid;
@@ -506,7 +551,6 @@ provideOntology({
   max-height: 100vh;
   overflow-y: auto;
   padding: 2rem 1rem;
-  border-right: 1px solid rgba(var(--v-theme-on-surface), 0.1);
 }
 .property-tree {
   background: transparent;
@@ -521,14 +565,20 @@ provideOntology({
   min-width: 0;
   padding: clamp(2rem, 5vw, 5rem);
 }
+.selected-instance.roadmap-instance {
+  padding: 0;
+}
 .utility-rail {
-  align-self: stretch;
+  align-self: start;
+  position: sticky;
+  top: 0;
+  max-height: 100vh;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
   padding: 1rem 0.5rem;
-  border-left: 1px solid rgba(var(--v-theme-on-surface), 0.1);
 }
 .instance-heading {
   display: flex;
@@ -536,7 +586,6 @@ provideOntology({
   align-items: flex-start;
   gap: 1rem;
   max-width: 60ch;
-  margin: 0 auto 2rem;
 }
 .instance-heading h1 {
   margin: 0;
@@ -587,8 +636,6 @@ provideOntology({
     position: static;
     max-height: none;
     padding: 0.75rem 1rem;
-    border-right: 0;
-    border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.1);
   }
   .property-tree {
     display: flex;
@@ -604,8 +651,6 @@ provideOntology({
     flex-direction: row;
     justify-content: flex-end;
     padding: 0.75rem 1rem;
-    border-top: 1px solid rgba(var(--v-theme-on-surface), 0.1);
-    border-left: 0;
   }
 }
 </style>

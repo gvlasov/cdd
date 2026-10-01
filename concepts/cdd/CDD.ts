@@ -17,7 +17,7 @@ export default [
     { kind: 'concept', value: 'cdd.ontology' },
     { kind: 'slug', value: 'cdd' },
     { kind: 'name', value: 'CDD' },
-    { kind: 'definition', value: 'the ontology being viewed.' },
+    { kind: 'definition', value: 'a theory of being for software development.' },
     {
       kind: 'concepts',
       value: [

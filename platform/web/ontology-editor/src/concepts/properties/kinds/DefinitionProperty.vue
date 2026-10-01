@@ -36,6 +36,6 @@ function ucfirst(value: string): string {
     Synonym: {{ ucfirst(synonyms[1]) }}
   </p>
   <p v-else-if="synonyms.length > 2" class="text-body-2 text-medium-emphasis text-left">
-    Synonyms: {{ synonyms.map(ucfirst).join(', ') }}
+    Synonyms: {{ synonyms.slice(1).map(ucfirst).join(', ') }}
   </p>
 </template>

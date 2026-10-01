@@ -99,12 +99,13 @@ function propertySectionId(index: number) {
 <template>
   <div class="instance-card">
     <div class="content scroll-region">
-      <div class="d-flex flex-column ga-4" style="max-width: 60ch; width: 100%">
+      <div class="instance-properties d-flex flex-column ga-4">
         <div
           v-for="entry in drawn"
           :key="entry.i"
           :id="propertySectionId(entry.i)"
           class="property-section"
+          :class="{ 'roadmap-section': instanceType(instance) === 'cdd.roadmap' && entry.kind.name === 'scheme' }"
         >
           <component
             :is="entry.kind.render"
@@ -126,12 +127,20 @@ function propertySectionId(index: number) {
   justify-content: center;
   color: rgb(var(--v-theme-on-surface));
 }
+.instance-properties {
+  width: 100%;
+  align-items: center;
+}
 .scroll-region {
   position: relative;
   min-height: 0;
   overflow-y: auto;
 }
 .property-section {
+  width: min(60ch, 100%);
   scroll-margin-top: 1.5rem;
+}
+.property-section.roadmap-section {
+  width: 100%;
 }
 </style>

@@ -19,7 +19,7 @@ export default [
     },
     {
       "kind": "definition",
-      "value": "A [reflection](cdd.reflection) in a [reality](cdd.reality)"
+      "value": "A fact of presence in a reality"
     },
     {
       "kind": "details",

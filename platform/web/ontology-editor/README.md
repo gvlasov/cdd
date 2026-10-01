@@ -52,7 +52,7 @@ CDD's directory layout or any storage backend.
 ## Navigate
 
 The toolbar has a **concept search** — an autocomplete over every concept,
-filtered by name; picking one navigates to it.
+filtered by its name and synonyms; picking one navigates to it.
 
 Pass `history` to sync the open concept to the URL hash (`#<identity>`) and
 honour the browser's **back / forward** buttons. Off by default so an embedding
