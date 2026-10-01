@@ -4,12 +4,14 @@ import type { Property } from '@/concepts/properties/Property'
 import type { Instance } from '@/concepts/instances/Instance'
 import { useOntology } from '@/concepts/ontology/useOntology'
 import { transactionName, transactionOf, transactionParams } from '@/concepts/transactions/Transaction'
+import { propertyLabel } from '@/concepts/attributes/Attribute'
 
 // `transactions` value identities reference transaction instances the concept
 // exposes. Each list item links to its transaction and has an adjacent action
 // for running it against the reality.
 const props = defineProps<{ property: Property; instance: Instance }>()
-const { ontology, navigate, runTransaction } = useOntology()
+const { ontology, language, navigate, runTransaction } = useOntology()
+const title = computed(() => propertyLabel(ontology(), props.instance, props.property.kind, language()))
 
 const ids = computed(() =>
   Array.isArray(props.property.value) ? props.property.value : [props.property.value],
@@ -42,7 +44,7 @@ function run() {
 
 <template>
   <div>
-    <h3 class="text-left mb-1">Transactions</h3>
+    <h3 class="text-left mb-1">{{ title }}</h3>
     <ul class="transactions-list">
       <li v-for="t in transactions" :key="t.id">
         <a href="#" class="link" @click.prevent="navigate(t.id)">{{ t.label }}</a>

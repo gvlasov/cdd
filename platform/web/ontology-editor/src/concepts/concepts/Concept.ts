@@ -1,6 +1,8 @@
 import type { Identity } from '@/concepts/identity/Identity'
 import { firstOfKind, propertiesOfKind } from '@/concepts/properties/Property'
 import type { Instance } from '@/concepts/instances/Instance'
+import type { Ontology } from '@/concepts/ontology/Ontology'
+import { nameText } from '@/concepts/ontology/Ontology'
 import {
   instanceName,
   instanceSlug,
@@ -19,12 +21,23 @@ export function isConcept(instance: Instance): boolean {
 }
 
 export const conceptIdentity = instanceIdentity
-export const conceptName = instanceName
+export function conceptName(
+  ontology: Ontology,
+  concept: Concept,
+  language?: Identity,
+): string | undefined {
+  const name = instanceName(concept)
+  return name ? nameText(ontology, name, language) : undefined
+}
 export const conceptSlug = instanceSlug
 
 /** A short human label for a concept: its name, else its identity. */
-export function conceptLabelOf(concept: Concept): string | undefined {
-  return conceptName(concept) ?? conceptIdentity(concept)
+export function conceptLabelOf(
+  ontology: Ontology,
+  concept: Concept,
+  language?: Identity,
+): string | undefined {
+  return conceptName(ontology, concept, language) ?? conceptIdentity(concept)
 }
 
 /**

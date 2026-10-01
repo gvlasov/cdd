@@ -75,7 +75,7 @@ export default [
     { kind: 'concept', value: 'cdd.attribute' },
     { kind: 'slug', value: 'slug' },
     { kind: 'name', value: 'slug' },
-    { kind: 'type', value: 'cdd.slug' },
+    { kind: 'type', value: 'cdd.string' },
     { kind: 'cardinality', value: '1' },
   ],
   [
@@ -83,7 +83,7 @@ export default [
     { kind: 'concept', value: 'cdd.attribute' },
     { kind: 'slug', value: 'definition' },
     { kind: 'name', value: 'definition' },
-    { kind: 'type', value: 'cdd.definition' },
+    { kind: 'type', value: 'cdd.text' },
     { kind: 'cardinality', value: '0-1' },
   ],
   [
@@ -91,7 +91,7 @@ export default [
     { kind: 'concept', value: 'cdd.attribute' },
     { kind: 'slug', value: 'purpose' },
     { kind: 'name', value: 'purpose' },
-    { kind: 'type', value: 'cdd.string' },
+    { kind: 'type', value: 'cdd.text' },
     { kind: 'cardinality', value: '0-1' },
   ],
   [
@@ -99,7 +99,7 @@ export default [
     { kind: 'concept', value: 'cdd.attribute' },
     { kind: 'slug', value: 'details' },
     { kind: 'name', value: 'details' },
-    { kind: 'type', value: 'cdd.definition' },
+    { kind: 'type', value: 'cdd.text' },
     { kind: 'cardinality', value: '0-1' },
   ],
   [

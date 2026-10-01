@@ -7,7 +7,7 @@ import { isSlug } from '@/concepts/identity/Slug'
 import { provideOntology } from './useOntology'
 import { ontologyConcepts, conceptOf } from './Ontology'
 import { conceptLabelOf } from '@/concepts/concepts/Concept'
-import { conceptAttributeSpecs, soleOwningAttribute } from '@/concepts/attributes/Attribute'
+import { attributeSpec, conceptAttributeSpecs, soleOwningAttribute } from '@/concepts/attributes/Attribute'
 import { instanceType } from '@/concepts/instances/Instance'
 import {
   renameSlug as renameSlugEdit,
@@ -41,11 +41,14 @@ const props = defineProps<{
   history?: boolean
   /** Where uploaded files live. Without one, image values take URLs only. */
   fileStore?: FileStore
+  /** The language used to display localized Names. Defaults to English. */
+  language?: Identity
 }>()
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: Ontology): void
   (e: 'update:reality', value: Reality): void
+  (e: 'update:language', value: Identity): void
 }>()
 
 const currentReality = computed(() => props.reality ?? emptyReality())
@@ -55,6 +58,32 @@ const firstId = computed(
 )
 const currentId = ref<Identity>(firstId.value)
 const editing = ref(false)
+const selectedLanguage = ref<Identity>(props.language ?? 'cdd.language:en')
+const languageDialog = ref(false)
+
+watch(
+  () => props.language,
+  (language) => {
+    if (language) selectedLanguage.value = language
+  },
+)
+
+function selectLanguage(language: Identity) {
+  selectedLanguage.value = language
+  languageDialog.value = false
+  emit('update:language', language)
+}
+
+const languageOptions = computed(() =>
+  Object.entries(props.modelValue.instances)
+    .filter(([, instance]) => instanceType(instance) === 'cdd.language')
+    .map(([id, instance]) => ({
+      value: id,
+      title: conceptLabelOf(props.modelValue, instance, selectedLanguage.value) ?? id,
+      subtitle: id,
+    }))
+    .sort((a, b) => a.title.localeCompare(b.title)),
+)
 
 const creating = ref(false)
 const newSlug = ref('')
@@ -168,7 +197,7 @@ const conceptSearchItems = computed(() =>
     .filter((id, index, all) => all.indexOf(id) === index)
     .map((id) => {
     const c = conceptOf(props.modelValue, id)
-    return { value: id, title: (c && conceptLabelOf(c)) || id }
+    return { value: id, title: (c && conceptLabelOf(props.modelValue, c, selectedLanguage.value)) || id }
     }),
 )
 const search = ref<Identity | null>(null)
@@ -178,12 +207,44 @@ function onSearchSelect(id: Identity | null) {
 }
 
 const currentConcept = computed(() => conceptOf(props.modelValue, currentId.value))
-const currentTitle = computed(() =>
-  (currentConcept.value && conceptLabelOf(currentConcept.value)) || currentId.value,
-)
 function ucfirst(value: string) {
   return value ? value.slice(0, 1).toLocaleUpperCase() + value.slice(1) : value
 }
+const currentTitle = computed(() => {
+  const instance = currentConcept.value
+  if (!instance) return currentId.value
+  if (instanceType(instance) !== 'cdd.attribute') {
+    return conceptLabelOf(props.modelValue, instance, selectedLanguage.value) || currentId.value
+  }
+  const owner = Object.values(props.modelValue.instances).find((candidate) =>
+    conceptAttributeSpecs(props.modelValue, candidate, selectedLanguage.value)
+      .some((spec) => spec.attribute === currentId.value),
+  )
+  const ownerName = owner && conceptLabelOf(props.modelValue, owner, selectedLanguage.value)
+  const attributeName = attributeSpec(props.modelValue, currentId.value, selectedLanguage.value)?.name
+  return ownerName && attributeName
+    ? `${ucfirst(ownerName)}.${attributeName}`
+    : conceptLabelOf(props.modelValue, instance, selectedLanguage.value) || currentId.value
+})
+const currentAttributeType = computed(() => {
+  const instance = currentConcept.value
+  if (!instance || instanceType(instance) !== 'cdd.attribute') return undefined
+  const type = instance.find((property) => property.kind === 'type')?.value
+  const typeId = type && (Array.isArray(type) ? type[0] : type)
+  if (!typeId) return undefined
+  const cardinality = instance.find((property) => property.kind === 'cardinality')?.value
+  const cardinalityValue = cardinality && (Array.isArray(cardinality) ? cardinality[0] : cardinality)
+  const typeConcept = conceptOf(props.modelValue, typeId)
+  const label = typeConcept
+    ? conceptLabelOf(props.modelValue, typeConcept, selectedLanguage.value)
+    : undefined
+  const fallback = typeId.split(/[.:]/).at(-1) ?? typeId
+  return {
+    id: typeId,
+    label: label && label !== typeId ? label : ucfirst(fallback),
+    cardinality: cardinalityValue === '1' ? undefined : cardinalityValue,
+  }
+})
 function scrollToProperty(index: number) {
   document
     .getElementById(`instance-property-${currentId.value}-${index}`)
@@ -201,7 +262,7 @@ const currentPropertyAttributes = computed(() => {
   const typeId = instanceType(instance)
   const type = typeId ? conceptOf(props.modelValue, typeId) : undefined
   const attributesBySlug = new Map(
-    (type ? conceptAttributeSpecs(props.modelValue, type) : []).map((attribute) => [attribute.slug, attribute]),
+    (type ? conceptAttributeSpecs(props.modelValue, type, selectedLanguage.value) : []).map((attribute) => [attribute.slug, attribute]),
   )
   return instance
     .map((property, index) => ({
@@ -215,6 +276,7 @@ const currentPropertyAttributes = computed(() => {
 
 provideOntology({
   ontology: () => props.modelValue,
+  language: () => selectedLanguage.value,
   reality: () => currentReality.value,
   navigate,
   apply,
@@ -274,9 +336,18 @@ provideOntology({
 
       <main class="selected-instance">
         <div class="instance-heading">
-          <div>
-            <h1 :id="`instance-name-${currentId}`">{{ currentTitle }}</h1>
-          </div>
+          <h1 :id="`instance-name-${currentId}`">{{ currentTitle }}</h1>
+          <template v-if="currentAttributeType">
+            <span class="attribute-separator">·</span>
+            <span class="attribute-type-summary">
+              <a
+                href="#"
+                class="attribute-type"
+                @click.prevent="navigate(currentAttributeType.id)"
+              >{{ currentAttributeType.label }}</a>
+              <sup v-if="currentAttributeType.cardinality" class="attribute-cardinality">{{ currentAttributeType.cardinality }}</sup>
+            </span>
+          </template>
         </div>
 
         <v-alert
@@ -294,7 +365,15 @@ provideOntology({
         <ConceptView v-else :ontology="modelValue" :concept-id="currentId" />
       </main>
 
-      <aside v-if="editable || $slots['utility-rail']" class="utility-rail">
+      <aside v-if="editable || $slots['utility-rail'] || languageOptions.length" class="utility-rail">
+        <v-btn
+          icon="mdi-translate"
+          variant="text"
+          size="small"
+          aria-label="Language"
+          title="Language"
+          @click="languageDialog = true"
+        />
         <template v-if="editable">
           <v-btn icon="mdi-plus" variant="text" size="small" aria-label="New concept" title="New concept" @click="creating = true" />
           <v-btn
@@ -310,6 +389,21 @@ provideOntology({
         <slot name="utility-rail" />
       </aside>
     </div>
+
+    <v-dialog v-model="languageDialog" max-width="420">
+      <v-card title="Language">
+        <v-list>
+          <v-list-item
+            v-for="language in languageOptions"
+            :key="language.value"
+            :title="language.title"
+            :subtitle="language.subtitle"
+            :active="language.value === selectedLanguage"
+            @click="selectLanguage(language.value)"
+          />
+        </v-list>
+      </v-card>
+    </v-dialog>
 
     <v-dialog v-model="creating" max-width="420">
       <v-card>
@@ -424,6 +518,25 @@ provideOntology({
   font-size: clamp(2rem, 4vw, 3.5rem);
   line-height: 1.05;
   letter-spacing: -0.035em;
+}
+.attribute-type {
+  color: rgb(var(--v-theme-concept));
+  font-size: 1.2rem;
+  text-decoration: none;
+  border-bottom: 2px solid currentColor;
+}
+.attribute-type-summary {
+  align-self: flex-end;
+}
+.attribute-separator {
+  align-self: flex-end;
+  margin-bottom: 0.25rem;
+  color: rgb(var(--v-theme-on-surface));
+  font-size: 1.2rem;
+}
+.attribute-cardinality {
+  margin-left: 0.1em;
+  font-size: 0.7em;
 }
 @media (max-width: 760px) {
   .editor-header {

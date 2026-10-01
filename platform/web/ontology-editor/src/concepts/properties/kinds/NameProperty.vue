@@ -5,6 +5,7 @@ import type { Instance } from '@/concepts/instances/Instance'
 import { instanceType, instanceIdentity } from '@/concepts/instances/Instance'
 import { conceptLabelOf, conceptAttributes } from '@/concepts/concepts/Concept'
 import { conceptOf } from '@/concepts/ontology/Ontology'
+import { nameText } from '@/concepts/ontology/Ontology'
 import {
   attributeType,
   attributeCardinality,
@@ -18,7 +19,7 @@ import { useOntology } from '@/concepts/ontology/useOntology'
 // cardinality as a superscript. `type` itself does not render separately.
 const props = defineProps<{ property: Property; instance: Instance }>()
 
-const { ontology, navigate, conceptLabel } = useOntology()
+const { ontology, language, navigate, conceptLabel } = useOntology()
 
 const isAttribute = computed(() => instanceType(props.instance) === 'cdd.attribute')
 
@@ -28,7 +29,7 @@ const owner = computed(() => {
   if (!myId) return undefined
   for (const [id, inst] of Object.entries(ontology().instances)) {
     if (conceptAttributes(inst).includes(myId)) {
-      return { id, label: conceptLabelOf(conceptOf(ontology(), id) ?? []) ?? id }
+      return { id, label: conceptLabelOf(ontology(), conceptOf(ontology(), id) ?? [], language()) ?? id }
     }
   }
   return undefined
@@ -46,6 +47,10 @@ const typeId = computed(() => {
   return type
 })
 const cardinality = computed(() => attributeCardinality(props.instance))
+const label = computed(() => {
+  const value = Array.isArray(props.property.value) ? props.property.value[0] : props.property.value
+  return nameText(ontology(), value, language()) ?? value
+})
 </script>
 
 <template>
@@ -54,7 +59,7 @@ const cardinality = computed(() => attributeCardinality(props.instance))
       ><a class="link" href="#" @click.prevent="navigate(owner.id)">{{
         owner.label
       }}</a><span class="text-medium-emphasis">.</span></template
-    >{{ property.value
+    >{{ label
     }}<template v-if="typeId"
       ><span class="text-medium-emphasis">:&nbsp;</span
       ><a class="link type-link" href="#" @click.prevent="navigate(typeId)">{{

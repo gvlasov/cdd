@@ -29,7 +29,7 @@ export default [
     { kind: 'concept', value: 'cdd.attribute' },
     { kind: 'slug', value: 'description' },
     { kind: 'name', value: 'description' },
-    { kind: 'type', value: 'cdd.definition' },
+    { kind: 'type', value: 'cdd.text' },
     { kind: 'cardinality', value: '0-1' },
   ],
 ]

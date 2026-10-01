@@ -90,6 +90,11 @@ export type PropertyKindName =
   | 'steps'
   | 'milestones'
   | 'dependsOn'
+  | 'synonyms'
+  | 'translations'
+  | 'language'
+  | 'value'
+  | 'isoName'
 
 export function propertiesOfKind(
   properties: Property[],

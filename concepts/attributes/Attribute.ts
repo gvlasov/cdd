@@ -30,7 +30,7 @@ export default [
     { kind: 'concept', value: 'cdd.attribute' },
     { kind: 'slug', value: 'slug' },
     { kind: 'name', value: 'slug' },
-    { kind: 'type', value: 'cdd.slug' },
+    { kind: 'type', value: 'cdd.string' },
     { kind: 'cardinality', value: '1' },
   ],
   [
@@ -63,7 +63,7 @@ export default [
     { kind: 'concept', value: 'cdd.attribute' },
     { kind: 'slug', value: 'function' },
     { kind: 'name', value: 'function' },
-    { kind: 'type', value: 'cdd.definition' },
+    { kind: 'type', value: 'cdd.text' },
     { kind: 'cardinality', value: '0-1' },
   ],
   [
@@ -71,7 +71,7 @@ export default [
     { kind: 'concept', value: 'cdd.attribute' },
     { kind: 'slug', value: 'description' },
     { kind: 'name', value: 'description' },
-    { kind: 'type', value: 'cdd.definition' },
+    { kind: 'type', value: 'cdd.text' },
     { kind: 'cardinality', value: '0-1' },
   ],
 ]

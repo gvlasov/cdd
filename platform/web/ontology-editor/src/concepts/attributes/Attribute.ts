@@ -5,6 +5,7 @@ import { conceptOf, ontologyConcepts } from '@/concepts/ontology/Ontology'
 import { firstOfKind } from '@/concepts/properties/Property'
 import { instanceName, instanceSlug, instanceType } from '@/concepts/instances/Instance'
 import { conceptAttributes } from '@/concepts/concepts/Concept'
+import { nameText } from '@/concepts/ontology/Ontology'
 
 // An attribute is an instance typed `cdd.attribute`. It defines one slot on
 // instances of the concept that owns it:
@@ -88,12 +89,13 @@ export function computeAttributeValue(
 export function attributeSpec(
   ontology: Ontology,
   attributeId: Identity,
+  language?: Identity,
 ): AttributeSpec | undefined {
   const attribute = conceptOf(ontology, attributeId)
   if (!attribute) return undefined
   return {
     attribute: attributeId,
-    name: instanceName(attribute) ?? attributeId,
+    name: (instanceName(attribute) && nameText(ontology, instanceName(attribute)!, language)) ?? attributeId,
     slug: instanceSlug(attribute) ?? attributeId,
     type: attributeType(attribute),
     cardinality: attributeCardinality(attribute),
@@ -106,10 +108,26 @@ export function attributeSpec(
 export function conceptAttributeSpecs(
   ontology: Ontology,
   concept: Instance,
+  language?: Identity,
 ): AttributeSpec[] {
   return conceptAttributes(concept)
-    .map((id) => attributeSpec(ontology, id))
+    .map((id) => attributeSpec(ontology, id, language))
     .filter((s): s is AttributeSpec => s !== undefined)
+}
+
+/** The localized label of an instance property, falling back to its slug. */
+export function propertyLabel(
+  ontology: Ontology,
+  instance: Instance,
+  slug: string,
+  language?: Identity,
+): string {
+  const typeId = instanceType(instance)
+  const type = typeId ? conceptOf(ontology, typeId) : undefined
+  const label = type
+    ? conceptAttributeSpecs(ontology, type, language).find((spec) => spec.slug === slug)?.name ?? slug
+    : slug
+  return label.slice(0, 1).toLocaleUpperCase() + label.slice(1)
 }
 
 /** A concept with no attributes of its own is a leaf — its value edits as a plain input. */

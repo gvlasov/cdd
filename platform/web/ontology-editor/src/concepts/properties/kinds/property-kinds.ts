@@ -32,8 +32,8 @@ import ImageProperty from '@/concepts/images/ImageProperty.vue'
 //    that attribute applies to — AttributeValueEditor reads them directly
 //    to render and evaluate the derived value instead
 //  - `slug` is not drawn — it is addressing, not something to show
-//  - `type` and `cardinality` are drawn inline with the name for an attribute
-//    instance — see NameProperty — not on their own line
+//  - attribute-page type and cardinality draw beside the page title in
+//    OntologyEditor, not as content properties.
 export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   name: { name: 'name', position: 0, render: NameProperty },
   slug: { name: 'slug', position: 1 },
@@ -103,6 +103,11 @@ export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   steps: { name: 'steps', position: 7 },
   milestones: { name: 'milestones', position: 7 },
   dependsOn: { name: 'dependsOn', position: 7 },
+  synonyms: { name: 'synonyms', position: 7 },
+  translations: { name: 'translations', position: 7 },
+  language: { name: 'language', position: 7 },
+  value: { name: 'value', position: 7 },
+  isoName: { name: 'isoName', position: 7 },
 }
 
 export function propertyKind(name: PropertyKindName): PropertyKind {

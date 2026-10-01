@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<{ instance: Instance; showName?: boolean 
   showName: true,
 })
 
-const { ontology } = useOntology()
+const { ontology, language } = useOntology()
 
 // When this attribute is the sole reason its type-concept exists (see
 // `soleOwningAttribute`), that concept has no page of its own — its content
@@ -62,7 +62,7 @@ const computedEntries = computed(() => {
   const typeId = instanceType(props.instance)
   const type = typeId ? conceptOf(ontology(), typeId) : undefined
   if (!type) return []
-  return conceptAttributeSpecs(ontology(), type)
+  return conceptAttributeSpecs(ontology(), type, language())
     .filter((spec) => spec.computed)
     .map((spec) => ({ kind: spec.slug as never, value: '' }))
 })
@@ -73,7 +73,7 @@ const drawn = computed(() =>
       const typeId = instanceType(props.instance)
       const type = typeId ? conceptOf(ontology(), typeId) : undefined
       const attribute = type
-        ? conceptAttributeSpecs(ontology(), type).find((spec) => spec.slug === property.kind)
+        ? conceptAttributeSpecs(ontology(), type, language()).find((spec) => spec.slug === property.kind)
         : undefined
       // `cdd.scheme` is a value type, not a globally reserved property name.
       // This lets a concept call its diagram `map`, `model`, etc. and still

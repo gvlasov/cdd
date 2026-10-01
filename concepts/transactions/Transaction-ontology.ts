@@ -77,7 +77,7 @@ export default [
     { kind: 'concept', value: 'cdd.attribute' },
     { kind: 'slug', value: 'slug' },
     { kind: 'name', value: 'slug' },
-    { kind: 'type', value: 'cdd.slug' },
+    { kind: 'type', value: 'cdd.string' },
     { kind: 'cardinality', value: '1' },
   ],
   [

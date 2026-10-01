@@ -9,6 +9,7 @@ import { useOntology } from '@/concepts/ontology/useOntology'
 import AttributeValueEditor from '@/concepts/attributes/AttributeValueEditor.vue'
 import DefineAttributeButton from '@/concepts/attributes/DefineAttributeButton.vue'
 import ImageValueEditor from '@/concepts/images/ImageValueEditor.vue'
+import TextValueEditor from '@/concepts/texts/TextValueEditor.vue'
 import { addProperty, isListPropertyKind, setPropertyValue } from './editOntology'
 import { propertyKinds } from '@/concepts/properties/kinds/property-kinds'
 import type { PropertyKindName } from '@/concepts/properties/Property'
@@ -23,7 +24,7 @@ const props = withDefaults(
   { ancestors: () => [] },
 )
 
-const { ontology, navigate, apply } = useOntology()
+const { ontology, language, navigate, apply } = useOntology()
 
 const cyclic = computed(() => props.ancestors.includes(props.conceptId))
 const chain = computed(() => [...props.ancestors, props.conceptId])
@@ -32,7 +33,7 @@ const instance = computed(() => conceptOf(ontology(), props.conceptId))
 const typeId = computed(() => (instance.value ? instanceType(instance.value) : undefined))
 const type = computed(() => (typeId.value ? conceptOf(ontology(), typeId.value) : undefined))
 const specs = computed(() =>
-  type.value ? conceptAttributeSpecs(ontology(), type.value) : [],
+  type.value ? conceptAttributeSpecs(ontology(), type.value, language()) : [],
 )
 const specKinds = computed(() => new Set(specs.value.map((spec) => spec.slug)))
 const freeProperties = computed(() =>
@@ -53,6 +54,7 @@ const propertyItems = computed(() =>
     .map((kind) => ({ value: kind, title: kind })),
 )
 const multilineKinds = new Set<PropertyKindName>(['definition', 'description', 'details', 'effect', 'function'])
+const textKinds = new Set<PropertyKindName>(['definition', 'description', 'details', 'purpose'])
 
 function addNewProperty() {
   if (!newPropertyKind.value) return
@@ -85,6 +87,11 @@ function setFreeProperty(kind: PropertyKindName, value: string | string[]) {
         :slug="property.kind"
         name="prototype image"
         :list="false"
+      />
+      <TextValueEditor
+        v-else-if="textKinds.has(property.kind) && !Array.isArray(property.value)"
+        :text-id="property.value"
+        :label="property.kind"
       />
       <v-combobox
         v-else-if="isListPropertyKind(property.kind)"

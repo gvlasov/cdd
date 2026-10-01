@@ -2,16 +2,19 @@
 import { computed } from 'vue'
 import type { Property } from '@/concepts/properties/Property'
 import type { Instance } from '@/concepts/instances/Instance'
+import { useOntology } from '@/concepts/ontology/useOntology'
+import { propertyLabel } from '@/concepts/attributes/Attribute'
 
 // Renders a literal list of strings as a titled list — ordered when the
 // values form a sequence (e.g. `layers`), unordered otherwise (e.g.
 // `concerns`). Used for property kinds with no cross-references to resolve,
 // unlike `examples`/`transactions`/`concepts`.
 const props = defineProps<{ property: Property; instance: Instance }>()
+const { ontology, language } = useOntology()
 
 const ORDERED_KINDS = new Set(['layers'])
 
-const title = computed(() => props.property.kind[0].toUpperCase() + props.property.kind.slice(1))
+const title = computed(() => propertyLabel(ontology(), props.instance, props.property.kind, language()))
 const ordered = computed(() => ORDERED_KINDS.has(props.property.kind))
 const items = computed(() =>
   Array.isArray(props.property.value) ? props.property.value : [props.property.value],

@@ -61,6 +61,11 @@ export const propertyValueKind: Record<PropertyKindName, PropertyValueKind> = {
   steps: 'concept-list',
   milestones: 'concept-list',
   dependsOn: 'concept-list',
+  synonyms: 'concept-list',
+  translations: 'concept-list',
+  language: 'concept-list',
+  value: 'literal',
+  isoName: 'literal',
 }
 
 export const ALL_PROPERTY_KINDS: PropertyKindName[] = [
@@ -117,4 +122,9 @@ export const ALL_PROPERTY_KINDS: PropertyKindName[] = [
   'steps',
   'milestones',
   'dependsOn',
+  'synonyms',
+  'translations',
+  'language',
+  'value',
+  'isoName',
 ]

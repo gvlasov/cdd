@@ -4,6 +4,8 @@ import type { Property } from '@/concepts/properties/Property'
 import { firstOfKind } from '@/concepts/properties/Property'
 import type { Instance } from '@/concepts/instances/Instance'
 import { useOntology } from '@/concepts/ontology/useOntology'
+import { textText } from '@/concepts/ontology/Ontology'
+import { propertyLabel } from '@/concepts/attributes/Attribute'
 import ConceptText from '@/concepts/concept-links/ConceptText.vue'
 
 // `examples` value identities reference Example instances — each one pairs an
@@ -11,9 +13,9 @@ import ConceptText from '@/concepts/concept-links/ConceptText.vue'
 // `description`. An example with no linked instance is plain text: just its
 // description, rendered without a link.
 const props = defineProps<{ property: Property; instance: Instance }>()
-const { ontology, conceptLabel, navigate } = useOntology()
+const { ontology, language, conceptLabel, navigate } = useOntology()
 
-const title = computed(() => props.property.kind[0].toUpperCase() + props.property.kind.slice(1))
+const title = computed(() => propertyLabel(ontology(), props.instance, props.property.kind, language()))
 
 function literal(value: Property['value']): string {
   return Array.isArray(value) ? (value[0] ?? '') : value
@@ -28,7 +30,10 @@ const examples = computed(() => {
     const linked = example ? firstOfKind(example, 'instance') : undefined
     const description = example ? firstOfKind(example, 'description') : undefined
     const target = linked ? literal(linked.value) : undefined
-    const descriptionText = description ? literal(description.value) : undefined
+    const descriptionValue = description ? literal(description.value) : undefined
+    const descriptionText = descriptionValue
+      ? textText(ontology(), descriptionValue, language()) ?? descriptionValue
+      : undefined
     return {
       key: id,
       target,

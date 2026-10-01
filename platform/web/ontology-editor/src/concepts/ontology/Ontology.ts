@@ -30,6 +30,67 @@ export function conceptOf(ontology: Ontology, identity: Identity): Instance | un
   return ontology.instances[identity]
 }
 
+/** Text of a Name instance in `languageId`, with English then any translation as fallbacks. */
+export function nameText(
+  ontology: Ontology,
+  nameId: Identity,
+  languageId: Identity = 'cdd.language:en',
+): string | undefined {
+  const name = conceptOf(ontology, nameId)
+  const synonyms = name ? firstOfKind(name, 'synonyms') : undefined
+  const wordIds = synonyms ? (Array.isArray(synonyms.value) ? synonyms.value : [synonyms.value]) : []
+  for (const wordId of wordIds) {
+    const word = conceptOf(ontology, wordId)
+    const translations = word ? firstOfKind(word, 'translations') : undefined
+    const translationIds = translations
+      ? (Array.isArray(translations.value) ? translations.value : [translations.value])
+      : []
+    const candidates = translationIds.map((id) => conceptOf(ontology, id)).filter(Boolean) as Instance[]
+    const inLanguage = candidates.find((translation) => {
+      const language = firstOfKind(translation, 'language')
+      const translationLanguageId = language && (Array.isArray(language.value) ? language.value[0] : language.value)
+      return translationLanguageId === languageId
+    })
+    const english = candidates.find((translation) => {
+      const language = firstOfKind(translation, 'language')
+      const translationLanguageId = language && (Array.isArray(language.value) ? language.value[0] : language.value)
+      const languageInstance = translationLanguageId ? conceptOf(ontology, translationLanguageId) : undefined
+      return languageInstance && firstOfKind(languageInstance, 'isoName')?.value === 'en'
+    })
+    const translation = inLanguage ?? english ?? candidates[0]
+    const value = translation && firstOfKind(translation, 'value')
+    if (value) return Array.isArray(value.value) ? value.value[0] : value.value
+  }
+  return undefined
+}
+
+/** Text of a Text instance in `languageId`, falling back to English then any translation. */
+export function textText(
+  ontology: Ontology,
+  textId: Identity,
+  languageId: Identity = 'cdd.language:en',
+): string | undefined {
+  const text = conceptOf(ontology, textId)
+  const translations = text ? firstOfKind(text, 'translations') : undefined
+  const translationIds = translations
+    ? (Array.isArray(translations.value) ? translations.value : [translations.value])
+    : []
+  const candidates = translationIds.map((id) => conceptOf(ontology, id)).filter(Boolean) as Instance[]
+  const selected = candidates.find((translation) => {
+    const language = firstOfKind(translation, 'language')
+    const translationLanguageId = language && (Array.isArray(language.value) ? language.value[0] : language.value)
+    return translationLanguageId === languageId
+  })
+  const english = candidates.find((translation) => {
+    const language = firstOfKind(translation, 'language')
+    const translationLanguageId = language && (Array.isArray(language.value) ? language.value[0] : language.value)
+    const languageInstance = translationLanguageId ? conceptOf(ontology, translationLanguageId) : undefined
+    return languageInstance && firstOfKind(languageInstance, 'isoName')?.value === 'en'
+  })
+  const value = firstOfKind(selected ?? english ?? candidates[0] ?? [], 'value')
+  return value ? (Array.isArray(value.value) ? value.value[0] : value.value) : undefined
+}
+
 /** The ontology's root instance — not necessarily a concept itself. */
 export function rootConcept(ontology: Ontology): Instance | undefined {
   return ontology.instances[ontology.root]

@@ -11,13 +11,13 @@ import { useOntology } from '@/concepts/ontology/useOntology'
 // property itself, so it is derived here from the attribute's `function`
 // rather than read off `property.value`.
 const props = defineProps<{ property: Property; instance: Instance }>()
-const { ontology } = useOntology()
+const { ontology, language } = useOntology()
 
 const value = computed(() => {
   const typeId = instanceType(props.instance)
   const type = typeId ? conceptOf(ontology(), typeId) : undefined
   const spec = type
-    ? conceptAttributeSpecs(ontology(), type).find((s) => s.slug === 'canonicalName')
+    ? conceptAttributeSpecs(ontology(), type, language()).find((s) => s.slug === 'canonicalName')
     : undefined
   if (!spec?.function) return undefined
   return computeAttributeValue(spec.function, props.instance, ontology())

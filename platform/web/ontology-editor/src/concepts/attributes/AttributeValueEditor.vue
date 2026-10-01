@@ -18,6 +18,7 @@ import InstanceForm from '@/concepts/editing/InstanceForm.vue'
 import SchemeValueEditor from '@/concepts/schemes/SchemeValueEditor.vue'
 import ImageValueEditor from '@/concepts/images/ImageValueEditor.vue'
 import { IMAGE_CONCEPT } from '@/concepts/images/Image'
+import TextValueEditor from '@/concepts/texts/TextValueEditor.vue'
 
 // Edits one attribute's value(s) on an owner instance.
 //  - leaf type       → a plain text field (select for cardinality)
@@ -44,6 +45,7 @@ const leaf = computed(() => isLeafConcept(ontology(), props.spec.type))
 const reference = computed(() => props.spec.type === 'cdd.concept' || props.spec.type === 'cdd.instance')
 const scheme = computed(() => props.spec.type === 'cdd.scheme')
 const image = computed(() => props.spec.type === IMAGE_CONCEPT)
+const text = computed(() => props.spec.type === 'cdd.text')
 const list = computed(() => isList(props.spec.cardinality))
 const cardinalityValued = computed(() => props.spec.type === 'cdd.cardinality')
 const CARDS: string[] = [...CARDINALITIES]
@@ -153,6 +155,12 @@ function submitNew() {
       :slug="spec.slug"
       :name="spec.name"
       :list="list"
+    />
+
+    <TextValueEditor
+      v-else-if="text && valueIds[0]"
+      :text-id="valueIds[0]"
+      :label="spec.name"
     />
 
     <!-- leaf: single field (list of fields when 0+/1+) -->

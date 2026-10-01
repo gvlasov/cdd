@@ -12,6 +12,8 @@ import type { FileStore } from '@/concepts/files/FileStore'
 // triggers deep in the tree can act without prop drilling.
 export interface OntologyContext {
   ontology: () => Ontology
+  /** The language used to render localized Names. */
+  language: () => Identity
   reality: () => Reality
   conceptLabel: (identity: Identity) => string | undefined
   /** { value, title } options for picking a concept in an editor. */
@@ -35,6 +37,7 @@ const key: InjectionKey<OntologyContext> = Symbol('ontology')
 
 export function provideOntology(ctx: {
   ontology: () => Ontology
+  language: () => Identity
   reality: () => Reality
   navigate: (identity: Identity) => void
   apply: (mutate: (ontology: Ontology) => Ontology) => void
@@ -45,10 +48,11 @@ export function provideOntology(ctx: {
 }): void {
   const label = (identity: Identity) => {
     const concept = conceptOf(ctx.ontology(), identity)
-    return concept ? conceptLabelOf(concept) : undefined
+    return concept ? conceptLabelOf(ctx.ontology(), concept, ctx.language()) : undefined
   }
   provide(key, {
     ontology: ctx.ontology,
+    language: ctx.language,
     reality: ctx.reality,
     navigate: ctx.navigate,
     apply: ctx.apply,

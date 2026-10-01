@@ -4,12 +4,15 @@ import type { Property } from '@/concepts/properties/Property'
 import { firstOfKind } from '@/concepts/properties/Property'
 import type { Instance } from '@/concepts/instances/Instance'
 import { useOntology } from '@/concepts/ontology/useOntology'
+import { textText } from '@/concepts/ontology/Ontology'
+import { propertyLabel } from '@/concepts/attributes/Attribute'
 import ConceptText from '@/concepts/concept-links/ConceptText.vue'
 
 // `concepts` value identities are the concepts an ontology contains — listed
 // here as name (linking to the concept) plus its definition text.
 const props = defineProps<{ property: Property; instance: Instance }>()
-const { ontology, conceptLabel, navigate } = useOntology()
+const { ontology, language, conceptLabel, navigate } = useOntology()
+const title = computed(() => propertyLabel(ontology(), props.instance, props.property.kind, language()))
 
 function literal(value: Property['value']): string {
   return Array.isArray(value) ? (value[0] ?? '') : value
@@ -25,7 +28,9 @@ const concepts = computed(() => {
     return {
       id,
       label: conceptLabel(id) ?? id,
-      definition: definition ? literal(definition.value) : undefined,
+      definition: definition
+        ? textText(ontology(), literal(definition.value), language()) ?? literal(definition.value)
+        : undefined,
     }
   })
 })
@@ -33,7 +38,7 @@ const concepts = computed(() => {
 
 <template>
   <div>
-    <h3 class="text-left mb-1">Concepts</h3>
+    <h3 class="text-left mb-1">{{ title }}</h3>
     <ul class="rich-text-list">
       <li v-for="c in concepts" :key="c.id">
         <a href="#" class="link" @click.prevent="navigate(c.id)">{{ c.label }}</a
