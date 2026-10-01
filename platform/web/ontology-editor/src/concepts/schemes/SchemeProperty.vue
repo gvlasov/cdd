@@ -311,10 +311,20 @@ function centerFocusedTask(): void {
 function scrollToUnlinkedTasks(): void {
   const canvas = schemeCanvas.value
   const first = unlinkedBoxes.value[0]
-  if (!canvas || !first || !scrollParent) return
+  if (!canvas || !first) return
   const canvasRect = canvas.getBoundingClientRect()
-  const parentRect = scrollParent.getBoundingClientRect()
   const scaleY = canvasRect.height / (layout.value?.height ?? 1)
+  // The instance viewer may grow with the document instead of owning an
+  // internal scrollbar. In that layout, scrolling `.scroll-region` is a
+  // no-op; move the document page to the first unlinked task instead.
+  if (!scrollParent || scrollParent.scrollHeight <= scrollParent.clientHeight) {
+    window.scrollTo({
+      top: Math.max(0, window.scrollY + canvasRect.top + first.y * scaleY - 24),
+      behavior: 'smooth',
+    })
+    return
+  }
+  const parentRect = scrollParent.getBoundingClientRect()
   const top = scrollParent.scrollTop + canvasRect.top - parentRect.top + first.y * scaleY - 24
   const start = scrollParent.scrollTop
   const target = Math.max(0, top)
@@ -377,12 +387,15 @@ function boxLineCount(padding: number): number {
   return Math.max(1, Math.floor((135 - padding * 2) / 18.75))
 }
 
-function marker(head: string, position: 'start' | 'end'): string | undefined {
-  return head === 'none' ? undefined : `url(#${position}-${head})`
+function arrowMarkerId(edge: { id: string }, position: 'start' | 'end'): string {
+  return `edge-${position}-arrow-${edge.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`
 }
-function endMarker(head: string): string | undefined {
+function marker(edge: DrawnEdge & { id: string }, head: string, position: 'start' | 'end'): string | undefined {
   if (head === 'none') return undefined
-  return focusedTaskId.value && head === 'arrow' ? 'url(#end-arrow-focus)' : marker(head, 'end')
+  return head === 'arrow' ? `url(#${arrowMarkerId(edge, position)})` : `url(#${position}-${head})`
+}
+function endMarker(edge: DrawnEdge & { id: string; endHead: string }): string | undefined {
+  return marker(edge, edge.endHead, 'end')
 }
 function dash(style: string): string | undefined {
   if (style === 'dashed') return '10 7'
@@ -435,6 +448,10 @@ function gradientColor(edge: DrawnEdge & { color: string }, peak = false): strin
   return peak
     ? `color-mix(in srgb, ${edge.color} 78%, rgb(var(--v-theme-on-surface)))`
     : edge.color
+}
+
+function arrowColor(edge: DrawnEdge & { color: string }): string {
+  return edgeIsHighlighted(edge) ? 'rgb(var(--v-theme-primary))' : edge.color
 }
 
 function edgeIsHighlighted(edge: DrawnEdge): boolean {
@@ -703,6 +720,8 @@ function navigateTo(id?: string) { if (id) navigate(id) }
         <marker id="end-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke" /></marker>
         <marker id="end-arrow-focus" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="270"><path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke" /></marker>
         <marker id="start-arrow" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 10 0 L 0 5 L 10 10 z" fill="context-stroke" /></marker>
+        <marker v-for="edge in layout.edges" :id="arrowMarkerId(edge, 'start')" :key="arrowMarkerId(edge, 'start')" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 10 0 L 0 5 L 10 10 z" :fill="arrowColor(edge)" /></marker>
+        <marker v-for="edge in layout.edges" :id="arrowMarkerId(edge, 'end')" :key="arrowMarkerId(edge, 'end')" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" :orient="focusedTaskId ? 270 : 'auto'"><path d="M 0 0 L 10 5 L 0 10 z" :fill="arrowColor(edge)" /></marker>
         <marker v-for="position in ['start', 'end']" :id="`${position}-circle`" :key="`${position}-circle`" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7"><circle cx="5" cy="5" r="3.5" fill="white" stroke="context-stroke" /></marker>
         <marker v-for="position in ['start', 'end']" :id="`${position}-diamond`" :key="`${position}-diamond`" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="8" markerHeight="8"><path d="M 5 0 L 10 5 L 5 10 L 0 5 z" fill="white" stroke="context-stroke" /></marker>
         <linearGradient
@@ -771,8 +790,8 @@ function navigateTo(id?: string) { if (id) navigate(id) }
           :stroke="edge.color"
           :stroke-width="strokeWidth(edge.boldness)"
           stroke-dasharray="0 1000"
-          :marker-start="marker(edge.startHead, 'start')"
-          :marker-end="endMarker(edge.endHead)"
+          :marker-start="marker(edge, edge.startHead, 'start')"
+          :marker-end="endMarker(edge)"
         />
       </template>
       <text v-for="text in layout.texts" :key="text.id" :x="text.x" :y="text.y" class="free-text" :text-anchor="text.align === 'center' ? 'middle' : 'start'" :class="{ clickable: text.denotatum }" @click="navigateTo(text.denotatum)">{{ text.content }}</text>

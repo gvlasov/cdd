@@ -26,7 +26,7 @@ function capitalizeFirstLetter(segments: Segment[]): Segment[] {
     const segment = result[i]
     if (segment.kind === 'code') break
 
-    if (segment.kind === 'text') {
+    if (segment.kind === 'text' || segment.kind === 'italic') {
       const firstLetter = segment.text.search(/\S/)
       if (firstLetter === -1) continue
       result[i] = {
@@ -74,6 +74,7 @@ function known(target: string): boolean {
         ><v-icon icon="mdi-open-in-new" size="10" class="external-link-icon"
       /></a>
       <code v-else-if="seg.kind === 'code'" class="inline-code">{{ seg.text }}</code>
+      <em v-else-if="seg.kind === 'italic'">{{ seg.text }}</em>
       <template v-else>{{ seg.text }}</template>
     </template>
   </span>

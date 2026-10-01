@@ -6,6 +6,7 @@ import type { Identity } from '@/concepts/identity/Identity'
 //                                target is `<rootSlug>.attribute`
 //   [Label](https://example)   → external link, opened in the same window
 //   `git commit`                → inline monospace code
+//   *emphasis*                  → italic text
 //
 // Everything else is plain text.
 
@@ -33,15 +34,20 @@ export interface CodeSegment {
   text: string
 }
 
-export type Segment = TextSegment | LinkSegment | ExternalLinkSegment | CodeSegment
+export interface ItalicSegment {
+  kind: 'italic'
+  text: string
+}
+
+export type Segment = TextSegment | LinkSegment | ExternalLinkSegment | CodeSegment | ItalicSegment
 
 const EXTERNAL_URL = /^[a-z][a-z0-9+.-]*:\/\//i
 
-// One combined scanner: a concept link, or an inline-code span.
-const TOKEN = /\[([^\]]+)\]\(([^)]+)\)|`([^`]+)`/g
+// One combined scanner: a concept link, inline-code span, or italic span.
+const TOKEN = /\[([^\]]+)\]\(([^)]+)\)|`([^`]+)`|\*([^*\n]+)\*/g
 
 /**
- * Split `text` into plain, link, external-link and code segments. `rootSlug`
+ * Split `text` into plain, link, external-link, code and italic segments. `rootSlug`
  * resolves a leading-dot link target (`.attribute` → `<rootSlug>.attribute`);
  * when omitted such a target is left as written minus the dot. A target
  * written as an absolute URL (`https://…`) becomes an external link instead
@@ -52,12 +58,14 @@ export function parseConceptLinks(text: string, rootSlug?: string): Segment[] {
   let last = 0
 
   for (const match of text.matchAll(TOKEN)) {
-    const [whole, label, rawTarget, code] = match
+    const [whole, label, rawTarget, code, italic] = match
     const start = match.index ?? 0
     if (start > last) segments.push({ kind: 'text', text: text.slice(last, start) })
 
     if (code !== undefined) {
       segments.push({ kind: 'code', text: code })
+    } else if (italic !== undefined) {
+      segments.push({ kind: 'italic', text: italic })
     } else if (EXTERNAL_URL.test(rawTarget)) {
       segments.push({ kind: 'external-link', label, href: rawTarget })
     } else {

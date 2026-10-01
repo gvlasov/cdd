@@ -7,7 +7,8 @@ import { isSlug } from '@/concepts/identity/Slug'
 import { provideOntology } from './useOntology'
 import { ontologyConcepts, conceptOf } from './Ontology'
 import { conceptLabelOf } from '@/concepts/concepts/Concept'
-import { soleOwningAttribute } from '@/concepts/attributes/Attribute'
+import { conceptAttributeSpecs, soleOwningAttribute } from '@/concepts/attributes/Attribute'
+import { instanceType } from '@/concepts/instances/Instance'
 import {
   renameSlug as renameSlugEdit,
   identityAfterSlug,
@@ -176,6 +177,42 @@ function onSearchSelect(id: Identity | null) {
   search.value = null
 }
 
+const currentConcept = computed(() => conceptOf(props.modelValue, currentId.value))
+const currentTitle = computed(() =>
+  (currentConcept.value && conceptLabelOf(currentConcept.value)) || currentId.value,
+)
+function ucfirst(value: string) {
+  return value ? value.slice(0, 1).toLocaleUpperCase() + value.slice(1) : value
+}
+function scrollToProperty(index: number) {
+  document
+    .getElementById(`instance-property-${currentId.value}-${index}`)
+    ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+function scrollToInstanceName() {
+  document
+    .getElementById(`instance-name-${currentId.value}`)
+    ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+const PROPERTY_TREE_SKIP = new Set(['concept', 'identity', 'name', 'slug'])
+const currentPropertyAttributes = computed(() => {
+  const instance = currentConcept.value
+  if (!instance) return []
+  const typeId = instanceType(instance)
+  const type = typeId ? conceptOf(props.modelValue, typeId) : undefined
+  const attributesBySlug = new Map(
+    (type ? conceptAttributeSpecs(props.modelValue, type) : []).map((attribute) => [attribute.slug, attribute]),
+  )
+  return instance
+    .map((property, index) => ({
+      key: `${property.kind}-${index}`,
+      index,
+      name: ucfirst(attributesBySlug.get(property.kind)?.name ?? property.kind),
+      kind: property.kind,
+    }))
+    .filter((attribute) => !PROPERTY_TREE_SKIP.has(attribute.kind))
+})
+
 provideOntology({
   ontology: () => props.modelValue,
   reality: () => currentReality.value,
@@ -189,57 +226,90 @@ provideOntology({
 </script>
 
 <template>
-  <div class="ontology-editor d-flex flex-column ga-2">
-    <div class="d-flex align-center ga-2">
+  <div class="ontology-editor">
+    <header class="editor-header">
+      <div class="editor-brand">
+        <v-icon icon="mdi-vector-triangle" size="24" />
+        <span>CDD</span>
+      </div>
+
       <v-autocomplete
         :model-value="search"
         :items="conceptSearchItems"
         placeholder="Search concepts…"
         prepend-inner-icon="mdi-magnify"
-        variant="outlined"
-        density="compact"
+        variant="plain"
+        density="comfortable"
         hide-details
         clearable
         auto-select-first
         menu-icon=""
-        class="flex-grow-1"
-        style="max-width: 320px"
+        class="editor-search"
         @update:model-value="onSearchSelect"
       />
-      <v-spacer />
-      <template v-if="editable">
-        <v-btn
-          prepend-icon="mdi-plus"
-          variant="tonal"
-          size="small"
-          @click="creating = true"
+
+    </header>
+
+    <div class="editor-layout" :class="{ 'has-utility-rail': editable || $slots['utility-rail'] }">
+      <aside class="concept-sidebar">
+        <v-list density="compact" class="property-tree">
+          <v-list-item
+            :title="currentTitle"
+            prepend-icon="mdi-circle-medium"
+            rounded="lg"
+            class="instance-tree-root"
+            @click="scrollToInstanceName"
+          />
+          <v-list-item
+            v-for="attribute in currentPropertyAttributes"
+            :key="attribute.key"
+            :title="attribute.name"
+            prepend-icon="mdi-circle-small"
+            density="compact"
+            class="property-tree-item"
+            @click="scrollToProperty(attribute.index)"
+          />
+        </v-list>
+      </aside>
+
+      <main class="selected-instance">
+        <div class="instance-heading">
+          <div>
+            <h1 :id="`instance-name-${currentId}`">{{ currentTitle }}</h1>
+          </div>
+        </div>
+
+        <v-alert
+          v-if="runError"
+          type="error"
+          density="compact"
+          closable
+          class="mb-4"
+          @click:close="runError = ''"
         >
-          New concept
-        </v-btn>
-        <v-btn
-          :prepend-icon="editing ? 'mdi-check' : 'mdi-pencil'"
-          :color="editing ? 'primary' : undefined"
-          variant="tonal"
-          size="small"
-          @click="editing = !editing"
-        >
-          {{ editing ? 'Done' : 'Edit' }}
-        </v-btn>
-      </template>
+          {{ runError }}
+        </v-alert>
+
+        <ConceptEditor v-if="editing" :ontology="modelValue" :concept-id="currentId" />
+        <ConceptView v-else :ontology="modelValue" :concept-id="currentId" />
+      </main>
+
+      <aside v-if="editable || $slots['utility-rail']" class="utility-rail">
+        <template v-if="editable">
+          <v-btn icon="mdi-plus" variant="text" size="small" aria-label="New concept" title="New concept" @click="creating = true" />
+          <v-btn
+            :icon="editing ? 'mdi-check' : 'mdi-pencil'"
+            :color="editing ? 'primary' : undefined"
+            variant="text"
+            size="small"
+            :aria-label="editing ? 'Done editing' : 'Edit concept'"
+            :title="editing ? 'Done editing' : 'Edit concept'"
+            @click="editing = !editing"
+          />
+        </template>
+        <slot name="utility-rail" />
+      </aside>
     </div>
-
-    <v-alert
-      v-if="runError"
-      type="error"
-      density="compact"
-      closable
-      @click:close="runError = ''"
-    >
-      {{ runError }}
-    </v-alert>
-
-    <ConceptEditor v-if="editing" class="flex-grow-1" :ontology="modelValue" :concept-id="currentId" />
-    <ConceptView v-else class="flex-grow-1" :ontology="modelValue" :concept-id="currentId" />
 
     <v-dialog v-model="creating" max-width="420">
       <v-card>
@@ -274,7 +344,125 @@ provideOntology({
 <style scoped>
 .ontology-editor {
   width: 100%;
-  height: 100%;
   min-height: 400px;
+  color: rgb(var(--v-theme-on-surface));
+}
+.editor-header {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0 2rem;
+  border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.1);
+}
+.editor-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 10rem;
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+.editor-brand .v-icon {
+  color: rgb(var(--v-theme-primary));
+}
+.editor-search {
+  max-width: 32rem;
+  border-left: 1px solid rgba(var(--v-theme-on-surface), 0.1);
+  padding-left: 1rem;
+}
+.editor-layout {
+  display: grid;
+  grid-template-columns: minmax(13rem, 18rem) minmax(0, 1fr);
+}
+.editor-layout.has-utility-rail {
+  grid-template-columns: minmax(13rem, 18rem) minmax(0, 1fr) 4.5rem;
+}
+.concept-sidebar {
+  align-self: start;
+  position: sticky;
+  top: 0;
+  max-height: 100vh;
+  overflow-y: auto;
+  padding: 2rem 1rem;
+  border-right: 1px solid rgba(var(--v-theme-on-surface), 0.1);
+}
+.property-tree {
+  background: transparent;
+}
+.instance-tree-root {
+  font-weight: 700;
+}
+.property-tree-item {
+  margin-left: 1rem;
+}
+.selected-instance {
+  min-width: 0;
+  padding: clamp(2rem, 5vw, 5rem);
+}
+.utility-rail {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0.5rem;
+  border-left: 1px solid rgba(var(--v-theme-on-surface), 0.1);
+}
+.instance-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  max-width: 60ch;
+  margin: 0 auto 2rem;
+}
+.instance-heading h1 {
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+@media (max-width: 760px) {
+  .editor-header {
+    min-height: 60px;
+    padding: 0 1rem;
+  }
+  .editor-brand {
+    min-width: auto;
+  }
+  .editor-search {
+    border: 0;
+    padding-left: 0;
+  }
+  .editor-layout {
+    display: block;
+  }
+  .concept-sidebar {
+    position: static;
+    max-height: none;
+    padding: 0.75rem 1rem;
+    border-right: 0;
+    border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.1);
+  }
+  .property-tree {
+    display: flex;
+    overflow-x: auto;
+  }
+  .property-tree :deep(.v-list-item) {
+    flex: 0 0 auto;
+  }
+  .selected-instance {
+    padding: 2rem 1.25rem;
+  }
+  .utility-rail {
+    flex-direction: row;
+    justify-content: flex-end;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid rgba(var(--v-theme-on-surface), 0.1);
+    border-left: 0;
+  }
 }
 </style>

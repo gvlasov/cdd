@@ -54,24 +54,35 @@ function downloadCdd() {
   <v-app>
     <v-main>
       <v-container fluid>
-        <div class="d-flex align-center ga-2 mb-2">
-          <v-btn prepend-icon="mdi-folder-open-outline" variant="tonal" size="small" @click="cddFile?.click()">
-            Открыть онтологию
-          </v-btn>
-          <input ref="cddFile" type="file" accept=".cdd,application/xml,text/xml" class="d-none" @change="openCdd" />
-          <v-btn prepend-icon="mdi-download" variant="tonal" size="small" @click="downloadCdd">Скачать .cdd</v-btn>
-          <span v-if="fileError" class="text-error text-body-2">{{ fileError }}</span>
-        </div>
-        <div style="height: 80vh">
-          <OntologyEditor
-            v-model="ontology"
-            v-model:reality="reality"
-            root-id="cdd.concept"
-            :file-store="fileStore"
-            editable
-            history
-          />
-        </div>
+        <input ref="cddFile" type="file" accept=".cdd,application/xml,text/xml" class="d-none" @change="openCdd" />
+        <OntologyEditor
+          v-model="ontology"
+          v-model:reality="reality"
+          root-id="cdd.concept"
+          :file-store="fileStore"
+          editable
+          history
+        >
+          <template #utility-rail>
+            <v-btn
+              icon="mdi-folder-open-outline"
+              variant="text"
+              size="small"
+              aria-label="Открыть онтологию"
+              title="Открыть онтологию"
+              @click="cddFile?.click()"
+            />
+            <v-btn
+              icon="mdi-download"
+              variant="text"
+              size="small"
+              aria-label="Скачать .cdd"
+              title="Скачать .cdd"
+              @click="downloadCdd"
+            />
+          </template>
+        </OntologyEditor>
+        <v-alert v-if="fileError" type="error" density="compact" class="mt-2">{{ fileError }}</v-alert>
       </v-container>
     </v-main>
   </v-app>

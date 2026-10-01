@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { Instance } from './Instance'
-import { isConcept } from '@/concepts/concepts/Concept'
 import { instanceType } from './Instance'
 import { propertyKind } from '@/concepts/properties/kinds/property-kinds'
 import { conceptOf } from '@/concepts/ontology/Ontology'
@@ -18,7 +17,9 @@ import { IMAGE_CONCEPT } from '@/concepts/images/Image'
 
 // The central component: renders one instance as its properties, in
 // kind-position order. Equal positions keep source order.
-const props = defineProps<{ instance: Instance }>()
+const props = withDefaults(defineProps<{ instance: Instance; showName?: boolean }>(), {
+  showName: true,
+})
 
 const { ontology } = useOntology()
 
@@ -54,13 +55,6 @@ const usageEntries = computed(() => {
   return ids.length ? [{ kind: slug as never, value: ids }] : []
 })
 
-// Ground color: `attribute` for an attribute instance, `concept` when it
-// declares attributes, else `instance`.
-const tone = computed(() => {
-  if (instanceType(props.instance) === 'cdd.attribute') return 'attribute'
-  return isConcept(props.instance) ? 'concept' : 'instance'
-})
-
 // Computed attributes (see cdd.attribute's `computed`/`function`) are never
 // stored on the instance, so they don't appear among its own properties —
 // synthesize a property entry per computed attribute the type declares.
@@ -93,29 +87,34 @@ const drawn = computed(() =>
             : propertyKind(property.kind)
       return { property, i, kind }
     })
-    .filter((x) => x.kind?.render)
+    .filter((x) => x.kind?.render && (props.showName || x.property.kind !== 'name'))
     .sort((a, b) => a.kind.position - b.kind.position || a.i - b.i),
 )
+
+function propertySectionId(index: number) {
+  return `instance-property-${instanceIdentity(props.instance) ?? 'unknown'}-${index}`
+}
 </script>
 
 <template>
-  <v-card
-    :color="tone"
-    variant="tonal"
-    class="flex-grow-1 d-flex instance-card"
-  >
-    <v-card-text class="d-flex justify-center content scroll-region">
+  <div class="instance-card">
+    <div class="content scroll-region">
       <div class="d-flex flex-column ga-4" style="max-width: 60ch; width: 100%">
-        <component
-          :is="entry.kind.render"
+        <div
           v-for="entry in drawn"
           :key="entry.i"
-          :property="entry.property"
-          :instance="instance"
-        />
+          :id="propertySectionId(entry.i)"
+          class="property-section"
+        >
+          <component
+            :is="entry.kind.render"
+            :property="entry.property"
+            :instance="instance"
+          />
+        </div>
       </div>
-    </v-card-text>
-  </v-card>
+    </div>
+  </div>
 </template>
 
 <style scoped>
@@ -123,11 +122,16 @@ const drawn = computed(() =>
   min-height: 0;
 }
 .content {
+  display: flex;
+  justify-content: center;
   color: rgb(var(--v-theme-on-surface));
 }
 .scroll-region {
   position: relative;
   min-height: 0;
   overflow-y: auto;
+}
+.property-section {
+  scroll-margin-top: 1.5rem;
 }
 </style>

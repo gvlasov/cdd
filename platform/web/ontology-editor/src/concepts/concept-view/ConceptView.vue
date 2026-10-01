@@ -16,7 +16,7 @@ const concept = computed(() => conceptOf(props.ontology, props.conceptId))
 
 <template>
   <div class="d-flex flex-column ga-4 concept-view">
-    <Instance v-if="concept" :instance="concept" />
+    <Instance v-if="concept" :instance="concept" :show-name="false" />
     <v-card v-else variant="outlined" class="flex-grow-1 d-flex align-center">
       <v-card-text class="text-medium-emphasis">Unknown concept: {{ conceptId }}</v-card-text>
     </v-card>
