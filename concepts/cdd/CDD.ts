@@ -60,7 +60,6 @@ export default [
         'cdd.llm',
         'cdd.mess',
         'cdd.milestone',
-        'cdd.name',
         'cdd.ontology',
         'cdd.ontologyEditor',
         'cdd.pasteAsSymlink',
