@@ -32,7 +32,10 @@ function ucfirst(value: string): string {
   <p class="text-body-1 text-medium-emphasis text-left">
     <ConceptText :text="text" :capitalize="isConcept(instance)" />
   </p>
-  <p v-if="synonyms.length >= 2" class="text-body-2 text-medium-emphasis text-left">
+  <p v-if="synonyms.length === 2" class="text-body-2 text-medium-emphasis text-left">
+    Synonym: {{ ucfirst(synonyms[1]) }}
+  </p>
+  <p v-else-if="synonyms.length > 2" class="text-body-2 text-medium-emphasis text-left">
     Synonyms: {{ synonyms.map(ucfirst).join(', ') }}
   </p>
 </template>
