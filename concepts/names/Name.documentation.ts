@@ -22,10 +22,6 @@ export default [
       "value": "A set of synonymous words that identifies an instance within its concept."
     },
     {
-      "kind": "details",
-      "value": "Linguistically - a noun"
-    },
-    {
       "kind": "examples",
       "value": [
         "cdd.name:examples:1",
