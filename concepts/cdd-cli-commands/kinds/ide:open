@@ -1,10 +1,28 @@
 #!/usr/bin/env bash
-# Open a file in the user's editor
+# Open a file in the user's editor, optionally at a line, inside a project
 set -euo pipefail
 
-if [ "$#" -ne 1 ]; then
-  printf 'usage: cdd ide:open <file>\n' >&2
+usage() {
+  printf 'usage: cdd ide:open [--line N] [--column N] [--project DIR] <file>\n' >&2
   exit 2
+}
+
+line=""
+column=""
+project=""
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --line) [ "$#" -ge 2 ] || usage; line="$2"; shift 2 ;;
+    --column) [ "$#" -ge 2 ] || usage; column="$2"; shift 2 ;;
+    --project) [ "$#" -ge 2 ] || usage; project="$2"; shift 2 ;;
+    --) shift; break ;;
+    -*) usage ;;
+    *) break ;;
+  esac
+done
+
+if [ "$#" -ne 1 ]; then
+  usage
 fi
 
 file="$1"
@@ -16,4 +34,26 @@ fi
 
 concept_dir="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 editor_command="$("$concept_dir/ide:which")"
-exec "$editor_command" "$file"
+
+args=()
+case "$(basename "$editor_command")" in
+  idea*|*storm*|pycharm*|goland*|rubymine*|clion*|rider*|datagrip*|rustrover*)
+    # Project first, so the file opens in its project window instead of LightEdit
+    [ -z "$project" ] || args+=("$project")
+    [ -z "$line" ] || args+=(--line "$line")
+    [ -z "$column" ] || args+=(--column "$column")
+    args+=("$file")
+    ;;
+  vim|nvim|vi)
+    [ -z "$line" ] || args+=("+$line")
+    args+=("$file")
+    ;;
+  code|codium)
+    args+=(-g "$file${line:+:$line}${line:+${column:+:$column}}")
+    ;;
+  *)
+    args+=("$file")
+    ;;
+esac
+
+exec "$editor_command" "${args[@]}"

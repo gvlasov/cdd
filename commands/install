@@ -29,6 +29,7 @@ run_installer() {
 
 run_installer "Bash support" bash "$cdd_home/commands/bash:install"
 run_installer "Fish support" fish "$cdd_home/commands/fish:install"
+run_installer "IDE link handler" xdg-mime "$cdd_home/commands/ide:url-handler:install"
 run_installer "Codex skill" codex "$cdd_home/commands/codex:install"
 run_installer "Claude Code skill" claude "$cdd_home/commands/claude:install"
 run_installer "Codex project terminal launcher" tmuxinator "$cdd_home/commands/codex:project-terminal:install"

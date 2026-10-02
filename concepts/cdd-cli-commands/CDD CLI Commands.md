@@ -8,7 +8,8 @@ CDD keeps these commands together so the entrypoint can discover, print, and dis
 - `github:open` opens the current repository in GitHub
 - `commands:create` creates a project command and opens it in the editor
 - `commands:ln` links a file into `/commands` as a symlinked project command
-- `ide:open` opens a file in the user's editor
+- `ide:open` opens a file in the user's editor, optionally at a line, inside a project
+- `ide:open:url` opens a `jetbrains://` link in the user's IDE
 - `ide:which` prints the IDE command CDD will use
 - `init` initializes a CDD project directory and Git repository
 - `print` prints indexed project code

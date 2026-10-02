@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=CDD IDE link handler
+Exec=@ENV@@CDD@ ide:open:url %u
+Terminal=false
+NoDisplay=true
+MimeType=x-scheme-handler/jetbrains;
