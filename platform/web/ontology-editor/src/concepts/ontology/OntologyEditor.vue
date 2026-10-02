@@ -68,6 +68,13 @@ watch(
   },
 )
 
+watch(
+  () => props.editable,
+  (editable) => {
+    if (!editable) editing.value = false
+  },
+)
+
 function selectLanguage(language: Identity) {
   selectedLanguage.value = language
   languageDialog.value = false
@@ -222,6 +229,12 @@ function onSearchSelect(id: Identity | null) {
 }
 
 const currentConcept = computed(() => conceptOf(props.modelValue, currentId.value))
+// The masthead identifies the ontology itself, not the CDD editor embedding it.
+// A localized Name is used whenever the ontology provides one.
+const ontologyName = computed(() => {
+  const root = conceptOf(props.modelValue, props.modelValue.root)
+  return root ? conceptLabelOf(props.modelValue, root, selectedLanguage.value) ?? props.modelValue.root : props.modelValue.root
+})
 function ucfirst(value: string) {
   return value ? value.slice(0, 1).toLocaleUpperCase() + value.slice(1) : value
 }
@@ -353,7 +366,7 @@ provideOntology({
     <header class="editor-header">
       <button type="button" class="editor-brand" @click="navigateToRoot">
         <v-icon icon="mdi-vector-triangle" size="24" />
-        <span>CDD</span>
+        <span>{{ ontologyName }}</span>
       </button>
 
       <v-autocomplete
@@ -367,6 +380,7 @@ provideOntology({
         clearable
         auto-select-first
         menu-icon=""
+        :menu-props="{ transition: 'concept-menu-transition' }"
         class="editor-search"
         @update:model-value="onSearchSelect"
       />
@@ -428,32 +442,48 @@ provideOntology({
           {{ runError }}
         </v-alert>
 
-        <ConceptEditor v-if="editing" :ontology="modelValue" :concept-id="currentId" />
+        <ConceptEditor v-if="editing && editable" :ontology="modelValue" :concept-id="currentId" />
         <ConceptView v-else :ontology="modelValue" :concept-id="currentId" />
       </main>
 
       <aside v-if="editable || $slots['utility-rail'] || languageOptions.length" class="utility-rail">
-        <v-btn
-          icon="mdi-translate"
-          variant="text"
-          size="small"
-          aria-label="Language"
-          title="Language"
-          @click="languageDialog = true"
-        />
-        <template v-if="editable">
-          <v-btn icon="mdi-plus" variant="text" size="small" aria-label="New concept" title="New concept" @click="creating = true" />
-          <v-btn
-            :icon="editing ? 'mdi-check' : 'mdi-pencil'"
-            :color="editing ? 'primary' : undefined"
-            variant="text"
-            size="small"
-            :aria-label="editing ? 'Done editing' : 'Edit concept'"
-            :title="editing ? 'Done editing' : 'Edit concept'"
-            @click="editing = !editing"
-          />
+        <template v-if="editable || $slots['utility-rail']">
+          <v-tooltip text="New concept" location="left" :open-delay="0">
+            <template #activator="{ props: tooltipProps }">
+              <span v-bind="tooltipProps" class="tool-tooltip-activator">
+                <v-btn icon="mdi-plus" variant="text" size="small" aria-label="New concept" :disabled="!editable" @click="creating = true" />
+              </span>
+            </template>
+          </v-tooltip>
+          <v-tooltip :text="editing ? 'Done editing' : 'Edit concept'" location="left" :open-delay="0">
+            <template #activator="{ props: tooltipProps }">
+              <span v-bind="tooltipProps" class="tool-tooltip-activator">
+                <v-btn
+                  :icon="editing ? 'mdi-check' : 'mdi-pencil'"
+                  :color="editing ? 'primary' : undefined"
+                  variant="text"
+                  size="small"
+                  :aria-label="editing ? 'Done editing' : 'Edit concept'"
+                  :disabled="!editable"
+                  @click="editing = !editing"
+                />
+              </span>
+            </template>
+          </v-tooltip>
         </template>
         <slot name="utility-rail" />
+        <v-tooltip text="Language" location="left" :open-delay="0">
+          <template #activator="{ props: tooltipProps }">
+            <v-btn
+              v-bind="tooltipProps"
+              icon="mdi-translate"
+              variant="text"
+              size="small"
+              aria-label="Language"
+              @click="languageDialog = true"
+            />
+          </template>
+        </v-tooltip>
       </aside>
     </div>
 
@@ -580,6 +610,9 @@ provideOntology({
   gap: 0.5rem;
   padding: 1rem 0.5rem;
 }
+.tool-tooltip-activator {
+  display: inline-flex;
+}
 .instance-heading {
   display: flex;
   justify-content: space-between;
@@ -652,5 +685,17 @@ provideOntology({
     justify-content: flex-end;
     padding: 0.75rem 1rem;
   }
+}
+</style>
+
+<style>
+.concept-menu-transition-enter-active,
+.concept-menu-transition-leave-active {
+  transition: opacity 90ms ease-out, transform 90ms ease-out;
+}
+.concept-menu-transition-enter-from,
+.concept-menu-transition-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
 }
 </style>
