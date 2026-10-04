@@ -10,7 +10,7 @@ load test_helper
   esc=$'\033'
   assert_output_contains "install ${esc}[37m- install cdd support for the tools available on this machine.${esc}[0m"
   assert_output_contains "commands:create ${esc}[37m- create a project command and open it in the editor${esc}[0m"
-  assert_output_contains "ide:open ${esc}[37m- open a file in the user's editor${esc}[0m"
+  assert_output_contains "ide:open ${esc}[37m- open a file in the user's editor, optionally at a line, inside a project${esc}[0m"
   printf '%s\n' "$output" | grep -qx 'plans'
   printf '%s\n' "$output" | grep -qx 'features'
   printf '%s\n' "$output" | grep -qx 'problems'
@@ -35,7 +35,7 @@ load test_helper
   assert_success
 
   esc=$'\033'
-  [ "$output" = "ide:open ${esc}[37m- open a file in the user's editor${esc}[0m" ]
+  [ "$output" = "ide:open ${esc}[37m- open a file in the user's editor, optionally at a line, inside a project${esc}[0m" ]
 }
 
 @test "cdd help <command> only uses the description immediately after the shebang" {
@@ -82,7 +82,7 @@ EOF
   esc=$'\033'
   assert_output_contains "cdd github:open ${esc}[37m- open this project's GitHub repository in browser${esc}[0m"
   assert_output_contains "cdd commands:create ${esc}[37m- create a project command and open it in the editor${esc}[0m"
-  assert_output_contains "cdd ide:open ${esc}[37m- open a file in the user's editor${esc}[0m"
+  assert_output_contains "cdd ide:open ${esc}[37m- open a file in the user's editor, optionally at a line, inside a project${esc}[0m"
   assert_output_contains "cdd ide:which ${esc}[37m- print the IDE command CDD will use${esc}[0m"
   printf '%s\n' "$output" | grep -qx 'cdd plans'
   printf '%s\n' "$output" | grep -qx 'cdd features'
