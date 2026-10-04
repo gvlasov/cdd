@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Opens a project-scoped Claude Code or Codex terminal in tmuxinator.
-# Terminal emulator is chosen with CDD_TERMINAL (default: kitty).
+# Terminal emulator is chosen with CDD_TERMINAL (see detect_terminal).
 set -euo pipefail
 
 if [ "$#" -ne 1 ]; then
@@ -57,6 +57,22 @@ focus_existing_i3_window() {
   i3-msg "[class=\"$window_class\"] focus" >/dev/null 2>&1
 }
 
+# Order: $CDD_TERMINAL, $TERMINAL, xdg-terminal-exec, kitty.
+detect_terminal() {
+  local cmd
+
+  if [ -n "${CDD_TERMINAL:-}" ]; then
+    printf '%s\n' "$CDD_TERMINAL"
+  elif [ -n "${TERMINAL:-}" ]; then
+    printf '%s\n' "$TERMINAL"
+  elif command -v xdg-terminal-exec >/dev/null 2>&1 \
+    && cmd="$(xdg-terminal-exec --print-cmd 2>/dev/null)" && [ -n "$cmd" ]; then
+    printf '%s\n' "${cmd%% *}"
+  else
+    printf 'kitty\n'
+  fi
+}
+
 yaml_single_quote() {
   sed "s/'/''/g; s/^/'/; s/$/'/"
 }
@@ -72,7 +88,7 @@ if focus_existing_i3_window "$window_class"; then
   exit 0
 fi
 
-terminal="${CDD_TERMINAL:-kitty}"
+terminal="$(detect_terminal)"
 require_command "$terminal"
 require_command tmux
 require_command tmuxinator

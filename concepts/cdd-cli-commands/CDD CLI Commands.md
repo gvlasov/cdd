@@ -18,8 +18,8 @@ CDD keeps these commands together so the entrypoint can discover, print, and dis
 - `source-code:volume:analyze` prints source files ordered by indexed byte size and can be restricted to given paths
 - `source-code:volume:assess` opens a terminal browser that ranks source-code items by aggregate volume
 - `skill:print` prints the freshest installed CDD skill
-- `codex:terminal` opens the last Codex session for this project in a tmuxinator-backed terminal (kitty by default, override with `CDD_TERMINAL`)
-- `claude:terminal` opens the last Claude Code session for this project in a tmuxinator-backed terminal (kitty by default, override with `CDD_TERMINAL`)
+- `codex:terminal` opens the last Codex session for this project in a tmuxinator-backed terminal (`CDD_TERMINAL`, `TERMINAL`, `xdg-terminal-exec`, then kitty)
+- `claude:terminal` opens the last Claude Code session for this project in a tmuxinator-backed terminal (`CDD_TERMINAL`, `TERMINAL`, `xdg-terminal-exec`, then kitty)
 - `plans` lists stored plans in the repository
 - `features` lists feature plans in the repository
 - `problems` lists problem plans in the repository
