@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Opens a project-scoped Claude Code or Codex terminal in tmuxinator.
+# Terminal emulator is chosen with CDD_TERMINAL (default: kitty).
 set -euo pipefail
 
 if [ "$#" -ne 1 ]; then
@@ -71,7 +72,8 @@ if focus_existing_i3_window "$window_class"; then
   exit 0
 fi
 
-require_command xterm
+terminal="${CDD_TERMINAL:-kitty}"
+require_command "$terminal"
 require_command tmux
 require_command tmuxinator
 
@@ -127,11 +129,8 @@ esac
   pane_lines
 } > "$config_path"
 
-exec xterm \
-  -xrm '*VT100*translations: #override Ctrl <Key>V: insert-selection(CLIPBOARD)' \
-  -class "$window_class" \
-  -T "${launcher_llm^} - $project_name" \
-  -e bash -lc '
+window_title="${launcher_llm^} - $project_name"
+run_script='
     tmuxinator start -p "$1"
     status="$?"
 
@@ -142,4 +141,27 @@ exec xterm \
     fi
 
     exit "$status"
-  ' terminal-tmuxinator "$config_path" "$launcher_name"
+  '
+run_args=(bash -lc "$run_script" terminal-tmuxinator "$config_path" "$launcher_name")
+
+case "$(basename "$terminal")" in
+  xterm)
+    exec "$terminal" \
+      -xrm '*VT100*translations: #override Ctrl <Key>V: insert-selection(CLIPBOARD)' \
+      -class "$window_class" \
+      -T "$window_title" \
+      -e "${run_args[@]}"
+    ;;
+  kitty)
+    exec "$terminal" --class "$window_class" --title "$window_title" "${run_args[@]}"
+    ;;
+  alacritty)
+    exec "$terminal" --class "$window_class" --title "$window_title" -e "${run_args[@]}"
+    ;;
+  foot)
+    exec "$terminal" --app-id "$window_class" --title "$window_title" "${run_args[@]}"
+    ;;
+  *)
+    exec "$terminal" -e "${run_args[@]}"
+    ;;
+esac
