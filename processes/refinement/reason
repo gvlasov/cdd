@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-# Start a Codex session for interactive reasoning about the methodology
+# Start a Claude session for interactive reasoning about the methodology
 set -e
 cd "$(git rev-parse --show-toplevel)"
 
-#exec codex -C "$(pwd)" "$(./processes/refinement/prompt-for-reasoning)"
-exec claude "$(./processes/refinement/prompt-for-reasoning)"
+# The prompt is too large for argv, so pass it as a system prompt file
+prompt_file="$(mktemp)"
+trap 'rm -f "$prompt_file"' EXIT
+./processes/refinement/prompt-for-reasoning > "$prompt_file"
+claude --append-system-prompt-file "$prompt_file" "Load the methodology."
