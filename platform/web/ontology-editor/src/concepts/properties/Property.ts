@@ -63,7 +63,6 @@ export type PropertyKindName =
   | 'function'
   | 'scheme'
   | 'exampleDiagram'
-  | 'ontologyDiagram'
   | 'boxes'
   | 'edges'
   | 'texts'

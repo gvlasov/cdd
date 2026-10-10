@@ -75,9 +75,6 @@ export const propertyKinds: Record<PropertyKindName, PropertyKind> = {
   // enclosing concept may name its slot something other than `scheme`.
   scheme: { name: 'scheme', position: 6, render: SchemeProperty },
   exampleDiagram: { name: 'exampleDiagram', position: 6, render: SchemeProperty },
-  // An ontology overview is navigation, so show it before a concept's often
-  // long documentation rather than hiding it at the end of the page.
-  ontologyDiagram: { name: 'ontologyDiagram', position: 3, render: SchemeProperty },
   boxes: { name: 'boxes', position: 7 },
   edges: { name: 'edges', position: 7 },
   texts: { name: 'texts', position: 7 },

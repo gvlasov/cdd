@@ -104,7 +104,6 @@ export default [
         'cdd.language',
       ],
     },
-    { kind: 'ontologyDiagram', value: 'cdd' },
   ],
   [
     { kind: 'identity', value: 'cdd.project' },

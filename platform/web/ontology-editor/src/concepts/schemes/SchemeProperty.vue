@@ -4,7 +4,7 @@ import type { Property } from '@/concepts/properties/Property'
 import type { Instance } from '@/concepts/instances/Instance'
 import { nameText } from '@/concepts/ontology/Ontology'
 import { useOntology } from '@/concepts/ontology/useOntology'
-import { layoutOntology, layoutScheme, schemeReference, type SchemeLayout } from './Scheme'
+import { layoutScheme, schemeReference, type SchemeLayout } from './Scheme'
 
 const props = defineProps<{ property: Property; instance: Instance }>()
 const { ontology, navigate } = useOntology()
@@ -178,12 +178,8 @@ function separateMilestoneBands(base: SchemeLayout): SchemeLayout {
 }
 
 const layout = computed(() => {
-  const base = props.property.kind === 'ontologyDiagram'
-    ? layoutOntology(ontology(), schemeReference(props.property) ?? 'cdd')
-    : (() => {
-      const id = schemeReference(props.property)
-      return id ? layoutScheme(ontology(), id) : undefined
-    })()
+  const id = schemeReference(props.property)
+  const base = id ? layoutScheme(ontology(), id) : undefined
   const roadmap = base && isRoadmap.value ? separateMilestoneBands(base) : base
   return roadmap && focusedTaskId.value ? focusedRoadmapLayout(roadmap, focusedTaskId.value).layout : roadmap
 })

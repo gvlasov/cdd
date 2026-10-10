@@ -304,47 +304,6 @@ export function layoutScheme(ontology: Ontology, schemeId: Identity): SchemeLayo
   }
 }
 
-/** A live overview of an ontology's root and every declared concept. */
-export function layoutOntology(ontology: Ontology, rootId: Identity): SchemeLayout | undefined {
-  const root = conceptOf(ontology, rootId)
-  if (!root) return undefined
-  const conceptIds = ids(root, 'concepts')
-  const all = [rootId, ...conceptIds.filter((id) => id !== rootId)]
-  const columns = 4
-  const gapX = 48
-  const gapY = 44
-  const startX = 48
-  const startY = 64
-  const boxes = all.flatMap((id, index) => {
-    const instance = conceptOf(ontology, id)
-    if (!instance) return []
-    const column = index % columns
-    const row = Math.floor(index / columns)
-    return [{
-      id,
-      content: instanceName(instance) ?? id,
-      denotatum: id,
-      color: 'rgb(var(--v-theme-on-surface))',
-      backgroundColor: 'rgb(var(--v-theme-surface))',
-      borderColor: index === 0 ? 'rgb(var(--v-theme-primary))' : 'rgb(var(--v-theme-outline))',
-      padding: 14,
-      x: startX + column * (BOX_WIDTH + gapX),
-      y: startY + row * (BOX_HEIGHT + gapY),
-    }]
-  })
-  const rows = Math.max(1, Math.ceil(boxes.length / columns))
-  const width = startX * 2 + columns * BOX_WIDTH + (columns - 1) * gapX
-  const height = startY + rows * BOX_HEIGHT + Math.max(0, rows - 1) * gapY + 48
-  return {
-    boxes,
-    edges: [],
-    texts: [{ id: `${rootId}:caption`, content: 'Ontology concepts', align: 'center', x: width / 2, y: 32 }],
-    width,
-    height,
-    direction: 'leftToRight',
-  }
-}
-
 export function schemeReference(property: { value: Identity | Identity[] }): Identity | undefined {
   return Array.isArray(property.value) ? property.value[0] : property.value || undefined
 }
