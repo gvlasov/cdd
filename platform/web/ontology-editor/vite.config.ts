@@ -18,6 +18,9 @@ export default defineConfig(({ mode }) => {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
+    // sqlite-wasm locates its .wasm file relative to its own module, which
+    // pre-bundling would break.
+    optimizeDeps: { exclude: ['@sqlite.org/sqlite-wasm'] },
     server: {
       port: 5174,
       // In the Docker environment the browser reaches Vite through Caddy on

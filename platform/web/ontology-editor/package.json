@@ -41,5 +41,8 @@
     "vue": "^3.5.30",
     "vue-tsc": "^2.2.0",
     "vuetify": "^4.0.0"
+  },
+  "dependencies": {
+    "@sqlite.org/sqlite-wasm": "^3.53.4-build2"
   }
 }
