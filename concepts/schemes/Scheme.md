@@ -10,6 +10,7 @@ Define an attribute on the concept being documented with type `cdd.scheme`. Its 
 
 The viewer fits the whole scheme into a width-100% block. It uses the following optional visual values:
 
+- Scheme: `direction`, an instance of `schemeDirection` (`leftToRight`, the default, or `bottomToTop`).
 - Box: `color`, `backgroundColor`, `borderColor`, `padding`.
 - Edge: `color`, `lineStyle` (`solid`, `dashed`, `dotted`), `startHead` and `endHead` (`none`, `arrow`, `circle`, `diamond`), and `content` for its label.
 - Text: `align` (`left`, `center`, `right`).

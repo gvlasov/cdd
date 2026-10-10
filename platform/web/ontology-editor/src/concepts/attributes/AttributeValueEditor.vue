@@ -48,6 +48,15 @@ const image = computed(() => props.spec.type === IMAGE_CONCEPT)
 const text = computed(() => props.spec.type === 'cdd.text')
 const list = computed(() => isList(props.spec.cardinality))
 const cardinalityValued = computed(() => props.spec.type === 'cdd.cardinality')
+// An enumeration is a leaf concept whose volume is a fixed set of instances:
+// its value is one of them, picked rather than typed.
+const enumItems = computed(() => {
+  const type = props.spec.type
+  if (!type || !leaf.value || cardinalityValued.value) return []
+  return Object.entries(ontology().instances)
+    .filter(([, instance]) => instance.some((p) => p.kind === 'concept' && p.value === type))
+    .map(([id]) => ({ value: id, title: conceptLabel(id) ?? id }))
+})
 const CARDS: string[] = [...CARDINALITIES]
 const CREATE = ' create'
 
@@ -178,6 +187,19 @@ function submitNew() {
           <v-btn v-for="c in CARDS" :key="c" :value="c" size="small">{{ c }}</v-btn>
         </v-btn-toggle>
       </div>
+      <v-select
+        v-else-if="enumItems.length"
+        :model-value="list ? valueIds : literalValue"
+        :items="enumItems"
+        :label="spec.name"
+        :multiple="list"
+        :chips="list"
+        :clearable="!isRequired(spec.cardinality)"
+        variant="outlined"
+        density="comfortable"
+        hide-details
+        @update:model-value="commit(($event ?? (list ? [] : '')) as string | string[])"
+      />
       <v-text-field
         v-else-if="!list"
         :model-value="literalValue"

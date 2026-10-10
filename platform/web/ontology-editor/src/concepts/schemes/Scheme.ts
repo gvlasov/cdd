@@ -95,11 +95,14 @@ function align(value: string): TextAlign {
   return ['left', 'center', 'right'].includes(value) ? value as TextAlign : 'center'
 }
 
+/** The `schemeDirection` instance that makes a scheme flow from the bottom to the top. */
+const BOTTOM_TO_TOP: Identity = 'cdd.schemeDirection:bottomToTop'
+
 /** Reads the semantic Scheme/Box/Edge/Text instances and derives their geometry. */
 export function layoutScheme(ontology: Ontology, schemeId: Identity): SchemeLayout | undefined {
   const scheme = conceptOf(ontology, schemeId)
   if (!scheme) return undefined
-  const direction = literal(scheme, 'direction') === 'bottomToTop' ? 'bottomToTop' : 'leftToRight'
+  const direction = literal(scheme, 'direction') === BOTTOM_TO_TOP ? 'bottomToTop' : 'leftToRight'
   const boxes = ids(scheme, 'boxes').flatMap((id) => {
     const instance = conceptOf(ontology, id)
     if (!instance) return []

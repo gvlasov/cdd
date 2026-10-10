@@ -245,7 +245,7 @@ export default [
   [
     { kind: 'identity', value: 'cdd.roadmap:examples:cddPublicRelease:diagram' },
     { kind: 'concept', value: 'cdd.scheme' },
-    { kind: 'direction', value: 'bottomToTop' },
+    { kind: 'direction', value: 'cdd.schemeDirection:bottomToTop' },
     { kind: 'boxes', value: [
       'cdd.roadmap:examples:cddPublicRelease:diagram:problem',
       'cdd.roadmap:examples:cddPublicRelease:diagram:goal',
@@ -402,7 +402,7 @@ export default [
   [
     { kind: 'identity', value: 'cdd.roadmap:examples:independentTasks:diagram' },
     { kind: 'concept', value: 'cdd.scheme' },
-    { kind: 'direction', value: 'bottomToTop' },
+    { kind: 'direction', value: 'cdd.schemeDirection:bottomToTop' },
     { kind: 'boxes', value: [
       'cdd.roadmap:examples:independentTasks:diagram:research',
       'cdd.roadmap:examples:independentTasks:diagram:prototype',

@@ -9,7 +9,7 @@ export default [
     { kind: 'slug', value: 'scheme' },
     { kind: 'name', value: 'Scheme' },
     { kind: 'definition', value: 'a concept drawn as a collection of automatically laid-out boxes, edges, and texts.' },
-    { kind: 'attributes', value: ['cdd.scheme:boxes', 'cdd.scheme:edges', 'cdd.scheme:texts'] },
+    { kind: 'attributes', value: ['cdd.scheme:direction', 'cdd.scheme:boxes', 'cdd.scheme:edges', 'cdd.scheme:texts'] },
     { kind: 'exampleDiagram', value: 'cdd.scheme:example' },
   ],
   [
@@ -56,6 +56,22 @@ export default [
   [
     { kind: 'identity', value: 'cdd.scheme:example.caption' }, { kind: 'concept', value: 'cdd.schemeText' },
     { kind: 'content', value: 'A Scheme is a semantic drawing.' }, { kind: 'denotatum', value: 'cdd.scheme' }, { kind: 'align', value: 'center' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.scheme:direction' }, { kind: 'concept', value: 'cdd.attribute' },
+    { kind: 'slug', value: 'direction' }, { kind: 'name', value: 'direction' }, { kind: 'type', value: 'cdd.schemeDirection' }, { kind: 'cardinality', value: '0-1' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.schemeDirection' }, { kind: 'concept', value: 'cdd.concept' }, { kind: 'slug', value: 'schemeDirection' }, { kind: 'name', value: 'Direction' },
+    { kind: 'definition', value: 'the way a scheme flows: from left to right (the default), or from the bottom to the top. Its volume is closed to these two instances.' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.schemeDirection:leftToRight' }, { kind: 'concept', value: 'cdd.schemeDirection' },
+    { kind: 'slug', value: 'leftToRight' }, { kind: 'name', value: 'Left to right' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.schemeDirection:bottomToTop' }, { kind: 'concept', value: 'cdd.schemeDirection' },
+    { kind: 'slug', value: 'bottomToTop' }, { kind: 'name', value: 'Bottom to top' },
   ],
   [
     { kind: 'identity', value: 'cdd.scheme:boxes' }, { kind: 'concept', value: 'cdd.attribute' },
