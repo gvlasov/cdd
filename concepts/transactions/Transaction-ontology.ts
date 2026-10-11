@@ -20,6 +20,7 @@ export default [
         'cdd.transaction:parentConcept',
         'cdd.transaction:canonicalName',
         'cdd.transaction:params',
+        'cdd.transaction:effect',
       ],
     },
     {
@@ -110,5 +111,14 @@ export default [
     { kind: 'type', value: 'cdd.string' },
     { kind: 'cardinality', value: '0+' },
     { kind: 'description', value: 'names of the inputs the transaction’s effect expects.' },
+  ],
+  [
+    { kind: 'identity', value: 'cdd.transaction:effect' },
+    { kind: 'concept', value: 'cdd.attribute' },
+    { kind: 'slug', value: 'effect' },
+    { kind: 'name', value: 'effect' },
+    { kind: 'type', value: 'cdd.string' },
+    { kind: 'cardinality', value: '0-1' },
+    { kind: 'description', value: 'JavaScript function body that performs the transaction, with `input`, `reality` and `ontology` in scope.' },
   ],
 ]
