@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Opens a project-scoped Claude Code or Codex terminal in tmuxinator.
+# Opens a project-scoped LLM terminal in tmuxinator.
 # Terminal emulator is chosen with CDD_TERMINAL (see detect_terminal).
 set -euo pipefail
 
@@ -17,7 +17,7 @@ case "$launcher_llm" in
     ;;
 esac
 
-launcher_name="terminal-tmuxinator-$launcher_llm"
+launcher_name="terminal-tmuxinator"
 
 find_project_root() {
   local dir
@@ -83,7 +83,7 @@ if [ -z "$project_root" ]; then
   exit 1
 fi
 
-window_class="cdd-tmuxinator-$launcher_llm"
+window_class="cdd-tmuxinator"
 if focus_existing_i3_window "$window_class"; then
   exit 0
 fi
@@ -98,54 +98,46 @@ mkdir -p "$state_dir"
 
 project_id="$(printf '%s' "$project_root" | sha256sum | awk '{ print substr($1, 1, 12) }')"
 project_name="$(basename "$project_root" | tr -d '\n' | tr -c '[:alnum:]_-' '-')"
-session_name="cdd-${launcher_llm}-${project_name}-${project_id}"
-config_path="$state_dir/terminal-tmuxinator-${launcher_llm}.yml"
+session_name="cdd-${project_name}-${project_id}"
+config_path="$state_dir/terminal-tmuxinator.yml"
+legacy_config_path="$state_dir/terminal-tmuxinator-claude.yml"
 quoted_project_root="$(printf '%s' "$project_root" | yaml_single_quote)"
 
-case "$launcher_llm" in
-  claude)
-    selected_llm="claude"
-    if [ -f "$config_path" ] && grep -Eq '^[[:space:]]*-[[:space:]]+codex([[:space:]]|$)' "$config_path"; then
-      selected_llm="codex"
-    fi
+selected_llm="$launcher_llm"
+selection_source="$config_path"
+[ -f "$selection_source" ] || selection_source="$legacy_config_path"
+if [ -f "$selection_source" ] && grep -Eq '^[[:space:]]*-[[:space:]]+codex([[:space:]]|$)' "$selection_source"; then
+  selected_llm="codex"
+fi
 
-    case "$selected_llm" in
-      codex)
-        claude_comment="#"
-        codex_comment=""
-        ;;
-      claude)
-        claude_comment=""
-        codex_comment="#"
-        ;;
-    esac
-
-    require_command "$selected_llm"
-
-    pane_lines() {
-      printf '        %s- claude --resume\n' "$claude_comment"
-      printf '        %s- codex --dangerously-bypass-approvals-and-sandbox resume\n' "$codex_comment"
-    }
-    ;;
+case "$selected_llm" in
   codex)
-    require_command codex
-
-    pane_lines() {
-      printf '        - codex --dangerously-bypass-approvals-and-sandbox\n'
-    }
+    claude_comment="#"
+    codex_comment=""
+    ;;
+  claude)
+    claude_comment=""
+    codex_comment="#"
     ;;
 esac
+
+require_command "$selected_llm"
+
+pane_lines() {
+  printf '        %s- claude --resume\n' "$claude_comment"
+  printf '        %s- codex --dangerously-bypass-approvals-and-sandbox resume\n' "$codex_comment"
+}
 
 {
   printf 'name: %s\n' "$session_name"
   printf 'root: %s\n' "$quoted_project_root"
   printf 'windows:\n'
-  printf '  - %s:\n' "$launcher_llm"
+  printf '  - llm:\n'
   printf '      panes:\n'
   pane_lines
 } > "$config_path"
 
-window_title="${launcher_llm^} - $project_name"
+window_title="LLM - $project_name"
 run_script='
     tmuxinator start -p "$1"
     status="$?"

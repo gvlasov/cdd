@@ -4,7 +4,7 @@ load ../../../platform/tests/bats/test_helper
 
 setup() {
   project="$BATS_TEST_TMPDIR/project"
-  config="$project/platform/tmuxinator/local/terminal-tmuxinator-claude.yml"
+  config="$project/platform/tmuxinator/local/terminal-tmuxinator.yml"
   mkdir -p "$project/commands" "$(dirname "$config")"
   cat > "$config" <<'YAML'
 name: project-llm

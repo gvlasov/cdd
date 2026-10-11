@@ -36,7 +36,7 @@ if [ -z "$project_root" ]; then
   exit 1
 fi
 
-config_path="$project_root/platform/tmuxinator/local/terminal-tmuxinator-claude.yml"
+config_path="$project_root/platform/tmuxinator/local/terminal-tmuxinator.yml"
 if [ ! -f "$config_path" ]; then
   printf 'cdd llms:use: tmuxinator config does not exist: %s\n' "$config_path" >&2
   exit 1
